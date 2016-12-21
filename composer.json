@@ -1,0 +1,15 @@
+{
+  "name": "gg_admin/gg_admin",
+  "description": "杠杠麻将",
+  "minimum-stability": "stable",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "JSS",
+      "email": "419756656@qq.com"
+    }
+  ],
+  "require": {
+    "mongodb/mongodb": "1.1.0"
+  }
+}
