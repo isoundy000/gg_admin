@@ -1,12 +1,11 @@
 <?php
 namespace Admin\Controller;
-use Think\Controller;
-class IndexController extends Controller {
+use Common\Controller\BaseController;
+
+class IndexController extends BaseController {
+
     public function index(){
-        $MongoClient = new \MongoDB\Client(C('MONGO_SERVER'));
-        $MongoClient->selectDatabase(C('MONGO_DB'));
-        $user = $MongoClient->gg_admin->user;
-        $result = $user->findOne();
-        var_dump($result);
+        $result = $this->mongo_db->admin_user->findOne();
+        $this->display("index");
     }
 }
