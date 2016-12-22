@@ -16,7 +16,7 @@ use Think\App;
  */
 class RestController extends Controller {
     //返回数据
-    protected   $_result = array('data' => array(), 'msg' => '请求成功', 'error' => array());
+    protected   $_result = array('data' => array(), 'msg' => '请求成功', 'error' => array(), 'code' => 200);
     // 当前请求类型
     protected   $_method        =   ''; 
     // 当前请求的资源类型
@@ -240,6 +240,7 @@ class RestController extends Controller {
             403 => "操作无权限",
             404 => "请求不存在",
         );
+        $this->_result['code'] = $code;
         isset($msg[$code]) && $data['msg'] = $msg[$code];
         $data['msg'] = $error ? $error : $data['msg'];
         $this->sendHttpStatus($code);
