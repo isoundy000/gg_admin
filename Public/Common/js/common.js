@@ -2,29 +2,39 @@
  * Created by Cherish on 2016/12/22.
  */
 
+function logout(_url) {
+    ajaxRequest(_url, null, 'delete', 'json', function(result) {
+        if (!result) {
+            window.location.href = "/";
+        }
+    });
+}
+
+function menuClick(_url) {
+    ajaxRequest(_url, null, 'get', 'json', function(result) {
+        if(result.code == 200) {
+            $("#content-wrapper").html(result.data.html);
+        }
+    });
+}
+
 function ajaxRequest(url, data, type, dataType, success) {
     $.ajax( {
         url : url,
         type : type,
         data : data,
         dataType : dataType,
-        beforeSend : function() {
-            beforeSend('visible');
-        },
         success : function(res) {
-            beforeSend('hidden');
             success && typeof success=='function' && success.call(null, res);
         },
         error : function(XMLHttpRequest, textStatus, errorThrown) {
-            var message = XMLHttpRequest.responseJSON.msg ? XMLHttpRequest.responseJSON.msg : textStatus + " " + errorThrown;
+            //var jsonResponse =XMLHttpRequest.responseJson;
+            var message = textStatus + " " + errorThrown;
             errorDialog("block", XMLHttpRequest.status, message);
         }
     });
 }
 
-function beforeSend(style) {
-
-}
 
 function errorDialog(display, title, message) {
     var html = '<div class="modal-dialog">' +

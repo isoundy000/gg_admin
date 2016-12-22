@@ -14,8 +14,8 @@ return array(
     'REST_DELETE' => 'Delete',
 
     //数据库配置 mongodb
-    'MONGO_SERVER' => 'mongodb://127.0.0.1:27017',
-    'MONGO_DB' => 'gg_admin',
+    'MONGO_SERVER' => 'mongodb://backdbuser:backdbpwd@115.28.230.12:27017/backDb',
+    'MONGO_DB' => 'backDb',
 
     //theme
     'DEFAULT_THEME' => 'Admin',

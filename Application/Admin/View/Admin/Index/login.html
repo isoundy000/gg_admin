@@ -15,7 +15,6 @@
     <link href="/bower_components/AdminLTE/dist/css/AdminLTE.min.css" rel="stylesheet">
     <link href="/bower_components/AdminLTE/dist/css/skins/_all-skins.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/Public/font-awesome/css/font-awesome.min.css">
-    <link rel="stylesheet" href="/bower_components/Ionicons/css/ionicons.min.css">
     <link href="/bower_components/AdminLTE/plugins/iCheck/square/blue.css" rel="stylesheet">
     <link href="/Public/Admin/css/admin.css" rel="stylesheet">
     <!-- Bootstrap core JavaScript
@@ -24,7 +23,6 @@
     <script src="/bower_components/AdminLTE/plugins/jQuery/jquery-2.2.3.min.js"></script>
     <script src="/bower_components/AdminLTE/bootstrap/js/bootstrap.min.js"></script>
     <script src="/bower_components/AdminLTE/plugins/iCheck/icheck.min.js"></script>
-    <script src="/bower_components/jquery-validation/dist/jquery.validate.min.js"></script>
     <script src="/Public/Common/js/common.js"></script>
 </head>
 <body class="hold-transition login-page">
@@ -35,7 +33,7 @@
     <!-- /.login-logo -->
     <div class="login-box-body">
         <p class="login-box-msg">用户登录</p>
-        <form id="login">
+        <form id="login" onsubmit="return false;">
         <div class="form-group has-feedback">
             <input id="username" class="form-control" placeholder="用户名" type="text" required>
             <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
@@ -95,9 +93,8 @@
         ajaxRequest("__MODULE__/user/token", source, "get", "json", function (result) {
             if (result.code == 200) {
                 window.location.href = result.data.url;
-                errorDialog();
             } else {
-                errorDialog();
+                errorDialog("block", result.code, result.msg);
             }
         });
 
