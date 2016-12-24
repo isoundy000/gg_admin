@@ -126,7 +126,7 @@ class RestController extends Controller {
     }
 
     // 发送Http状态信息
-    protected function sendHttpStatus($code) {
+    protected function sendHttpStatus($code, $msg=null) {
         static $_status = array(
             // Informational 1xx
             100 => 'Continue',
@@ -177,9 +177,9 @@ class RestController extends Controller {
             509 => 'Bandwidth Limit Exceeded'
         );
         if(isset($_status[$code])) {
-            header('HTTP/1.1 '.$code.' '.$_status[$code]);
+            header('HTTP/1.1 '.$code.' '.($msg?$msg:$_status[$code]));
             // 确保FastCGI模式下正常
-            header('Status:'.$code.' '.$_status[$code]);
+            header('Status:'.$code.' '.($msg?$msg:$_status[$code]));
         }
     }
 

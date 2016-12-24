@@ -13,8 +13,8 @@ return array(
     'REST_PUT' => 'Put',
     'REST_DELETE' => 'Delete',
 
-    //数据库配置 mongodb
-    'MONGO_SERVER' => 'mongodb://backdbuser:backdbpwd@115.28.230.12:27017/backDb',
+    //数据库配置 mongodb socketTimeoutMS=-1
+    'MONGO_SERVER' => 'mongodb://backdbuser:backdbpwd@115.28.230.12:27017/backDb?socketTimeoutMS=-1',
     'MONGO_DB' => 'backDb',
 
     //theme

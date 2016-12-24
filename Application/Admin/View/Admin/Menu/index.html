@@ -15,8 +15,8 @@
     <div class="row">
         <div class="nav-tabs-custom">
             <ul class="nav nav-tabs" id="gg-tab">
-                <li class="active"><a href="#tab_1" data-toggle="tab" aria-expanded="true">菜单列表</a></li>
-                <li class=""><a href="#tab_2" data-toggle="tab" aria-expanded="false">新建/编辑</a></li>
+                <li class="active"><a href="#tab_1" data-toggle="tab" aria-expanded="true"><b class="text-light-blue">菜单列表</b></a></li>
+                <li class=""><a href="#tab_2" data-toggle="tab" aria-expanded="false"><b class="text-green">新建</b> | <b class="text-blue">编辑</b></a></li>
             </ul>
             <div class="tab-content">
                 <div class="tab-pane active" id="tab_1">
@@ -113,7 +113,8 @@
                         </div>
                         <div class="form-group">
                             <div class="col-sm-offset-2 col-sm-4">
-                                <button type="submit" class="btn btn-primary" onclick="menuSave('__MODULE__/menu/menus')">保存</button>
+                                <button id="menu_submit" type="submit" class="btn btn-primary" onclick="menuSave('__MODULE__/menu/menus')">添加</button>
+                                <button type="submit" class="btn btn-warning" onclick="menuClear()">清空</button>
                                 <input type="hidden" id="_id">
                             </div>
                         </div>
@@ -127,9 +128,20 @@
 </section>
 <!-- /.content -->
 <script>
+    function menuClear() {
+        $("#sort").val("");
+        $("#name").val("");
+        $("#action").val("");
+        $("#icon").val("");
+        $("#pid").val("0");
+        $("#_id").val("");
+        $("#menu_submit").html("添加");
+    }
+
     function menuEdit(_url) {
         ajaxRequest(_url, null, 'get', 'json', function(result) {
             if (result.code == 200) {
+                $("#menu_submit").html("保存");
                 $('#gg-tab a[href="#tab_2"]').tab('show');
                 $("#sort").val(result.data.menus.sort);
                 $("#name").val(result.data.menus.name);

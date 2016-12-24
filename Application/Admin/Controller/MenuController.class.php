@@ -68,7 +68,7 @@ class MenuController extends BaseController {
         $data['icon'] = I('put.icon', 'fa-circle');
         $data['pid'] = I('put.pid', '0');
 
-        merge_params_error($data['name'], 'name', '不能为空', $this->_result['error']);
+        merge_params_error($data['name'], 'name', '名称不能为空', $this->_result['error']);
 
         //检查参数
         if ($this->_result['error']) {
@@ -95,7 +95,7 @@ class MenuController extends BaseController {
         $data['action'] = I('post.action', 'javascript:void(0)');
         $data['icon'] = I('post.icon', 'fa-circle');
         $data['pid'] = I('post.pid', '0');
-        merge_params_error($data['name'], 'name', '不能为空', $this->_result['error']);
+        merge_params_error($data['name'], 'name', '名称不能为空', $this->_result['error']);
 
         //检查参数
         if ($this->_result['error']) {

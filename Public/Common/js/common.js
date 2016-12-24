@@ -28,7 +28,9 @@ function ajaxRequest(url, data, type, dataType, success) {
             success && typeof success=='function' && success.call(null, res);
         },
         error : function(XMLHttpRequest, textStatus, errorThrown) {
-            var message = textStatus + " " + errorThrown;
+            var response = JSON.parse(XMLHttpRequest.responseText);
+            console.log(response);
+            var message = response.msg ? response.msg : textStatus + " " + errorThrown;
             errorDialog("block", XMLHttpRequest.status, message);
         }
     });
