@@ -28,7 +28,6 @@ function ajaxRequest(url, data, type, dataType, success) {
             success && typeof success=='function' && success.call(null, res);
         },
         error : function(XMLHttpRequest, textStatus, errorThrown) {
-            //var jsonResponse =XMLHttpRequest.responseJson;
             var message = textStatus + " " + errorThrown;
             errorDialog("block", XMLHttpRequest.status, message);
         }
@@ -60,7 +59,7 @@ function successDialog(display, title, message) {
     var html = '<div class="modal-dialog">' +
         '<div class="modal-content">' +
         '<div class="modal-header">' +
-        '<button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="errorDialog(' + "'none'" + ')">' +
+        '<button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="successDialog(' + "'none'" + ')">' +
         '<span aria-hidden="true">×</span></button>' +
         '<h4 class="modal-title">' + title + '</h4>' +
         '</div>' +
@@ -68,7 +67,7 @@ function successDialog(display, title, message) {
         '<p>' + message + '</p>' +
         '</div>' +
         '<div class="modal-footer">' +
-        '<button type="button" class="btn btn-outline" onclick="errorDialog(' + "'none'" + ')">关闭</button>' +
+        '<button type="button" class="btn btn-outline" onclick="successDialog(' + "'none'" + ')">关闭</button>' +
         '</div>' +
         '</div>' +
         '</div>';

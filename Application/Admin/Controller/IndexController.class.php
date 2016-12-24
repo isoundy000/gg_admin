@@ -11,11 +11,15 @@ class IndexController extends BaseController {
         }
     }
 
+    public function profileGet() {
+        $this->_result['data']['html'] = 'Profile';
+        $this->response($this->_result, 'json', 200);
+    }
+
     public function loginGet() {
         if($_SESSION['token']) {
             $this->display("index:index");
         } else {
-            layout(false);
             $this->display("index:login");
         }
     }

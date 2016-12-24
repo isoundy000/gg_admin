@@ -18,6 +18,7 @@
     <link href="/bower_components/AdminLTE/plugins/iCheck/all.css" rel="stylesheet">
     <link href="/bower_components/AdminLTE/plugins/colorpicker/bootstrap-colorpicker.css" rel="stylesheet">
     <link href="/bower_components/AdminLTE/plugins/timepicker/bootstrap-timepicker.min.css" rel="stylesheet">
+    <!--<link href="/bower_components/AdminLTE/plugins/datatables/dataTables.bootstrap.css" rel="stylesheet">-->
     <link href="/bower_components/AdminLTE/plugins/select2/select2.min.css" rel="stylesheet">
     <link href="/bower_components/AdminLTE/dist/css/AdminLTE.min.css" rel="stylesheet">
     <link href="/bower_components/AdminLTE/dist/css/skins/_all-skins.min.css" rel="stylesheet">
@@ -38,6 +39,8 @@
     <script src="/bower_components/AdminLTE/plugins/slimScroll/jquery.slimscroll.min.js"></script>
     <script src="/bower_components/AdminLTE/plugins/iCheck/icheck.min.js"></script>
     <script src="/bower_components/AdminLTE/plugins/fastclick/fastclick.min.js"></script>
+    <!--<script src="/bower_components/AdminLTE/plugins/datatables/dataTables.bootstrap.min.js"></script>
+    <script src="/bower_components/AdminLTE/plugins/datatables/jquery.dataTables.min.js"></script>-->
     <script src="/bower_components/AdminLTE/dist/js/app.min.js"></script>
     <script src="/bower_components/AdminLTE/dist/js/demo.js"></script>
     <script src="/Public/Common/js/common.js"></script>
@@ -47,7 +50,7 @@
 <div class="wrapper">
     <header class="main-header">
         <!-- Logo -->
-        <a href="/bower_components/AdminLTE/index2.html" class="logo">
+        <a href="__MODULE__/index/index" class="logo">
             <!-- mini logo for sidebar mini 50x50 pixels -->
             <span class="logo-mini"><b>杠杠麻将</b></span>
             <!-- logo for regular state and mobile devices -->
@@ -86,7 +89,7 @@
                             <!-- Menu Footer-->
                             <li class="user-footer">
                                 <div class="pull-right">
-                                    <a href="#" class="btn btn-default btn-flat" onclick="logout('__MODULE__/user/token')">注销</a>
+                                    <a href="#" class="btn btn-danger btn-flat" onclick="logout('__MODULE__/user/token')">注销</a>
                                 </div>
                             </li>
                         </ul>
@@ -127,7 +130,7 @@
                         <if condition="$item.child neq null">
                             <ul class="treeview-menu">
                                 <foreach name="item.child" item="child">
-                                    <li><a href="javascript:void(0)" onclick=menuClick("__MODULE__/{$child.action}")><i class="fa {$item.icon}"></i>{$child.name}</a></li>
+                                    <li><a href="javascript:void(0)" onclick=menuClick("__MODULE__/{$child.action}")><i class="fa {$child.icon}"></i>{$child.name}</a></li>
                                 </foreach>
                             </ul>
                         </if>

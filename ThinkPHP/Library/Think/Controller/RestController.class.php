@@ -240,7 +240,7 @@ class RestController extends Controller {
             403 => "操作无权限",
             404 => "请求不存在",
         );
-        $this->_result['code'] = $code;
+        $data['code'] = $code;
         isset($msg[$code]) && $data['msg'] = $msg[$code];
         $data['msg'] = $error ? $error : $data['msg'];
         $this->sendHttpStatus($code);

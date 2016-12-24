@@ -12,14 +12,8 @@ class UserController extends BaseController
 {
     public function usersGet()
     {
-        $search['id'] = I('get.id');
-        $option['projection'] = array("username"=>1,
-            "name"=>1,
-            "date"=>1,
-            "role_id"=>1,
-            "status"=>1,
-            "_id"=>0
-        );
+        $search['_id'] = I('get._id');
+        $option = array();
         filter_array_element($search);
         $admin_user = $this->mongo_db->admin_user;
         $query = $admin_user->findOne($search, $option);

@@ -287,10 +287,14 @@ function I($name,$default='',$filter=null,$datas=null) {
         case 'post'    :   
         	$input =& $_POST;
         	break;
-        case 'put'     :   
+        case 'put'     :
+        case 'delete'  :
         	if(is_null($_PUT)){
             	parse_str(file_get_contents('php://input'), $_PUT);
         	}
+        	if (!$_PUT) {
+        	    $_PUT = $_REQUEST;
+            }
         	$input 	=	$_PUT;        
         	break;
         case 'param'   :

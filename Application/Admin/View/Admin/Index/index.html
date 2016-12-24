@@ -1,655 +1,88 @@
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <h1>
+        菜单管理
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i>首页</a></li>
+        <li><a href="#">一级</a></li>
+        <li class="active">二级</li>
+    </ol>
+</section>
 
-    <!-- Content Header (Page header) -->
-    <section class="content-header">
-        <h1>
-            大标题
-            <small>小标题</small>
-        </h1>
-        <ol class="breadcrumb">
-            <li><a href="#"><i class="fa fa-dashboard"></i>首页</a></li>
-            <li><a href="#">一级</a></li>
-            <li class="active">二级</li>
-        </ol>
-    </section>
+<!-- Main content -->
+<section class="content">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+                <div class="box-header">
+                    <h3 class="box-title">Responsive Hover Table</h3>
 
-    <!-- Main content -->
-    <section class="content">
+                    <div class="box-tools">
+                        <div class="input-group input-group-sm" style="width: 150px;">
+                            <input name="table_search" class="form-control pull-right" placeholder="Search" type="text">
 
-        <!-- SELECT2 EXAMPLE -->
-        <div class="box box-default">
-            <div class="box-header with-border">
-                <h3 class="box-title">标题（可伸缩示例）</h3>
-
-                <div class="box-tools pull-right">
-                    <button type="button" class="btn btn-box-tool" data-widget="collapse"><i
-                            class="fa fa-minus"></i></button>
-                    <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-remove"></i>
-                    </button>
-                </div>
-            </div>
-            <!-- /.box-header -->
-            <div class="box-body">
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label>Minimal</label>
-                            <select class="form-control select2 select2-hidden-accessible" style="width: 100%;"
-                                    tabindex="-1" aria-hidden="true">
-                                <option selected="selected">Alabama</option>
-                                <option>Alaska</option>
-                                <option>California</option>
-                                <option>Delaware</option>
-                                <option>Tennessee</option>
-                                <option>Texas</option>
-                                <option>Washington</option>
-                            </select><span class="select2 select2-container select2-container--default" dir="ltr"
-                                           style="width: 100%;"><span class="selection"><span
-                                class="select2-selection select2-selection--single" role="combobox"
-                                aria-haspopup="true" aria-expanded="false" tabindex="0"
-                                aria-labelledby="select2-dqyk-container"><span class="select2-selection__rendered"
-                                                                               id="select2-dqyk-container"
-                                                                               title="Alabama">Alabama</span><span
-                                class="select2-selection__arrow" role="presentation"><b
-                                role="presentation"></b></span></span></span><span class="dropdown-wrapper"
-                                                                                   aria-hidden="true"></span></span>
+                            <div class="input-group-btn">
+                                <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+                            </div>
                         </div>
-                        <!-- /.form-group -->
-                        <div class="form-group">
-                            <label>Disabled</label>
-                            <select class="form-control select2 select2-hidden-accessible" disabled=""
-                                    style="width: 100%;" tabindex="-1" aria-hidden="true">
-                                <option selected="selected">Alabama</option>
-                                <option>Alaska</option>
-                                <option>California</option>
-                                <option>Delaware</option>
-                                <option>Tennessee</option>
-                                <option>Texas</option>
-                                <option>Washington</option>
-                            </select><span
-                                class="select2 select2-container select2-container--default select2-container--disabled"
-                                dir="ltr" style="width: 100%;"><span class="selection"><span
-                                class="select2-selection select2-selection--single" role="combobox"
-                                aria-haspopup="true" aria-expanded="false" tabindex="-1"
-                                aria-labelledby="select2-j60t-container"><span class="select2-selection__rendered"
-                                                                               id="select2-j60t-container"
-                                                                               title="Alabama">Alabama</span><span
-                                class="select2-selection__arrow" role="presentation"><b
-                                role="presentation"></b></span></span></span><span class="dropdown-wrapper"
-                                                                                   aria-hidden="true"></span></span>
-                        </div>
-                        <!-- /.form-group -->
                     </div>
-                    <!-- /.col -->
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label>Multiple</label>
-                            <select class="form-control select2 select2-hidden-accessible" multiple=""
-                                    data-placeholder="Select a State" style="width: 100%;" tabindex="-1"
-                                    aria-hidden="true">
-                                <option>Alabama</option>
-                                <option>Alaska</option>
-                                <option>California</option>
-                                <option>Delaware</option>
-                                <option>Tennessee</option>
-                                <option>Texas</option>
-                                <option>Washington</option>
-                            </select><span class="select2 select2-container select2-container--default" dir="ltr"
-                                           style="width: 100%;"><span class="selection"><span
-                                class="select2-selection select2-selection--multiple" role="combobox"
-                                aria-haspopup="true" aria-expanded="false" tabindex="-1"><ul
-                                class="select2-selection__rendered"><li
-                                class="select2-search select2-search--inline"><input class="select2-search__field"
-                                                                                     tabindex="0" autocomplete="off"
-                                                                                     autocorrect="off"
-                                                                                     autocapitalize="off"
-                                                                                     spellcheck="false"
-                                                                                     role="textbox"
-                                                                                     aria-autocomplete="list"
-                                                                                     placeholder="Select a State"
-                                                                                     style="width: 923px;"
-                                                                                     type="search"></li></ul></span></span><span
-                                class="dropdown-wrapper" aria-hidden="true"></span></span>
-                        </div>
-                        <!-- /.form-group -->
-                        <div class="form-group">
-                            <label>Disabled Result</label>
-                            <select class="form-control select2 select2-hidden-accessible" style="width: 100%;"
-                                    tabindex="-1" aria-hidden="true">
-                                <option selected="selected">Alabama</option>
-                                <option>Alaska</option>
-                                <option disabled="disabled">California (disabled)</option>
-                                <option>Delaware</option>
-                                <option>Tennessee</option>
-                                <option>Texas</option>
-                                <option>Washington</option>
-                            </select><span class="select2 select2-container select2-container--default" dir="ltr"
-                                           style="width: 100%;"><span class="selection"><span
-                                class="select2-selection select2-selection--single" role="combobox"
-                                aria-haspopup="true" aria-expanded="false" tabindex="0"
-                                aria-labelledby="select2-jv61-container"><span class="select2-selection__rendered"
-                                                                               id="select2-jv61-container"
-                                                                               title="Alabama">Alabama</span><span
-                                class="select2-selection__arrow" role="presentation"><b
-                                role="presentation"></b></span></span></span><span class="dropdown-wrapper"
-                                                                                   aria-hidden="true"></span></span>
-                        </div>
-                        <!-- /.form-group -->
-                    </div>
-                    <!-- /.col -->
                 </div>
-                <!-- /.row -->
-            </div>
-            <!-- /.box-body -->
-            <div class="box-footer">
-                Visit <a href="https://select2.github.io/">Select2 documentation</a> for more examples and
-                information about
-                the plugin.
+                <!-- /.box-header -->
+                <div class="box-body table-responsive no-padding">
+                    <table class="table table-hover">
+                        <tbody><tr>
+                            <th>ID</th>
+                            <th>User</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Reason</th>
+                        </tr>
+                        <tr>
+                            <td>183</td>
+                            <td>John Doe</td>
+                            <td>11-7-2014</td>
+                            <td><span class="label label-success">Approved</span></td>
+                            <td>Bacon ipsum dolor sit amet salami venison chicken flank fatback doner.</td>
+                        </tr>
+                        <tr>
+                            <td>219</td>
+                            <td>Alexander Pierce</td>
+                            <td>11-7-2014</td>
+                            <td><span class="label label-warning">Pending</span></td>
+                            <td>Bacon ipsum dolor sit amet salami venison chicken flank fatback doner.</td>
+                        </tr>
+                        <tr>
+                            <td>657</td>
+                            <td>Bob Doe</td>
+                            <td>11-7-2014</td>
+                            <td><span class="label label-primary">Approved</span></td>
+                            <td>Bacon ipsum dolor sit amet salami venison chicken flank fatback doner.</td>
+                        </tr>
+                        <tr>
+                            <td>175</td>
+                            <td>Mike Doe</td>
+                            <td>11-7-2014</td>
+                            <td><span class="label label-danger">Denied</span></td>
+                            <td>Bacon ipsum dolor sit amet salami venison chicken flank fatback doner.</td>
+                        </tr>
+                        </tbody></table>
+                </div>
+                <!-- /.box-body -->
+                <div class="box-footer clearfix">
+                    <ul class="pagination pagination-sm no-margin pull-right">
+                        <li><a href="#">«</a></li>
+                        <li><a href="#">1</a></li>
+                        <li><a href="#">2</a></li>
+                        <li><a href="#">3</a></li>
+                        <li><a href="#">»</a></li>
+                    </ul>
+                </div>
+                <!-- /.box-footer -->
             </div>
         </div>
-        <!-- /.box -->
-
-        <div class="row">
-            <div class="col-md-6">
-
-                <div class="box box-danger">
-                    <div class="box-header">
-                        <h3 class="box-title">Input masks</h3>
-                    </div>
-                    <div class="box-body">
-                        <!-- Date dd/mm/yyyy -->
-                        <div class="form-group">
-                            <label>Date masks:</label>
-
-                            <div class="input-group">
-                                <div class="input-group-addon">
-                                    <i class="fa fa-calendar"></i>
-                                </div>
-                                <input class="form-control" data-inputmask="'alias': 'dd/mm/yyyy'" data-mask=""
-                                       type="text">
-                            </div>
-                            <!-- /.input group -->
-                        </div>
-                        <!-- /.form group -->
-
-                        <!-- Date mm/dd/yyyy -->
-                        <div class="form-group">
-                            <div class="input-group">
-                                <div class="input-group-addon">
-                                    <i class="fa fa-calendar"></i>
-                                </div>
-                                <input class="form-control" data-inputmask="'alias': 'mm/dd/yyyy'" data-mask=""
-                                       type="text">
-                            </div>
-                            <!-- /.input group -->
-                        </div>
-                        <!-- /.form group -->
-
-                        <!-- phone mask -->
-                        <div class="form-group">
-                            <label>US phone mask:</label>
-
-                            <div class="input-group">
-                                <div class="input-group-addon">
-                                    <i class="fa fa-phone"></i>
-                                </div>
-                                <input class="form-control"
-                                       data-inputmask="&quot;mask&quot;: &quot;(999) 999-9999&quot;" data-mask=""
-                                       type="text">
-                            </div>
-                            <!-- /.input group -->
-                        </div>
-                        <!-- /.form group -->
-
-                        <!-- phone mask -->
-                        <div class="form-group">
-                            <label>Intl US phone mask:</label>
-
-                            <div class="input-group">
-                                <div class="input-group-addon">
-                                    <i class="fa fa-phone"></i>
-                                </div>
-                                <input class="form-control"
-                                       data-inputmask="'mask': ['999-999-9999 [x99999]', '+099 99 99 9999[9]-9999']"
-                                       data-mask="" type="text">
-                            </div>
-                            <!-- /.input group -->
-                        </div>
-                        <!-- /.form group -->
-
-                        <!-- IP mask -->
-                        <div class="form-group">
-                            <label>IP mask:</label>
-
-                            <div class="input-group">
-                                <div class="input-group-addon">
-                                    <i class="fa fa-laptop"></i>
-                                </div>
-                                <input class="form-control" data-inputmask="'alias': 'ip'" data-mask="" type="text">
-                            </div>
-                            <!-- /.input group -->
-                        </div>
-                        <!-- /.form group -->
-
-                    </div>
-                    <!-- /.box-body -->
-                </div>
-                <!-- /.box -->
-
-                <div class="box box-info">
-                    <div class="box-header">
-                        <h3 class="box-title">Color &amp; Time Picker</h3>
-                    </div>
-                    <div class="box-body">
-                        <!-- Color Picker -->
-                        <div class="form-group">
-                            <label>Color picker:</label>
-                            <input class="form-control my-colorpicker1 colorpicker-element" type="text">
-                        </div>
-                        <!-- /.form group -->
-
-                        <!-- Color Picker -->
-                        <div class="form-group">
-                            <label>Color picker with addon:</label>
-
-                            <div class="input-group my-colorpicker2 colorpicker-element">
-                                <input class="form-control" type="text">
-
-                                <div class="input-group-addon">
-                                    <i></i>
-                                </div>
-                            </div>
-                            <!-- /.input group -->
-                        </div>
-                        <!-- /.form group -->
-
-                        <!-- time Picker -->
-                        <div class="bootstrap-timepicker">
-                            <div class="bootstrap-timepicker-widget dropdown-menu">
-                                <table>
-                                    <tbody>
-                                    <tr>
-                                        <td><a href="#" data-action="incrementHour"><i
-                                                class="glyphicon glyphicon-chevron-up"></i></a></td>
-                                        <td class="separator">&nbsp;</td>
-                                        <td><a href="#" data-action="incrementMinute"><i
-                                                class="glyphicon glyphicon-chevron-up"></i></a></td>
-                                        <td class="separator">&nbsp;</td>
-                                        <td class="meridian-column"><a href="#" data-action="toggleMeridian"><i
-                                                class="glyphicon glyphicon-chevron-up"></i></a></td>
-                                    </tr>
-                                    <tr>
-                                        <td><span class="bootstrap-timepicker-hour">09</span></td>
-                                        <td class="separator">:</td>
-                                        <td><span class="bootstrap-timepicker-minute">30</span></td>
-                                        <td class="separator">&nbsp;</td>
-                                        <td><span class="bootstrap-timepicker-meridian">AM</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td><a href="#" data-action="decrementHour"><i
-                                                class="glyphicon glyphicon-chevron-down"></i></a></td>
-                                        <td class="separator"></td>
-                                        <td><a href="#" data-action="decrementMinute"><i
-                                                class="glyphicon glyphicon-chevron-down"></i></a></td>
-                                        <td class="separator">&nbsp;</td>
-                                        <td><a href="#" data-action="toggleMeridian"><i
-                                                class="glyphicon glyphicon-chevron-down"></i></a></td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div class="form-group">
-                                <label>Time picker:</label>
-
-                                <div class="input-group">
-                                    <input class="form-control timepicker" type="text">
-
-                                    <div class="input-group-addon">
-                                        <i class="fa fa-clock-o"></i>
-                                    </div>
-                                </div>
-                                <!-- /.input group -->
-                            </div>
-                            <!-- /.form group -->
-                        </div>
-                    </div>
-                    <!-- /.box-body -->
-                </div>
-                <!-- /.box -->
-
-            </div>
-            <!-- /.col (left) -->
-            <div class="col-md-6">
-                <div class="box box-primary">
-                    <div class="box-header">
-                        <h3 class="box-title">Date picker</h3>
-                    </div>
-                    <div class="box-body">
-                        <!-- Date -->
-                        <div class="form-group">
-                            <label>Date:</label>
-
-                            <div class="input-group date">
-                                <div class="input-group-addon">
-                                    <i class="fa fa-calendar"></i>
-                                </div>
-                                <input class="form-control pull-right" id="datepicker" type="text">
-                            </div>
-                            <!-- /.input group -->
-                        </div>
-                        <!-- /.form group -->
-
-                        <!-- Date range -->
-                        <div class="form-group">
-                            <label>Date range:</label>
-
-                            <div class="input-group">
-                                <div class="input-group-addon">
-                                    <i class="fa fa-calendar"></i>
-                                </div>
-                                <input class="form-control pull-right" id="reservation" type="text">
-                            </div>
-                            <!-- /.input group -->
-                        </div>
-                        <!-- /.form group -->
-
-                        <!-- Date and time range -->
-                        <div class="form-group">
-                            <label>Date and time range:</label>
-
-                            <div class="input-group">
-                                <div class="input-group-addon">
-                                    <i class="fa fa-clock-o"></i>
-                                </div>
-                                <input class="form-control pull-right" id="reservationtime" type="text">
-                            </div>
-                            <!-- /.input group -->
-                        </div>
-                        <!-- /.form group -->
-
-                        <!-- Date and time range -->
-                        <div class="form-group">
-                            <label>Date range button:</label>
-
-                            <div class="input-group">
-                                <button type="button" class="btn btn-default pull-right" id="daterange-btn">
-                    <span>
-                      <i class="fa fa-calendar"></i> Date range picker
-                    </span>
-                                    <i class="fa fa-caret-down"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <!-- /.form group -->
-
-                    </div>
-                    <!-- /.box-body -->
-                </div>
-                <!-- /.box -->
-
-                <!-- iCheck -->
-                <div class="box box-success">
-                    <div class="box-header">
-                        <h3 class="box-title">iCheck - Checkbox &amp; Radio Inputs</h3>
-                    </div>
-                    <div class="box-body">
-                        <!-- Minimal style -->
-
-                        <!-- checkbox -->
-                        <div class="form-group">
-                            <label>
-                                <div class="icheckbox_minimal-blue checked" style="position: relative;"
-                                     aria-checked="false" aria-disabled="false"><input class="minimal" checked=""
-                                                                                       style="position: absolute; opacity: 0;"
-                                                                                       type="checkbox">
-                                    <ins class="iCheck-helper"
-                                         style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; background: rgb(255, 255, 255) none repeat scroll 0% 0%; border: 0px none; opacity: 0;"></ins>
-                                </div>
-                            </label>
-                            <label>
-                                <div class="icheckbox_minimal-blue" style="position: relative;" aria-checked="false"
-                                     aria-disabled="false"><input class="minimal"
-                                                                  style="position: absolute; opacity: 0;"
-                                                                  type="checkbox">
-                                    <ins class="iCheck-helper"
-                                         style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; background: rgb(255, 255, 255) none repeat scroll 0% 0%; border: 0px none; opacity: 0;"></ins>
-                                </div>
-                            </label>
-                            <label>
-                                <div class="icheckbox_minimal-blue disabled" style="position: relative;"
-                                     aria-checked="false" aria-disabled="true"><input class="minimal" disabled=""
-                                                                                      style="position: absolute; opacity: 0;"
-                                                                                      type="checkbox">
-                                    <ins class="iCheck-helper"
-                                         style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; background: rgb(255, 255, 255) none repeat scroll 0% 0%; border: 0px none; opacity: 0;"></ins>
-                                </div>
-                                Minimal skin checkbox
-                            </label>
-                        </div>
-
-                        <!-- radio -->
-                        <div class="form-group">
-                            <label>
-                                <div class="iradio_minimal-blue checked" style="position: relative;"
-                                     aria-checked="false" aria-disabled="false"><input name="r1" class="minimal"
-                                                                                       checked=""
-                                                                                       style="position: absolute; opacity: 0;"
-                                                                                       type="radio">
-                                    <ins class="iCheck-helper"
-                                         style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; background: rgb(255, 255, 255) none repeat scroll 0% 0%; border: 0px none; opacity: 0;"></ins>
-                                </div>
-                            </label>
-                            <label>
-                                <div class="iradio_minimal-blue" style="position: relative;" aria-checked="false"
-                                     aria-disabled="false"><input name="r1" class="minimal"
-                                                                  style="position: absolute; opacity: 0;"
-                                                                  type="radio">
-                                    <ins class="iCheck-helper"
-                                         style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; background: rgb(255, 255, 255) none repeat scroll 0% 0%; border: 0px none; opacity: 0;"></ins>
-                                </div>
-                            </label>
-                            <label>
-                                <div class="iradio_minimal-blue disabled" style="position: relative;"
-                                     aria-checked="false" aria-disabled="true"><input name="r1" class="minimal"
-                                                                                      disabled=""
-                                                                                      style="position: absolute; opacity: 0;"
-                                                                                      type="radio">
-                                    <ins class="iCheck-helper"
-                                         style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; background: rgb(255, 255, 255) none repeat scroll 0% 0%; border: 0px none; opacity: 0;"></ins>
-                                </div>
-                                Minimal skin radio
-                            </label>
-                        </div>
-
-                        <!-- Minimal red style -->
-
-                        <!-- checkbox -->
-                        <div class="form-group">
-                            <label>
-                                <div class="icheckbox_minimal-red checked" style="position: relative;"
-                                     aria-checked="false" aria-disabled="false"><input class="minimal-red"
-                                                                                       checked=""
-                                                                                       style="position: absolute; opacity: 0;"
-                                                                                       type="checkbox">
-                                    <ins class="iCheck-helper"
-                                         style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; background: rgb(255, 255, 255) none repeat scroll 0% 0%; border: 0px none; opacity: 0;"></ins>
-                                </div>
-                            </label>
-                            <label>
-                                <div class="icheckbox_minimal-red" style="position: relative;" aria-checked="false"
-                                     aria-disabled="false"><input class="minimal-red"
-                                                                  style="position: absolute; opacity: 0;"
-                                                                  type="checkbox">
-                                    <ins class="iCheck-helper"
-                                         style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; background: rgb(255, 255, 255) none repeat scroll 0% 0%; border: 0px none; opacity: 0;"></ins>
-                                </div>
-                            </label>
-                            <label>
-                                <div class="icheckbox_minimal-red disabled" style="position: relative;"
-                                     aria-checked="false" aria-disabled="true"><input class="minimal-red"
-                                                                                      disabled=""
-                                                                                      style="position: absolute; opacity: 0;"
-                                                                                      type="checkbox">
-                                    <ins class="iCheck-helper"
-                                         style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; background: rgb(255, 255, 255) none repeat scroll 0% 0%; border: 0px none; opacity: 0;"></ins>
-                                </div>
-                                Minimal red skin checkbox
-                            </label>
-                        </div>
-
-                        <!-- radio -->
-                        <div class="form-group">
-                            <label>
-                                <div class="iradio_minimal-red checked" style="position: relative;"
-                                     aria-checked="false" aria-disabled="false"><input name="r2" class="minimal-red"
-                                                                                       checked=""
-                                                                                       style="position: absolute; opacity: 0;"
-                                                                                       type="radio">
-                                    <ins class="iCheck-helper"
-                                         style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; background: rgb(255, 255, 255) none repeat scroll 0% 0%; border: 0px none; opacity: 0;"></ins>
-                                </div>
-                            </label>
-                            <label>
-                                <div class="iradio_minimal-red" style="position: relative;" aria-checked="false"
-                                     aria-disabled="false"><input name="r2" class="minimal-red"
-                                                                  style="position: absolute; opacity: 0;"
-                                                                  type="radio">
-                                    <ins class="iCheck-helper"
-                                         style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; background: rgb(255, 255, 255) none repeat scroll 0% 0%; border: 0px none; opacity: 0;"></ins>
-                                </div>
-                            </label>
-                            <label>
-                                <div class="iradio_minimal-red disabled" style="position: relative;"
-                                     aria-checked="false" aria-disabled="true"><input name="r2" class="minimal-red"
-                                                                                      disabled=""
-                                                                                      style="position: absolute; opacity: 0;"
-                                                                                      type="radio">
-                                    <ins class="iCheck-helper"
-                                         style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; background: rgb(255, 255, 255) none repeat scroll 0% 0%; border: 0px none; opacity: 0;"></ins>
-                                </div>
-                                Minimal red skin radio
-                            </label>
-                        </div>
-
-                        <!-- Minimal red style -->
-
-                        <!-- checkbox -->
-                        <div class="form-group">
-                            <label>
-                                <div class="icheckbox_flat-green checked" style="position: relative;"
-                                     aria-checked="false" aria-disabled="false"><input class="flat-red" checked=""
-                                                                                       style="position: absolute; opacity: 0;"
-                                                                                       type="checkbox">
-                                    <ins class="iCheck-helper"
-                                         style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; background: rgb(255, 255, 255) none repeat scroll 0% 0%; border: 0px none; opacity: 0;"></ins>
-                                </div>
-                            </label>
-                            <label>
-                                <div class="icheckbox_flat-green" style="position: relative;" aria-checked="false"
-                                     aria-disabled="false"><input class="flat-red"
-                                                                  style="position: absolute; opacity: 0;"
-                                                                  type="checkbox">
-                                    <ins class="iCheck-helper"
-                                         style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; background: rgb(255, 255, 255) none repeat scroll 0% 0%; border: 0px none; opacity: 0;"></ins>
-                                </div>
-                            </label>
-                            <label>
-                                <div class="icheckbox_flat-green disabled" style="position: relative;"
-                                     aria-checked="false" aria-disabled="true"><input class="flat-red" disabled=""
-                                                                                      style="position: absolute; opacity: 0;"
-                                                                                      type="checkbox">
-                                    <ins class="iCheck-helper"
-                                         style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; background: rgb(255, 255, 255) none repeat scroll 0% 0%; border: 0px none; opacity: 0;"></ins>
-                                </div>
-                                Flat green skin checkbox
-                            </label>
-                        </div>
-
-                        <!-- radio -->
-                        <div class="form-group">
-                            <label>
-                                <div class="iradio_flat-green checked" style="position: relative;"
-                                     aria-checked="false" aria-disabled="false"><input name="r3" class="flat-red"
-                                                                                       checked=""
-                                                                                       style="position: absolute; opacity: 0;"
-                                                                                       type="radio">
-                                    <ins class="iCheck-helper"
-                                         style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; background: rgb(255, 255, 255) none repeat scroll 0% 0%; border: 0px none; opacity: 0;"></ins>
-                                </div>
-                            </label>
-                            <label>
-                                <div class="iradio_flat-green" style="position: relative;" aria-checked="false"
-                                     aria-disabled="false"><input name="r3" class="flat-red"
-                                                                  style="position: absolute; opacity: 0;"
-                                                                  type="radio">
-                                    <ins class="iCheck-helper"
-                                         style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; background: rgb(255, 255, 255) none repeat scroll 0% 0%; border: 0px none; opacity: 0;"></ins>
-                                </div>
-                            </label>
-                            <label>
-                                <div class="iradio_flat-green disabled" style="position: relative;"
-                                     aria-checked="false" aria-disabled="true"><input name="r3" class="flat-red"
-                                                                                      disabled=""
-                                                                                      style="position: absolute; opacity: 0;"
-                                                                                      type="radio">
-                                    <ins class="iCheck-helper"
-                                         style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; background: rgb(255, 255, 255) none repeat scroll 0% 0%; border: 0px none; opacity: 0;"></ins>
-                                </div>
-                                Flat green skin radio
-                            </label>
-                        </div>
-                    </div>
-                    <!-- /.box-body -->
-                    <div class="box-footer">
-                        Many more skins available. <a href="http://fronteed.com/iCheck/">Documentation</a>
-                    </div>
-                </div>
-                <!-- /.box -->
-            </div>
-            <!-- /.col (right) -->
-        </div>
-        <!-- /.row -->
-
-        <div style="padding: 10px 0px; text-align: center;">
-            <div class="text-muted">Excuse the ads! We need some help to keep our site up.</div>
-            <script async="" src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-            <div class="visible-xs visible-sm"><!-- AdminLTE -->
-                <ins class="adsbygoogle" style="display: inline-block; width: 300px; height: 250px;"
-                     data-ad-client="ca-pub-4495360934352473" data-ad-slot="5866534244"
-                     data-adsbygoogle-status="done">
-                    <ins id="aswift_0_expand"
-                         style="display:inline-table;border:none;height:250px;margin:0;padding:0;position:relative;visibility:visible;width:300px;background-color:transparent">
-                        <ins id="aswift_0_anchor"
-                             style="display:block;border:none;height:250px;margin:0;padding:0;position:relative;visibility:visible;width:300px;background-color:transparent">
-                            <iframe marginwidth="0" marginheight="0" vspace="0" hspace="0" allowtransparency="true"
-                                    scrolling="no" allowfullscreen="true"
-                                    onload="var i=this.id,s=window.google_iframe_oncopy,H=s&amp;&amp;s.handlers,h=H&amp;&amp;H[i],w=this.contentWindow,d;try{d=w.document}catch(e){}if(h&amp;&amp;d&amp;&amp;(!d.body||!d.body.firstChild)){if(h.call){setTimeout(h,0)}else if(h.match){try{h=s.upd(h,i)}catch(e){}w.location.replace(h)}}"
-                                    id="aswift_0" name="aswift_0" style="left:0;position:absolute;top:0;"
-                                    width="300" height="250" frameborder="0"></iframe>
-                        </ins>
-                    </ins>
-                </ins>
-                <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-            </div>
-            <div class="hidden-xs hidden-sm"><!-- Home large leaderboard -->
-                <ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px"
-                     data-ad-client="ca-pub-4495360934352473" data-ad-slot="1170479443"
-                     data-adsbygoogle-status="done">
-                    <ins id="aswift_1_expand"
-                         style="display:inline-table;border:none;height:90px;margin:0;padding:0;position:relative;visibility:visible;width:728px;background-color:transparent">
-                        <ins id="aswift_1_anchor"
-                             style="display:block;border:none;height:90px;margin:0;padding:0;position:relative;visibility:visible;width:728px;background-color:transparent">
-                            <iframe marginwidth="0" marginheight="0" vspace="0" hspace="0" allowtransparency="true"
-                                    scrolling="no" allowfullscreen="true"
-                                    onload="var i=this.id,s=window.google_iframe_oncopy,H=s&amp;&amp;s.handlers,h=H&amp;&amp;H[i],w=this.contentWindow,d;try{d=w.document}catch(e){}if(h&amp;&amp;d&amp;&amp;(!d.body||!d.body.firstChild)){if(h.call){setTimeout(h,0)}else if(h.match){try{h=s.upd(h,i)}catch(e){}w.location.replace(h)}}"
-                                    id="aswift_1" name="aswift_1" style="left:0;position:absolute;top:0;"
-                                    width="728" height="90" frameborder="0"></iframe>
-                        </ins>
-                    </ins>
-                </ins>
-                <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-            </div>
-        </div>
-    </section>
-    <!-- /.content -->
-
-
+        <!-- /.col -->
+    </div>
+    <!-- /.row -->
+</section>
+<!-- /.content -->

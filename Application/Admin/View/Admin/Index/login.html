@@ -92,7 +92,7 @@
         };
         ajaxRequest("__MODULE__/user/token", source, "get", "json", function (result) {
             if (result.code == 200) {
-                window.location.href = result.data.url;
+                window.location.href = (result.data.url);
             } else {
                 errorDialog("block", result.code, result.msg);
             }
