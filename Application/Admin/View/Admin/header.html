@@ -119,6 +119,7 @@
             <ul class="sidebar-menu">
                 <li class="header">导航栏</li>
                 <foreach name="menu" item="item">
+                    <if condition="$item.selected eq 1">
                     <li class="treeview">
                         <a <if condition="$item.child eq null">href="javascript:void(0)" onclick=menuClick("__MODULE__/{$item.action}")<else />href="#"</if>>
                             <i class="fa {$item.icon}"></i>
@@ -132,11 +133,14 @@
                         <if condition="$item.child neq null">
                             <ul class="treeview-menu">
                                 <foreach name="item.child" item="child">
+                                    <if condition="$child.selected eq 1">
                                     <li><a href="javascript:void(0)" onclick=menuClick("__MODULE__/{$child.action}")><i class="fa {$child.icon}"></i>{$child.name}</a></li>
+                                    </if>
                                 </foreach>
                             </ul>
                         </if>
                     </li>
+                    </if>
                 </foreach>
                 <li class="header">特殊设置</li>
                 <li><a href="#"><i class="fa fa-circle-o text-red"></i> <span>重要</span></a></li>

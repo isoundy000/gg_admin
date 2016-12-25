@@ -1,7 +1,7 @@
 <!-- Content Header (Page header) -->
 <section class="content-header">
     <h1>
-        菜单管理
+        管理员管理
     </h1>
     <ol class="breadcrumb">
         <li><a href="/"><i class="fa fa-dashboard"></i>首页</a></li>
@@ -15,59 +15,59 @@
     <div class="row">
         <div class="nav-tabs-custom">
             <ul class="nav nav-tabs" id="gg-tab">
-                <li class="active"><a href="#tab_1" data-toggle="tab" aria-expanded="true"><b class="text-light-blue">菜单列表</b></a></li>
+                <li class="active"><a href="#tab_1" data-toggle="tab" aria-expanded="true"><b class="text-light-blue">管理员列表</b></a></li>
                 <li class=""><a href="#tab_2" data-toggle="tab" aria-expanded="false"><b class="text-green">新建</b> | <b class="text-blue">编辑</b></a></li>
             </ul>
             <div class="tab-content">
                 <div class="tab-pane active" id="tab_1">
-                        <div class="box">
-                            <div class="box-header">
-                                <h3 class="box-title"></h3>
+                    <div class="box">
+                        <div class="box-header">
+                            <h3 class="box-title"></h3>
 
-                                <div class="box-tools">
-                                    <div class="input-group input-group-sm" style="width: 150px;">
-                                        <input name="table_search" class="form-control pull-right" placeholder="搜索..." type="text">
+                            <div class="box-tools">
+                                <div class="input-group input-group-sm" style="width: 150px;">
+                                    <input name="table_search" class="form-control pull-right" placeholder="搜索..." type="text">
 
-                                        <div class="input-group-btn">
-                                            <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
-                                        </div>
+                                    <div class="input-group-btn">
+                                        <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
                                     </div>
                                 </div>
                             </div>
-                            <!-- /.box-header -->
-                            <div class="box-body table-responsive no-padding">
-                                <table class="table table-hover">
-                                    <tbody>
-                                    <tr>
-                                        <th>排序</th>
-                                        <th>名称</th>
-                                        <th>父级</th>
-                                        <th>动作</th>
-                                        <th>图标</th>
-                                        <th>操作</th>
-                                    </tr>
-
-                                    <foreach name="menus" item="item">
-                                        <tr>
-                                            <td>{$item.sort}</td>
-                                            <td>{$item.name}</td>
-                                            <td>{$item.pid}</td>
-                                            <td>{$item.action}</td>
-                                            <td><i class="fa {$item.icon}"></i></td>
-                                            <td><a href="Javascript:void(0)" onclick="menuEdit('__MODULE__/menu/menus/_id/{$item._id}')">编辑</a> |
-                                                <a href="Javascript:void(0)" onclick="menuDelete('__MODULE__/menu/menus', '{$item._id}')">删除</a></td>
-                                        </tr>
-                                    </foreach>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <!-- /.box-body -->
-                            <div class="box-footer clearfix">
-                                {$page}
-                            </div>
-
-                            <!-- /.box-footer -->
                         </div>
+                        <!-- /.box-header -->
+                        <div class="box-body table-responsive no-padding">
+                            <table class="table table-hover">
+                                <tbody>
+                                <tr>
+                                    <th>排序</th>
+                                    <th>名称</th>
+                                    <th>父级</th>
+                                    <th>动作</th>
+                                    <th>图标</th>
+                                    <th>操作</th>
+                                </tr>
+
+                                <foreach name="users" item="item">
+                                    <tr>
+                                        <td>{$item.sort}</td>
+                                        <td>{$item.name}</td>
+                                        <td>{$item.pid}</td>
+                                        <td>{$item.action}</td>
+                                        <td><i class="fa {$item.icon}"></i></td>
+                                        <td><a href="Javascript:void(0)" onclick="userEdit('__MODULE__/user/users/_id/{$item._id}')">编辑</a> |
+                                            <a href="Javascript:void(0)" onclick="userDelete('__MODULE__/user/users', '{$item._id}')">删除</a></td>
+                                    </tr>
+                                </foreach>
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- /.box-body -->
+                        <div class="box-footer clearfix">
+                            {$page}
+                        </div>
+
+                        <!-- /.box-footer -->
+                    </div>
                 </div>
                 <!-- /.tab-pane -->
                 <div class="tab-pane" id="tab_2">
@@ -105,7 +105,7 @@
                             <div class="col-sm-4">
                                 <select class="form-control" id="pid">
                                     <option value="0">父级菜单</option>
-                                    <foreach name="parent_menu" item="item">
+                                    <foreach name="parent_user" item="item">
                                         <option value="{$item._id}">{$item.name}</option>
                                     </foreach>
                                 </select>
@@ -113,8 +113,8 @@
                         </div>
                         <div class="form-group">
                             <div class="col-sm-offset-2 col-sm-4">
-                                <button id="menu_submit" type="submit" class="btn btn-primary" onclick="menuSave('__MODULE__/menu/menus')">添加</button>
-                                <button type="submit" class="btn btn-warning" onclick="menuClear()">清空</button>
+                                <button id="user_submit" type="submit" class="btn btn-primary" onclick="userSave('__MODULE__/user/users')">添加</button>
+                                <button type="submit" class="btn btn-warning" onclick="userClear()">清空</button>
                                 <input type="hidden" id="_id">
                             </div>
                         </div>
@@ -128,32 +128,32 @@
 </section>
 <!-- /.content -->
 <script>
-    function menuClear() {
+    function userClear() {
         $("#sort").val("");
         $("#name").val("");
         $("#action").val("");
         $("#icon").val("");
         $("#pid").val("0");
         $("#_id").val("");
-        $("#menu_submit").html("添加");
+        $("#user_submit").html("添加");
     }
 
-    function menuEdit(_url) {
+    function userEdit(_url) {
         ajaxRequest(_url, null, 'get', 'json', function(result) {
             if (result.code == 200) {
-                $("#menu_submit").html("保存");
+                $("#user_submit").html("保存");
                 $('#gg-tab a[href="#tab_2"]').tab('show');
-                $("#sort").val(result.data.menus.sort);
-                $("#name").val(result.data.menus.name);
-                $("#action").val(result.data.menus.action);
-                $("#icon").val(result.data.menus.icon);
-                $("#pid").val(result.data.menus.pid);
-                $("#_id").val(result.data.menus._id.$oid);
+                $("#sort").val(result.data.users.sort);
+                $("#name").val(result.data.users.name);
+                $("#action").val(result.data.users.action);
+                $("#icon").val(result.data.users.icon);
+                $("#pid").val(result.data.users.pid);
+                $("#_id").val(result.data.users._id.$oid);
             }
         })
     }
 
-    function menuDelete(_url, _id) {
+    function userDelete(_url, _id) {
         var source = {
             _id: _id
         }
@@ -161,12 +161,12 @@
             console.log(result);
             if (!result) {
                 successDialog('block', '删除', '删除成功!');
-                menuClick('__MODULE__/menu/menus');
+                userClick('__MODULE__/user/users');
             }
         })
     }
 
-    function menuSave(_url) {
+    function userSave(_url) {
         var method = $("#_id").val() ? "PUT" : "POST";
         var sort = $("#sort").val();
         var name = $("#name").val();
@@ -186,7 +186,7 @@
         ajaxRequest(_url, source, method, 'json', function(result) {
             if(result.code == 201) {
                 successDialog('block', '保存或新建', result.msg);
-                menuClick('__MODULE__/menu/menus');
+                userClick('__MODULE__/user/users');
 
             } else {
                 errorDialog('block', '保存或新建', result.msg);
