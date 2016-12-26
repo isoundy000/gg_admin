@@ -7,7 +7,6 @@
  */
 namespace Admin\Controller;
 use Common\Controller\BaseController;
-use MongoDB\BSON\ObjectID;
 use Think\Page;
 
 class MenuController extends BaseController {
@@ -15,22 +14,25 @@ class MenuController extends BaseController {
         $admin_menu = $this->mongo_db->admin_menu;
 
         if (I('get._id')) {
-            $search['_id'] = new ObjectID(I('get._id', null));
-            $option['projection'] = array();
+            $search['_id'] = new \MongoId(I('get._id', null));
+            $option = array();
             $query = $admin_menu->findOne($search, $option);
             $this->_result['data']['menus'] = $query;
-            $this->response($this->_result);
-
         } else {
             $search = array();
-            $option['limit'] = intval(I('get.limit', C('PAGE_NUM')));
-            $option['skip'] = (intval(I('get.p', 1)) - 1) * $option['limit'];
+            $limit = intval(I('get.limit', C('PAGE_NUM')));
+            $skip = (intval(I('get.p', 1)) - 1) * $limit;
             filter_array_element($search);
             filter_array_element($option);
 
-            $cursor = $admin_menu->find($search, $option);
+            $cursor = $admin_menu->find($search)->limit($limit)->skip($skip);
             $result = array();
             foreach ($cursor as $item) {
+                if($item['pid']) {
+                    $parent_id = new \MongoId($item['pid']);
+                }
+                $parent = $admin_menu->findOne(array('_id'=>$parent_id), array('name' => 1));
+                $item['parent_name'] = $parent ? $parent['name'] : "";
                 array_push($result, $item);
             }
 
@@ -54,14 +56,13 @@ class MenuController extends BaseController {
             $this->_result['data']['page'] = $page;
             $this->_result['data']['menus'] = $result;
             $this->_result['data']['parent_menu'] = $parent_result;
-
-            $this->response($this->_result);
         }
+        $this->response($this->_result);
     }
 
     public function menusPut() {
 
-        $search['_id'] = new ObjectID(I('put._id'));
+        $search['_id'] = new \MongoId(I('put._id'));
         $data['sort'] = intval(I('put.sort'));
         $data['name'] = I('put.name', null, check_empty_string);
         $data['action'] = I('put.action', 'javascript:void(0)');
@@ -80,7 +81,7 @@ class MenuController extends BaseController {
 
         $update['$set'] = $data;
         $admin_menu = $this->mongo_db->admin_menu;
-        if ($admin_menu->findOneAndUpdate($search,$update)) {
+        if ($admin_menu->update($search,$update)) {
             $this->response($this->_result, 'json', 201, '保存成功');
         } else {
             $this->_result['data']['param'] = $data;
@@ -106,7 +107,7 @@ class MenuController extends BaseController {
         filter_array_element($data);
 
         $admin_menu = $this->mongo_db->admin_menu;
-        if ($admin_menu->InsertOne($data)) {
+        if ($admin_menu->insert($data)) {
             $this->response($this->_result, 'json', 201, '新建成功');
         } else {
             $this->response($this->_result, 'json', 400, '新建失败');
@@ -114,9 +115,9 @@ class MenuController extends BaseController {
     }
 
     public function menusDelete() {
-        $search['_id'] = new ObjectID(I('delete._id'));
+        $search['_id'] = new \MongoId(I('delete._id'));
         $admin_menu = $this->mongo_db->admin_menu;
-        if ($admin_menu->deleteOne($search)) {
+        if ($admin_menu->remove($search)) {
             $this->response($this->_result, 'json', 204, '删除成功');
         } else {
             $this->response($this->_result, 'json', 400, '删除失败');

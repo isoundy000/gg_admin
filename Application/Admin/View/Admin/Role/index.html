@@ -48,8 +48,8 @@
                                     <tr>
                                         <td>{$item.name}</td>
                                         <td><if condition="$item.status eq 1"><b class="label bg-green">已启用</b><else /><b class="label bg-red">已禁用</b></if></td>
-                                        <td><a href="Javascript:void(0)" onclick="roleEdit('__MODULE__/role/roles/_id/{$item._id}')">编辑</a> |
-                                            <a href="Javascript:void(0)" onclick="roleDelete('__MODULE__/role/roles', '{$item._id}')">删除</a></td>
+                                        <td><a href="Javascript:vid(0)" onclick="roleEdit('__MODULE__/role/roles/_id/{$item._id}')">编辑</a> |
+                                            <a href="Javascript:vid(0)" onclick="roleDelete('__MODULE__/role/roles', '{$item._id}')">删除</a></td>
                                     </tr>
                                 </foreach>
                                 </tbody>
@@ -234,7 +234,7 @@
                 $('#gg-tab a[href="#tab_2"]').tab('show');
                 $("#name").val(result.data.roles.name);
                 $("#status").attr("checked", result.data.roles.status);
-                $("#_id").val(result.data.roles._id.$oid);
+                $("#_id").val(result.data.roles._id.$id);
                 permission(result.data.roles.permission);
             }
         })

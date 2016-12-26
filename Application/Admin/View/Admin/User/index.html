@@ -40,16 +40,17 @@
                                 <tbody>
                                 <tr>
                                     <th>用户</th>
-                                    <th>名字<th>
+                                    <th>名字</th>
                                     <th>角色</th>
+                                    <th>status</th>
                                     <th>操作</th>
                                 </tr>
-
                                 <foreach name="users" item="item">
                                     <tr>
                                         <td>{$item.username}</td>
                                         <td>{$item.name}</td>
-                                        <td>{$item.role_id}</td>
+                                        <td>{$item.role_name}</td>
+                                        <td><if condition="$item.status eq 1"><b class="label bg-green">已启用</b><else /><b class="label bg-red">已禁用</b></if></td>
                                         <td><a href="Javascript:void(0)" onclick="userEdit('__MODULE__/user/users/_id/{$item._id}')">编辑</a> |
                                             <a href="Javascript:void(0)" onclick="userDelete('__MODULE__/user/users', '{$item._id}')">删除</a></td>
                                     </tr>
@@ -75,17 +76,17 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="password" class="col-sm-2 control-label"></label>
+                            <label for="password" class="col-sm-2 control-label">密码</label>
 
                             <div class="col-sm-4">
-                                <input class="form-control" id="password" placeholder="密码" type="text">
+                                <input class="form-control" id="password" placeholder="密码" type="password">
                             </div>
                         </div>
                         <div class="form-group">
                             <label for="repeat_password" class="col-sm-2 control-label">重复密码</label>
 
                             <div class="col-sm-4">
-                                <input class="form-control" id="repeat_password" placeholder="重复密码" type="text">
+                                <input class="form-control" id="repeat_password" placeholder="重复密码" type="password">
                             </div>
                         </div>
                         <div class="form-group">
@@ -96,10 +97,25 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="role" class="col-sm-2 control-label">角色</label>
+                            <label for="role_id" class="col-sm-2 control-label">角色</label>
+                            <div class="col-sm-4">
+                                <select class="form-control" id="role_id">
+                                    <foreach name="roles" item="item">
+                                        <option value="{$item._id}">{$item.name}</option>
+                                    </foreach>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="status" class="col-sm-2 control-label">状态</label>
 
                             <div class="col-sm-4">
-                                <input class="form-control" id="role" placeholder="角色" type="text" required>
+                                <!--<input class="form-control" id="status" placeholder="状态" type="text">-->
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" id="status">是否激活
+                                    </label>
+                                </div>
                             </div>
                         </div>
                         <div class="form-group">
@@ -120,11 +136,11 @@
 <!-- /.content -->
 <script>
     function userClear() {
-        $("#sort").val("");
+        $("#username").val("");
         $("#name").val("");
-        $("#action").val("");
-        $("#icon").val("");
-        $("#pid").val("0");
+        $("#password").val("");
+        $("#repeat_password").val("");
+        $("#status").attr("checked", false);
         $("#_id").val("");
         $("#user_submit").html("添加");
     }
@@ -134,12 +150,11 @@
             if (result.code == 200) {
                 $("#user_submit").html("保存");
                 $('#gg-tab a[href="#tab_2"]').tab('show');
-                $("#sort").val(result.data.users.sort);
+                $("#username").val(result.data.users.username);
                 $("#name").val(result.data.users.name);
-                $("#action").val(result.data.users.action);
-                $("#icon").val(result.data.users.icon);
-                $("#pid").val(result.data.users.pid);
-                $("#_id").val(result.data.users._id.$oid);
+                $("#status").attr("checked", result.data.users.status);
+                $("#role_id").val(result.data.users.role_id.$id);
+                $("#_id").val(result.data.users._id.$id);
             }
         })
     }
@@ -149,35 +164,36 @@
             _id: _id
         }
         ajaxRequest(_url, source, 'DELETE', 'json', function(result) {
-            console.log(result);
             if (!result) {
                 successDialog('block', '删除', '删除成功!');
-                userClick('__MODULE__/user/users');
+                menuClick('__MODULE__/user/users');
             }
         })
     }
 
     function userSave(_url) {
         var method = $("#_id").val() ? "PUT" : "POST";
-        var sort = $("#sort").val();
+        var username = $("#username").val();
+        var password = $("#password").val();
+        var repeat_password = $("#repeat_password").val();
         var name = $("#name").val();
-        var action = $("#action").val();
-        var icon = $("#icon").val();
-        var pid = $("#pid").val();
+        var role_id = $("#role_id").val();
         var _id = $("#_id").val();
+        var status = $("#status").val();
 
         var source = {
-            sort:sort,
+            username:username,
+            password:password,
+            repeat_password:repeat_password,
             name: name,
-            action: action ? action : 'javascript:void(0)',
-            icon: icon ? icon : 'fa-circle',
-            pid:pid,
+            role_id:role_id,
+            status:status,
             _id:_id
         };
         ajaxRequest(_url, source, method, 'json', function(result) {
             if(result.code == 201) {
                 successDialog('block', '保存或新建', result.msg);
-                userClick('__MODULE__/user/users');
+                menuClick('__MODULE__/user/users');
 
             } else {
                 errorDialog('block', '保存或新建', result.msg);

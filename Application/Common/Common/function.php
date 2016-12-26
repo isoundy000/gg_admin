@@ -236,6 +236,16 @@ function checkZouMaDengLength($data) {
 	}
 }
 
+function checkTextLength6($data) {
+    $data = iconv('utf-8', 'gbk', $data);
+    $length = strlen($data);
+    if ($length <= 6) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
 function checkTextLength12($data) {
 	$data = iconv('utf-8', 'gbk', $data);
 	$length = strlen($data);

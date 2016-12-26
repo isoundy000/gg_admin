@@ -51,7 +51,7 @@
                                         <tr>
                                             <td>{$item.sort}</td>
                                             <td>{$item.name}</td>
-                                            <td>{$item.pid}</td>
+                                            <td>{$item.parent_name}</td>
                                             <td>{$item.action}</td>
                                             <td><i class="fa {$item.icon}"></i></td>
                                             <td><a href="Javascript:void(0)" onclick="menuEdit('__MODULE__/menu/menus/_id/{$item._id}')">编辑</a> |
@@ -148,7 +148,7 @@
                 $("#action").val(result.data.menus.action);
                 $("#icon").val(result.data.menus.icon);
                 $("#pid").val(result.data.menus.pid);
-                $("#_id").val(result.data.menus._id.$oid);
+                $("#_id").val(result.data.menus._id.$id);
             }
         })
     }
