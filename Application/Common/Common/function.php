@@ -306,7 +306,9 @@ function checkTextLength80($data) {
 	}
 }
 
-
+function findRecord($field_name, $file_value, $table) {
+    return $table->findOne(array($field_name=>$file_value));
+}
 
 /*********************************HTTP*******************************/
 /**

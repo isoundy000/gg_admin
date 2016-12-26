@@ -114,6 +114,8 @@ class UserController extends BaseController
     }
 
     public function usersPost() {
+        $admin_user = $this->mongo_db->admin_user;
+
         $data['username'] = I('post.username');
         $data['name'] = I('post.name', null, check_empty_string);
         $data['password'] = I('post.password', null, check_empty_string);
@@ -144,12 +146,16 @@ class UserController extends BaseController
             $this->response($this->_result, 'json', 400, '密码长度');
         }
 
+        if (findRecord('username', $data['username'], $admin_user)) {
+            $this->response($this->_result, 'json', 400, 'username exist');
+        }
+
         filter_array_element($data);
 
         $data['role_id'] = new \MongoId($data['role_id']);
         $data['password'] = md5($data['password']);
         unset($data['repeat_password']);
-        $admin_user = $this->mongo_db->admin_user;
+
         if ($admin_user->insert($data)) {
             $this->_result['data']['url'] = U(MODULE_NAME.'/user/users');
             $this->response($this->_result, 'json', 201, '新建成功');
