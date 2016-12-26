@@ -48,7 +48,7 @@ class MenuController extends BaseController {
             $this->assign("page", $page);
             $this->assign("menus", $result);
             $this->assign("parent_menu", $parent_result);
-            $this->_result['data']['html'] = $this->fetch("menu:index");
+            $this->_result['data']['html'] = $this->fetch("Menu:index");
 
             $this->_result['data']['count'] = $count;
             $this->_result['data']['page'] = $page;

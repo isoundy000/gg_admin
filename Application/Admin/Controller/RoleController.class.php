@@ -44,7 +44,7 @@ class RoleController extends BaseController {
 
             $this->assign("page", $page);
             $this->assign("roles", $result);
-            $this->_result['data']['html'] = $this->fetch("role:index");
+            $this->_result['data']['html'] = $this->fetch("Role:index");
 
             $this->_result['data']['count'] = $count;
             $this->_result['data']['page'] = $page;

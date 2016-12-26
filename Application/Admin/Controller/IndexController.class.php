@@ -5,9 +5,9 @@ use Common\Controller\BaseController;
 class IndexController extends BaseController {
     public function indexGet(){
         if($_SESSION['token']) {//已登陆
-            $this->display("index:index");
+            $this->display("Index:index");
         } else {//未登陆
-            $this->redirect("index/login");
+            $this->redirect("Index/login");
         }
     }
 
@@ -18,9 +18,9 @@ class IndexController extends BaseController {
 
     public function loginGet() {
         if($_SESSION['token']) {
-            $this->display("index:index");
+            $this->display("Index:index");
         } else {
-            $this->display("index:login");
+            $this->display("Index:login");
         }
     }
 }

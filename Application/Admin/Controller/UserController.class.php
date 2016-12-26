@@ -7,6 +7,7 @@
  */
 namespace Admin\Controller;
 use Common\Controller\BaseController;
+use MongoDB\BSON\ObjectID;
 use Think\Page;
 
 class UserController extends BaseController
@@ -41,7 +42,7 @@ class UserController extends BaseController
 
             $this->assign("page", $page);
             $this->assign("users", $result);
-            $this->_result['data']['html'] = $this->fetch("user:index");
+            $this->_result['data']['html'] = $this->fetch("User:index");
 
             $this->_result['data']['count'] = $count;
             $this->_result['data']['page'] = $page;
@@ -138,7 +139,6 @@ class UserController extends BaseController
         $_SESSION['admin'] = $query;
         //生成token
         $_SESSION['token'] = $query['_id'];
-        unset($query['_id']);
 
         $this->_result['data']['user'] = $query;
         $this->_result['data']['url'] = U(MODULE_NAME . "/Index/index");
