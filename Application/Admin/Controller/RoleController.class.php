@@ -54,7 +54,7 @@ class RoleController extends BaseController {
     public function rolesPut() {
         $search['_id'] = new \MongoId(I('put._id'));
         $data['name'] = I('put.name', null, check_empty_string);
-        $data['status'] = I('post.status', 0)=='on' ? 1 : 0;
+        $data['status'] = intval(I('post.status'));
         $data['permission'] = $this->handlePermission(I('put.permission'));
         merge_params_error($data['name'], 'name', '权限名称不能为空', $this->_result['error']);
 
@@ -98,7 +98,7 @@ class RoleController extends BaseController {
 
     public function rolesPost() {
         $data['name'] = I('post.name', null, check_empty_string);
-        $data['status'] = I('post.status', 0)=='on' ? 1 : 0;
+        $data['status'] = intval(I('post.status'));
         $data['permission'] = $this->handlePermission(I('post.permission'));
         merge_params_error($data['name'], 'name', '权限名称不能为空', $this->_result['error']);
 
