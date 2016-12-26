@@ -17,7 +17,7 @@ class UserController extends BaseController
 
         if (I('get._id')) {
             $search['_id'] = new ObjectID(I('get._id', null));
-            $option['projection'] = array();
+            $option['projection'] = array('password' => 0);
             $query = $admin_user->findOne($search, $option);
             $this->_result['data']['users'] = $query;
             $this->response($this->_result);
@@ -26,6 +26,13 @@ class UserController extends BaseController
             $search = array();
             $option['limit'] = intval(I('get.limit', C('PAGE_NUM')));
             $option['skip'] = (intval(I('get.p', 1)) - 1) * $option['limit'];
+            $option['projection'] = array('password' => 0);
+            /*$option['$lookup'] = array(
+                'from' => 'admin_role',
+                'localField' => 'role_id',
+                'foreignField' => '_id',
+                'as' => 'role_name'
+            );*/
             filter_array_element($search);
             filter_array_element($option);
 
@@ -35,7 +42,19 @@ class UserController extends BaseController
                 array_push($result, $item);
             }
 
-
+            $aggregate = $admin_user->aggregate(
+                array(
+                array(
+                   '$lookup' => array(
+                        'from' => 'admin_role',
+                        'localField' => 'role_id',
+                        'foreignField' => '_id',
+                        'as' => 'role_name'
+                    )
+                )
+                )
+            );
+            $this->_result['data']['aggregate'] = $aggregate;
             $count = $admin_user->count($search);
             $page = new Page($count, C('PAGE_NUM'));
             $page = $page->show();
