@@ -45,8 +45,14 @@ class BaseController extends RestController {
         }
     }
 
-    protected function menu_tree($permission = array()) {
-        $admin_menu = $this->mongo_db->admin_menu->find()->sort(array('sort'=>1));
+    /**
+     * @desc tree_menu
+     * @param array $permission
+     * @param string $collection
+     * @return array
+     */
+    protected function menu_tree($permission = array(), $collection='admin_menu') {
+        $admin_menu = $this->mongo_db->$collection->find()->sort(array('sort'=>1));
         $result = array();
         foreach ($admin_menu as $item) {
             //permission

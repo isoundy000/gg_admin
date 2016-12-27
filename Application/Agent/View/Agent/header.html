@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!--<link rel="icon" href="/bower_components/AdminLTE/favicon.ico">-->
+
+    <title>杠杠麻将管理后员</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="/bower_components/AdminLTE/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/Public/font-awesome/css/font-awesome.min.css">
+    <link href="/bower_components/AdminLTE/plugins/daterangepicker/daterangepicker.css" rel="stylesheet">
+    <link href="/bower_components/AdminLTE/plugins/datepicker/datepicker3.css" rel="stylesheet">
+    <link href="/bower_components/AdminLTE/plugins/iCheck/all.css" rel="stylesheet">
+    <link href="/bower_components/AdminLTE/plugins/colorpicker/bootstrap-colorpicker.css" rel="stylesheet">
+    <link href="/bower_components/AdminLTE/plugins/timepicker/bootstrap-timepicker.min.css" rel="stylesheet">
+    <link href="/bower_components/AdminLTE/plugins/bootstrap-treeview/bootstrap-treeview.min.css" rel="stylesheet">
+    <!--<link href="/bower_components/AdminLTE/plugins/datatables/dataTables.bootstrap.css" rel="stylesheet">-->
+    <link href="/bower_components/AdminLTE/plugins/select2/select2.min.css" rel="stylesheet">
+    <link href="/bower_components/AdminLTE/dist/css/AdminLTE.min.css" rel="stylesheet">
+    <link href="/bower_components/AdminLTE/dist/css/skins/_all-skins.min.css" rel="stylesheet">
+
+    <link href="/Public/Admin/css/admin.css" rel="stylesheet">
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="/bower_components/AdminLTE/plugins/jQuery/jquery-2.2.3.min.js"></script>
+    <script src="/bower_components/AdminLTE/bootstrap/js/bootstrap.min.js"></script>
+    <script src="/bower_components/AdminLTE/plugins/select2/select2.full.min.js"></script>
+    <script src="/bower_components/AdminLTE/plugins/input-mask/jquery.inputmask.js"></script>
+    <script src="/bower_components/AdminLTE/plugins/input-mask/jquery.inputmask.date.extensions.js"></script>
+    <script src="/bower_components/AdminLTE/plugins/input-mask/jquery.inputmask.extensions.js"></script>
+    <script src="/bower_components/AdminLTE/plugins/datepicker/bootstrap-datepicker.js"></script>
+    <script src="/bower_components/AdminLTE/plugins/colorpicker/bootstrap-colorpicker.min.js"></script>
+    <script src="/bower_components/AdminLTE/plugins/timepicker/bootstrap-timepicker.min.js"></script>
+    <script src="/bower_components/AdminLTE/plugins/slimScroll/jquery.slimscroll.min.js"></script>
+    <script src="/bower_components/AdminLTE/plugins/iCheck/icheck.min.js"></script>
+    <script src="/bower_components/AdminLTE/plugins/fastclick/fastclick.min.js"></script>
+    <script src="/bower_components/AdminLTE/plugins/bootstrap-treeview/bootstrap-treeview.min.js"></script>
+    <!--<script src="/bower_components/AdminLTE/plugins/datatables/dataTables.bootstrap.min.js"></script>
+    <script src="/bower_components/AdminLTE/plugins/datatables/jquery.dataTables.min.js"></script>-->
+    <script src="/bower_components/AdminLTE/dist/js/app.min.js"></script>
+    <script src="/bower_components/AdminLTE/dist/js/demo.js"></script>
+    <script src="/Public/Common/js/common.js"></script>
+
+</head>
+<body class="skin-blue sidebar-mini">
+<div class="wrapper">
+    <header class="main-header">
+        <!-- Logo -->
+        <a href="__MODULE__/index/index" class="logo">
+            <!-- mini logo for sidebar mini 50x50 pixels -->
+            <span class="logo-mini"><b>杠杠麻将</b></span>
+            <!-- logo for regular state and mobile devices -->
+            <span class="logo-lg"><b>杠杠麻将</b></span>
+        </a>
+        <!-- Header Navbar: style can be found in header.less -->
+        <nav class="navbar navbar-static-top">
+            <!-- Sidebar toggle button-->
+            <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </a>
+
+            <div class="navbar-custom-menu">
+                <ul class="nav navbar-nav">
+                    <!-- User Account: style can be found in dropdown.less -->
+                    <li class="dropdown user user-menu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <img src="/bower_components/AdminLTE/dist/img/user2-160x160.jpg" class="user-image"
+                                 alt="User Image">
+                            <span class="hidden-xs">{$Think.session.admin.name}</span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <!-- User image -->
+                            <li class="user-header">
+                                <img src="/bower_components/AdminLTE/dist/img/user2-160x160.jpg" class="img-circle"
+                                     alt="User Image">
+
+                                <p>
+                                    职称
+                                    <small><b>注册日期: </b>{$Think.session.admin.date}</small>
+                                </p>
+                            </li>
+                            <!-- Menu Footer-->
+                            <li class="user-footer">
+                                <div class="pull-right">
+                                    <a href="#" class="btn btn-danger btn-flat" onclick="logout('__MODULE__/user/token')">注销</a>
+                                </div>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+    <aside class="main-sidebar">
+        <!-- sidebar: style can be found in sidebar.less -->
+        <section class="sidebar" style="height: auto;">
+            <!-- Sidebar user panel -->
+            <div class="user-panel">
+                <div class="pull-left image">
+                    <img src="/bower_components/AdminLTE/dist/img/user2-160x160.jpg" class="img-circle"
+                         alt="User Image">
+                </div>
+                <div class="pull-left info">
+                    <p>{$Think.session.admin.username}</p>
+                    <a href="#"><i class="fa fa-circle text-success"></i>在线</a>
+                </div>
+            </div>
+
+            <!-- sidebar menu: : style can be found in sidebar.less -->
+            <ul class="sidebar-menu">
+                <li class="header">导航栏</li>
+                <foreach name="menu" item="item">
+                    <if condition="$item.selected eq 1">
+                    <li class="treeview">
+                        <a <if condition="$item.child eq null">href="javascript:void(0)" onclick=menuClick("__MODULE__/{$item.action}")<else />href="#"</if>>
+                            <i class="fa {$item.icon}"></i>
+                            <span>{$item.name}</span>
+                            <if condition="$item.child neq null">
+                                <span class="pull-right-container">
+                                    <i class="fa fa-angle-left pull-right"></i>
+                                </span>
+                            </if>
+                        </a>
+                        <if condition="$item.child neq null">
+                            <ul class="treeview-menu">
+                                <foreach name="item.child" item="child">
+                                    <if condition="$child.selected eq 1">
+                                    <li><a href="javascript:void(0)" onclick=menuClick("__MODULE__/{$child.action}")><i class="fa {$child.icon}"></i>{$child.name}</a></li>
+                                    </if>
+                                </foreach>
+                            </ul>
+                        </if>
+                    </li>
+                    </if>
+                </foreach>
+                <li class="header">特殊设置</li>
+                <li><a href="#"><i class="fa fa-circle-o text-red"></i> <span>重要</span></a></li>
+                <li><a href="#"><i class="fa fa-circle-o text-yellow"></i> <span>警告</span></a></li>
+                <li><a href="#"><i class="fa fa-circle-o text-aqua"></i> <span>信息</span></a></li>
+            </ul>
+        </section>
+        <!-- /.sidebar -->
+    </aside>
+    <div id="content-wrapper" class="content-wrapper" style="min-height: 945px;">

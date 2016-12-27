@@ -1,0 +1,283 @@
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <h1>
+        权限管理
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="/"><i class="fa fa-dashboard"></i>首页</a></li>
+        <li><a href="#">一级</a></li>
+        <li class="active">二级</li>
+    </ol>
+</section>
+
+<!-- Main content -->
+<section class="content">
+    <div class="row">
+        <div class="nav-tabs-custom">
+            <ul class="nav nav-tabs" id="gg-tab">
+                <li class="active"><a href="#tab_1" data-toggle="tab" aria-expanded="true"><b class="text-light-blue">权限列表</b></a></li>
+                <li class=""><a href="#tab_2" data-toggle="tab" aria-expanded="false"><b class="text-green">新建</b> | <b class="text-blue">编辑</b></a></li>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane active" id="tab_1">
+                    <div class="box">
+                        <div class="box-header">
+                            <h3 class="box-title"></h3>
+
+                            <div class="box-tools">
+                                <div class="input-group input-group-sm" style="width: 150px;">
+                                    <input name="table_search" class="form-control pull-right" placeholder="搜索..." type="text">
+
+                                    <div class="input-group-btn">
+                                        <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /.box-header -->
+                        <div class="box-body table-responsive no-padding">
+                            <table class="table table-hover">
+                                <tbody>
+                                <tr>
+                                    <th>权限名称</th>
+                                    <th>状态</th>
+                                    <th>操作</th>
+                                </tr>
+
+                                <foreach name="roles" item="item">
+                                    <tr>
+                                        <td>{$item.name}</td>
+                                        <td><if condition="$item.status eq 1"><b class="label bg-green">已启用</b><else /><b class="label bg-red">已禁用</b></if></td>
+                                        <td><a href="Javascript:vid(0)" onclick="roleEdit('__MODULE__/role/roles/_id/{$item._id}')">编辑</a> |
+                                            <a href="Javascript:vid(0)" onclick="roleDelete('__MODULE__/role/roles', '{$item._id}')">删除</a></td>
+                                    </tr>
+                                </foreach>
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- /.box-body -->
+                        <div class="box-footer clearfix">
+                            {$page}
+                        </div>
+
+                        <!-- /.box-footer -->
+                    </div>
+                </div>
+                <!-- /.tab-pane -->
+                <div class="tab-pane" id="tab_2">
+                    <form class="form-horizontal" onsubmit="return false;">
+                        <div class="form-group">
+                            <label for="name" class="col-sm-2 control-label">名称</label>
+
+                            <div class="col-sm-4">
+                                <input class="form-control" id="name" placeholder="名称" type="text" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="status" class="col-sm-2 control-label">状态</label>
+
+                            <div class="col-sm-4">
+                                <!--<input class="form-control" id="status" placeholder="状态" type="text">-->
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" id="status">是否激活
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="permission" class="col-sm-2 control-label">权限列表</label>
+                            <div class="col-sm-2">
+                                <div id="permission">
+                                </div>
+                            </div>
+                            <!--<div class="col-sm-2">
+                                <button type="submit" class="btn btn-primary" onclick="chooseAll()">全选</button>
+                                <br>
+                                <br>
+                                <button type="submit" class="btn btn-warning" onclick="unChooseAll()">清空</button>
+                            </div>-->
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-offset-2 col-sm-4">
+                                <button id="role_submit" type="submit" class="btn btn-primary" onclick="roleSave('__MODULE__/role/roles')">添加</button>
+                                <button type="submit" class="btn btn-warning" onclick="roleClear()">清空</button>
+                                <input type="hidden" id="_id">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+            <!-- /.tab-content -->
+        </div>
+    </div>
+</section>
+<!-- /.content -->
+<script>
+    $(document).ready(
+        permission(null)
+    );
+
+    function permission(menus) {
+        var tree = [];
+        if (menus) {
+            $.each(menus, function(key, value) {
+                var tmp = {
+                    text: value.name,
+                    icon: "fa " + value.icon,
+                    tags: [value._id],
+                    state: {
+                        selected: value.selected==1 ? true : false
+                    }
+                };
+                //子节点
+                if(value.child) {
+                    $.each(value.child, function(k, v) {
+                        var child_tmp = {
+                            text: v.name,
+                            icon: "fa " + v.icon,
+                            tags: [v._id],
+                            state: {
+                                selected: v.selected==1 ? true : false
+                            }
+                        };
+                        if(!tmp.nodes) {
+                            tmp.nodes = [];
+                        }
+                        tmp.nodes.push(child_tmp);
+                    });
+                }
+                tree.push(tmp);
+            });
+            build_tree(tree);
+        } else {
+            //如果是编辑
+            ajaxRequest('__MODULE__/role/permission', null, 'get', 'json', function(result) {
+                $.each(result.data.menus, function(key, value) {
+                    var tmp = {
+                        text: value.name,
+                        icon: "fa " + value.icon,
+                        tags: [value._id],
+                        state: {
+                            selected: value.selected==1 ? true : false
+                        }
+                    };
+                    //子节点
+                    if(value.child) {
+                        $.each(value.child, function(k, v) {
+                            var child_tmp = {
+                                text: v.name,
+                                icon: "fa " + v.icon,
+                                tags: [v._id],
+                                state: {
+                                    selected: v.selected==1 ? true : false
+                                }
+                            };
+                            if(!tmp.nodes) {
+                                tmp.nodes = [];
+                            }
+                            tmp.nodes.push(child_tmp);
+                        })
+                    }
+                    tree.push(tmp);
+                });
+
+                //渲染树
+                build_tree(tree);
+            });
+        }
+    }
+
+    function build_tree(tree) {
+        $("#permission").treeview(
+            {
+                data: tree,
+                multiSelect: true,
+                //showTags: true,
+                selectedIcon: "fa fa-check-square-o",
+                onNodeSelected: function(event, node) {
+                    if(node.parentId) {
+                        $("#permission").treeview('selectNode', node.parentId);
+                    }
+                },
+                onNodeUnselected: function(event, node) {
+                    if(node.nodes) {
+                        $.each(node.nodes, function(key, value) {
+                            $("#permission").treeview('unselectNode', value.nodeId);
+                        });
+                    }
+                }
+            }
+        );
+    }
+
+    /*function chooseAll() {
+        $('#permission').treeview('checkAll', { silent: true });
+    }
+
+    function unChooseAll() {
+        $('#permission').treeview('uncheckAll', { silent: true });
+    }*/
+
+    function roleClear() {
+        $("#name").val("");
+        $("#status").attr("checked", false);
+        $("#_id").val("");
+        $("#role_submit").html("添加");
+    }
+
+    function roleEdit(_url) {
+        ajaxRequest(_url, null, 'get', 'json', function(result) {
+            if (result.code == 200) {
+                $("#role_submit").html("保存");
+                $('#gg-tab a[href="#tab_2"]').tab('show');
+                $("#name").val(result.data.roles.name);
+                if (result.data.roles.status) {
+                    $("#status").attr("checked", true);
+                } else {
+                    $("#status").attr("checked", false);
+                }
+                $("#_id").val(result.data.roles._id.$id);
+                permission(result.data.roles.permission);
+            }
+        })
+    }
+
+    function roleDelete(_url, _id) {
+        var source = {
+            _id: _id
+        }
+        ajaxRequest(_url, source, 'DELETE', 'json', function(result) {
+            console.log(result);
+            if (!result) {
+                successDialog('block', '删除', '删除成功!');
+                menuClick('__MODULE__/role/roles');
+            }
+        })
+    }
+
+    function roleSave(_url) {
+        var nodes = $("#permission").treeview('getSelected');
+        var method = $("#_id").val() ? "PUT" : "POST";
+        var name = $("#name").val();
+        var status = $("#status").is(':checked') ? 1 : 0;
+        var _id = $("#_id").val();
+
+        var source = {
+            name: name,
+            status:status,
+            _id:_id,
+            permission:nodes,
+        };
+        ajaxRequest(_url, source, method, 'json', function(result) {
+            if(result.code == 201) {
+                successDialog('block', '保存或新建', result.msg);
+                menuClick('__MODULE__/role/roles');
+
+            } else {
+                errorDialog('block', '保存或新建', result.msg);
+            }
+        });
+    }
+</script>

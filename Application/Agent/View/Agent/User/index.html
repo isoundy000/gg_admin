@@ -1,0 +1,209 @@
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <h1>
+        管理员管理
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="/"><i class="fa fa-dashboard"></i>首页</a></li>
+        <li><a href="#">一级</a></li>
+        <li class="active">二级</li>
+    </ol>
+</section>
+
+<!-- Main content -->
+<section class="content">
+    <div class="row">
+        <div class="nav-tabs-custom">
+            <ul class="nav nav-tabs" id="gg-tab">
+                <li class="active"><a href="#tab_1" data-toggle="tab" aria-expanded="true"><b class="text-light-blue">管理员列表</b></a></li>
+                <li class=""><a href="#tab_2" data-toggle="tab" aria-expanded="false"><b class="text-green">新建</b> | <b class="text-blue">编辑</b></a></li>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane active" id="tab_1">
+                    <div class="box">
+                        <div class="box-header">
+                            <h3 class="box-title"></h3>
+
+                            <div class="box-tools">
+                                <div class="input-group input-group-sm" style="width: 150px;">
+                                    <input name="table_search" class="form-control pull-right" placeholder="搜索..." type="text">
+
+                                    <div class="input-group-btn">
+                                        <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /.box-header -->
+                        <div class="box-body table-responsive no-padding">
+                            <table class="table table-hover">
+                                <tbody>
+                                <tr>
+                                    <th>用户名</th>
+                                    <th>名字</th>
+                                    <th>角色</th>
+                                    <th>状态</th>
+                                    <th>操作</th>
+                                </tr>
+                                <foreach name="users" item="item">
+                                    <tr>
+                                        <td>{$item.username}</td>
+                                        <td>{$item.name}</td>
+                                        <td>{$item.role_name}</td>
+                                        <td><if condition="$item.status eq 1"><b class="label bg-green">已启用</b><else /><b class="label bg-red">已禁用</b></if></td>
+                                        <td><a href="Javascript:void(0)" onclick="userEdit('__MODULE__/user/users/_id/{$item._id}')">编辑</a> |
+                                            <a href="Javascript:void(0)" onclick="userDelete('__MODULE__/user/users', '{$item._id}')">删除</a></td>
+                                    </tr>
+                                </foreach>
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- /.box-body -->
+                        <div class="box-footer clearfix">
+                            {$page}
+                        </div>
+
+                        <!-- /.box-footer -->
+                    </div>
+                </div>
+                <!-- /.tab-pane -->
+                <div class="tab-pane" id="tab_2">
+                    <form class="form-horizontal" onsubmit="return false;">
+                        <div class="form-group">
+                            <label for="username" class="col-sm-2 control-label">用户名</label>
+                            <div class="col-sm-4">
+                                <input class="form-control" id="username" placeholder="用户" type="text" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="password" class="col-sm-2 control-label">密码</label>
+
+                            <div class="col-sm-4">
+                                <input class="form-control" id="password" placeholder="密码" type="password">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="repeat_password" class="col-sm-2 control-label">重复密码</label>
+
+                            <div class="col-sm-4">
+                                <input class="form-control" id="repeat_password" placeholder="重复密码" type="password">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="name" class="col-sm-2 control-label">名字</label>
+
+                            <div class="col-sm-4">
+                                <input class="form-control" id="name" placeholder="名字" type="text" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="role_id" class="col-sm-2 control-label">角色</label>
+                            <div class="col-sm-4">
+                                <select class="form-control" id="role_id">
+                                    <foreach name="roles" item="item">
+                                        <option value="{$item._id}">{$item.name}</option>
+                                    </foreach>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="status" class="col-sm-2 control-label">状态</label>
+
+                            <div class="col-sm-4">
+                                <!--<input class="form-control" id="status" placeholder="状态" type="text">-->
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" id="status">是否激活
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-offset-2 col-sm-4">
+                                <button id="user_submit" type="submit" class="btn btn-primary" onclick="userSave('__MODULE__/user/users')">添加</button>
+                                <button type="submit" class="btn btn-warning" onclick="userClear()">清空</button>
+                                <input type="hidden" id="_id">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+            <!-- /.tab-content -->
+        </div>
+    </div>
+</section>
+<!-- /.content -->
+<script>
+    function userClear() {
+        $("#username").val("");
+        $("#name").val("");
+        $("#password").val("");
+        $("#repeat_password").val("");
+        $("#status").attr("checked", false);
+        $("#username").attr("disabled", false);
+        $("#_id").val("");
+        $("#user_submit").html("添加");
+    }
+
+    function userEdit(_url) {
+        ajaxRequest(_url, null, 'get', 'json', function(result) {
+            if (result.code == 200) {
+                $("#user_submit").html("保存");
+                $('#gg-tab a[href="#tab_2"]').tab('show');
+                $("#username").val(result.data.users.username);
+                $("#username").attr("disabled", true);
+                $("#name").val(result.data.users.name);
+                if (result.data.users.status) {
+                    $("#status").attr("checked", true);
+                } else {
+                    $("#status").attr("checked", false);
+                }
+                $("#role_id").val(result.data.users.role_id.$id);
+                $("#_id").val(result.data.users._id.$id);
+            }
+        })
+    }
+
+    function userDelete(_url, _id) {
+        var source = {
+            _id: _id
+        }
+        ajaxRequest(_url, source, 'DELETE', 'json', function(result) {
+            if (!result) {
+                successDialog('block', '删除', '删除成功!');
+                menuClick('__MODULE__/user/users');
+            }
+        })
+    }
+
+    function userSave(_url) {
+        var method = $("#_id").val() ? "PUT" : "POST";
+        var username = $("#username").val();
+        var password = $("#password").val();
+        var repeat_password = $("#repeat_password").val();
+        var name = $("#name").val();
+        var role_id = $("#role_id").val();
+        var _id = $("#_id").val();
+        var status = $("#status").is(':checked') ? 1 : 0;
+
+        var source = {
+            username:username,
+            password:password,
+            repeat_password:repeat_password,
+            name: name,
+            role_id:role_id,
+            status:status,
+            _id:_id
+        };
+        ajaxRequest(_url, source, method, 'json', function(result) {
+            if(result.code == 201) {
+                successDialog('block', '保存或新建', result.msg);
+                menuClick('__MODULE__/user/users');
+
+            } else {
+                errorDialog('block', '保存或新建', result.msg);
+            }
+        });
+    }
+</script>
