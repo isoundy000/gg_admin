@@ -1,7 +1,7 @@
 <!-- Content Header (Page header) -->
 <section class="content-header">
     <h1>
-        客户管理
+        代理管理
     </h1>
     <ol class="breadcrumb">
         <li><a href="/"><i class="fa fa-dashboard"></i>首页</a></li>
@@ -15,7 +15,7 @@
     <div class="row">
         <div class="nav-tabs-custom">
             <ul class="nav nav-tabs" id="gg-tab">
-                <li class="active"><a href="#tab_1" data-toggle="tab" aria-expanded="true"><b class="text-light-blue">客户列表</b></a></li>
+                <li class="active"><a href="#tab_1" data-toggle="tab" aria-expanded="true"><b class="text-light-blue">代理列表</b></a></li>
                 <li class=""><a href="#tab_2" data-toggle="tab" aria-expanded="false"><b class="text-green">新建</b> | <b class="text-blue">编辑</b></a></li>
             </ul>
             <div class="tab-content">
@@ -41,6 +41,7 @@
                                 <tr>
                                     <th>用户名</th>
                                     <th>昵称</th>
+                                    <th>类型</th>
                                     <th>状态</th>
                                     <th>操作</th>
                                 </tr>
@@ -48,6 +49,7 @@
                                     <tr>
                                         <td>{$item.username}</td>
                                         <td>{$item.name}</td>
+                                        <td>{$item.type_name}</td>
                                         <td><if condition="$item.status eq 1"><b class="label bg-green">已启用</b><else /><b class="label bg-red">已禁用</b></if></td>
                                         <td><a href="Javascript:void(0)" onclick="agentEdit('__MODULE__/agent/agents/_id/{$item._id}')">编辑</a> |
                                             <a href="Javascript:void(0)" onclick="agentDelete('__MODULE__/agent/agents', '{$item._id}')">删除</a></td>
@@ -96,6 +98,17 @@
                             </div>
                         </div>
                         <div class="form-group">
+                            <label for="type" class="col-sm-2 control-label">会员类型</label>
+
+                            <div class="col-sm-4">
+                                <select class="form-control" id="type">
+                                    <foreach name="agent_type" key="k" item="item">
+                                        <option value="{$k}">{$item}</option>
+                                    </foreach>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
                             <label for="status" class="col-sm-2 control-label">状态</label>
 
                             <div class="col-sm-4">
@@ -141,6 +154,7 @@
                 $('#gg-tab a[href="#tab_2"]').tab('show');
                 $("#username").val(result.data.agents.username);
                 $("#name").val(result.data.agents.name);
+                $("#type").val(result.data.agents.type);
                 if (result.data.agents.status) {
                     $("#status").attr("checked", true);
                 } else {
@@ -170,6 +184,7 @@
         var password = $("#password").val();
         var repeat_password = $("#repeat_password").val();
         var name = $("#name").val();
+        var type = $("#type").val();
         var _id = $("#_id").val();
         var status = $("#status").is(':checked') ? 1 : 0;
 
@@ -178,6 +193,7 @@
             password:password,
             repeat_password:repeat_password,
             name: name,
+            type: type,
             status:status,
             _id:_id
         };

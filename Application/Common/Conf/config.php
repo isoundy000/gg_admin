@@ -25,4 +25,16 @@ return array(
     //分页
     'PAGE_NUM' => 10,
     'PAGE_CALLBACK' => 'menuClick',
+
+    //业务配置
+    'SYSTEM' => array(
+        'AGENT_TYPE' => array(//代理类型
+            1 => '钻石',
+            2 => '金牌',
+        ),
+        'MODULE_LIST' => array(//模块列表
+            'Admin' => 'Admin',
+            'Agent' => 'Agent',
+        ),
+    ),
 );
