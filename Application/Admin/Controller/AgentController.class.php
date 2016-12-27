@@ -13,7 +13,6 @@ class AgentController extends BaseController
 {
     public function agentsGet() {
         $admin_agent = $this->mongo_db->admin_agent;
-        $admin_role = $this->mongo_db->admin_role;
         $agent_type = C('SYSTEM.AGENT_TYPE');
         $this->_result['data']['agent_type'] = $agent_type;
 
