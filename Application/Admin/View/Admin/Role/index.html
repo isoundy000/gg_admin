@@ -50,8 +50,8 @@
                                         <td>{$item.name}</td>
                                         <td><if condition="$item.status eq 1"><b class="label bg-green">已启用</b><else /><b class="label bg-red">已禁用</b></if></td>
                                         <td>{$item.module_name}</td>
-                                        <td><a href="Javascript:vid(0)" onclick="roleEdit('__MODULE__/role/roles/_id/{$item._id}/module_name/{$item.module_name}')">编辑</a> |
-                                            <a href="Javascript:vid(0)" onclick="roleDelete('__MODULE__/role/roles', '{$item._id}')">删除</a></td>
+                                        <td><a href="Javascript:void(0)" onclick="roleEdit('__MODULE__/role/roles/_id/{$item._id}/module_name/{$item.module_name}')">编辑</a> |
+                                            <a href="Javascript:void(0)" onclick="roleDelete('__MODULE__/role/roles', '{$item._id}')">删除</a></td>
                                     </tr>
                                 </foreach>
                                 </tbody>
@@ -90,7 +90,7 @@
                         <div class="form-group">
                             <label for="module_name" class="col-sm-2 control-label">模块名称</label>
                             <div class="col-sm-4">
-                                <select class="form-control" id="module_name">
+                                <select class="form-control" id="module_name" onchange="selectModule(this)">
                                     <option value="Admin">Admin</option>
                                     <option value="Agent">Agent</option>
                                 </select>
@@ -130,7 +130,19 @@
         permission(null)
     );
 
-    function permission(menus) {
+    function selectModule() {
+        var module_name = $("#module_name").find("option:selected").val();
+        var _id = $("#_id").val();
+        console.log(_id);
+        if (_id) {
+            roleEdit('__MODULE__/role/roles/_id/'+_id+'/module_name/'+module_name);
+        } else {
+            permission(null, module_name);
+        }
+
+    }
+
+    function permission(menus, module_name) {
         var tree = [];
         if (menus) {
             $.each(menus, function(key, value) {
@@ -164,7 +176,8 @@
             build_tree(tree);
         } else {
             //如果是编辑
-            ajaxRequest('__MODULE__/role/permission', null, 'get', 'json', function(result) {
+            module_name = module_name ? module_name : "Admin";
+            ajaxRequest('__MODULE__/role/permission/module_name/'+module_name, null, 'get', 'json', function(result) {
                 $.each(result.data.menus, function(key, value) {
                     var tmp = {
                         text: value.name,
@@ -242,6 +255,7 @@
                 } else {
                     $("#status").attr("checked", false);
                 }
+                $("#module_name").val(result.data.roles.module_name);
                 $("#_id").val(result.data.roles._id.$id);
                 permission(result.data.roles.permission);
             }
