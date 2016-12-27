@@ -15,8 +15,10 @@
     <div class="row">
         <div class="nav-tabs-custom">
             <ul class="nav nav-tabs" id="gg-tab">
-                <li class="active"><a href="#tab_1" data-toggle="tab" aria-expanded="true"><b class="text-light-blue">管理员列表</b></a></li>
-                <li class=""><a href="#tab_2" data-toggle="tab" aria-expanded="false"><b class="text-green">新建</b> | <b class="text-blue">编辑</b></a></li>
+                <li class="active"><a href="#tab_1" data-toggle="tab" aria-expanded="true"><b class="text-light-blue">管理员列表</b></a>
+                </li>
+                <li class=""><a href="#tab_2" data-toggle="tab" aria-expanded="false"><b class="text-green">新建</b> | <b
+                        class="text-blue">编辑</b></a></li>
             </ul>
             <div class="tab-content">
                 <div class="tab-pane active" id="tab_1">
@@ -26,10 +28,12 @@
 
                             <div class="box-tools">
                                 <div class="input-group input-group-sm" style="width: 150px;">
-                                    <input name="table_search" class="form-control pull-right" placeholder="搜索..." type="text">
+                                    <input name="table_search" class="form-control pull-right" placeholder="搜索..."
+                                           type="text">
 
                                     <div class="input-group-btn">
-                                        <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+                                        <button type="submit" class="btn btn-default"><i class="fa fa-search"></i>
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -50,9 +54,16 @@
                                         <td>{$item.username}</td>
                                         <td>{$item.name}</td>
                                         <td>{$item.role_name}</td>
-                                        <td><if condition="$item.status eq 1"><b class="label bg-green">已启用</b><else /><b class="label bg-red">已禁用</b></if></td>
-                                        <td><a href="Javascript:void(0)" onclick="userEdit('__MODULE__/user/users/_id/{$item._id}')">编辑</a> |
-                                            <a href="Javascript:void(0)" onclick="userDelete('__MODULE__/user/users', '{$item._id}')">删除</a></td>
+                                        <td>
+                                            <if condition="$item.status eq 1"><b class="label bg-green">已启用</b>
+                                                <else/>
+                                                <b class="label bg-red">已禁用</b></if>
+                                        </td>
+                                        <td><a href="Javascript:void(0)"
+                                               onclick="userEdit('__MODULE__/user/users/_id/{$item._id}')">编辑</a> |
+                                            <a href="Javascript:void(0)"
+                                               onclick="userConfirmDelete('__MODULE__/user/users', '{$item._id}')">删除</a>
+                                        </td>
                                     </tr>
                                 </foreach>
                                 </tbody>
@@ -120,7 +131,9 @@
                         </div>
                         <div class="form-group">
                             <div class="col-sm-offset-2 col-sm-4">
-                                <button id="user_submit" type="submit" class="btn btn-primary" onclick="userSave('__MODULE__/user/users')">添加</button>
+                                <button id="user_submit" type="submit" class="btn btn-primary"
+                                        onclick="userSave('__MODULE__/user/users')">添加
+                                </button>
                                 <button type="submit" class="btn btn-warning" onclick="userClear()">清空</button>
                                 <input type="hidden" id="_id">
                             </div>
@@ -147,7 +160,7 @@
     }
 
     function userEdit(_url) {
-        ajaxRequest(_url, null, 'get', 'json', function(result) {
+        ajaxRequest(_url, null, 'get', 'json', function (result) {
             if (result.code == 200) {
                 $("#user_submit").html("保存");
                 $('#gg-tab a[href="#tab_2"]').tab('show');
@@ -165,16 +178,21 @@
         })
     }
 
+    function userConfirmDelete(_url, _id) {
+        warningDialog('block', '警告', '此操作不可恢复，你真的要删除吗?', "userDelete('" + _url + "', '" + _id + "')");
+    }
+
     function userDelete(_url, _id) {
         var source = {
             _id: _id
-        }
-        ajaxRequest(_url, source, 'DELETE', 'json', function(result) {
+        };
+        warningDialog('none');
+        ajaxRequest(_url, source, 'DELETE', 'json', function (result) {
             if (!result) {
                 successDialog('block', '删除', '删除成功!');
                 menuClick('__MODULE__/user/users');
             }
-        })
+        });
     }
 
     function userSave(_url) {
@@ -188,16 +206,16 @@
         var status = $("#status").is(':checked') ? 1 : 0;
 
         var source = {
-            username:username,
-            password:password,
-            repeat_password:repeat_password,
+            username: username,
+            password: password,
+            repeat_password: repeat_password,
             name: name,
-            role_id:role_id,
-            status:status,
-            _id:_id
+            role_id: role_id,
+            status: status,
+            _id: _id
         };
-        ajaxRequest(_url, source, method, 'json', function(result) {
-            if(result.code == 201) {
+        ajaxRequest(_url, source, method, 'json', function (result) {
+            if (result.code == 201) {
                 successDialog('block', '保存或新建', result.msg);
                 menuClick('__MODULE__/user/users');
 

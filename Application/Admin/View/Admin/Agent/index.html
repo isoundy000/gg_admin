@@ -52,7 +52,7 @@
                                         <td>{$item.type_name}</td>
                                         <td><if condition="$item.status eq 1"><b class="label bg-green">已启用</b><else /><b class="label bg-red">已禁用</b></if></td>
                                         <td><a href="Javascript:void(0)" onclick="agentEdit('__MODULE__/agent/agents/_id/{$item._id}')">编辑</a> |
-                                            <a href="Javascript:void(0)" onclick="agentDelete('__MODULE__/agent/agents', '{$item._id}')">删除</a></td>
+                                            <a href="Javascript:void(0)" onclick="agentConfirmDelete('__MODULE__/agent/agents', '{$item._id}')">删除</a></td>
                                     </tr>
 
                                 </foreach>
@@ -164,6 +164,10 @@
                 $("#_id").val(result.data.agents._id.$id);
             }
         })
+    }
+
+    function agentConfirmDelete(_url, _id) {
+        warningDialog('block', '警告', '此操作不可恢复，你真的要删除吗?', "agentDelete('" + _url + "', '" + _id + "')");
     }
 
     function agentDelete(_url, _id) {

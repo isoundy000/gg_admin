@@ -29,7 +29,6 @@ function ajaxRequest(url, data, type, dataType, success) {
         },
         error : function(XMLHttpRequest, textStatus, errorThrown) {
             var response = JSON.parse(XMLHttpRequest.responseText);
-            console.log(response);
             var message = response.msg ? response.msg : textStatus + " " + errorThrown;
             errorDialog("block", XMLHttpRequest.status, message);
         }
@@ -75,4 +74,25 @@ function successDialog(display, title, message) {
         '</div>';
     $("#success-dialog").html(html);
     $("#success-dialog").css("display", display);
+}
+
+function warningDialog(display, title, message, event) {
+    var html = '<div class="modal-dialog">' +
+        '<div class="modal-content">' +
+        '<div class="modal-header">' +
+        '<button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="warningDialog(' + "'none'" + ')">' +
+        '<span aria-hidden="true">×</span></button>' +
+        '<h4 class="modal-title">' + title + '</h4>' +
+        '</div>' +
+        '<div class="modal-body">' +
+        '<p>' + message + '</p>' +
+        '</div>' +
+        '<div class="modal-footer">' +
+        '<button type="button" class="btn btn-outline pull-left" onclick="warningDialog(' + "'none'" + ')">关闭</button>' +
+        '<button type="button" class="btn btn-outline" onclick="' + event + '">确定</button>' +
+        '</div>' +
+        '</div>' +
+        '</div>';
+    $("#warning-dialog").html(html);
+    $("#warning-dialog").css("display", display);
 }

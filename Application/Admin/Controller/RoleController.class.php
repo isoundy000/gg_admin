@@ -33,6 +33,9 @@ class RoleController extends BaseController {
             $page = new Page($count, C('PAGE_NUM'));
             $page = $page->show();
 
+            $this->_result['data']['menus'] = $this->menu_tree(array(),
+                array("module_name"=>I('get.module_name')?I('get.module_name'):MODULE_NAME));
+            $this->assign("permission", $this->_result['data']['menus']);
             $this->assign("page", $page);
             $this->assign("roles", $result);
             $this->_result['data']['html'] = $this->fetch("Role:index");
@@ -45,7 +48,8 @@ class RoleController extends BaseController {
     }
 
     public function permissionGet() {
-        $this->_result['data']['menus'] = $this->menu_tree(array(),array("module_name"=>I('get.module_name')?I('get.module_name'):MODULE_NAME));
+        $this->_result['data']['menus'] = $this->menu_tree(array(),
+            array("module_name"=>I('get.module_name')?I('get.module_name'):MODULE_NAME));
         $this->response($this->_result);
     }
 

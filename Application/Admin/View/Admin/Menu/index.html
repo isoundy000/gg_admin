@@ -61,7 +61,7 @@
                                             <td><i class="fa {$item.icon}"></i></td>
                                             <td><if condition="$item.visible eq 1"><label class="label bg-green">可见</label><else/><label class="label bg-red">不可见</label></if></td>
                                             <td><a href="Javascript:void(0)" onclick="menuEdit('__MODULE__/menu/menus/_id/{$item._id}')">编辑</a> |
-                                                <a href="Javascript:void(0)" onclick="menuDelete('__MODULE__/menu/menus', '{$item._id}')">删除</a></td>
+                                                <a href="Javascript:void(0)" onclick="menuConfirmDelete('__MODULE__/menu/menus', '{$item._id}')">删除</a></td>
                                         </tr>
                                     </foreach>
                                     </tbody>
@@ -193,6 +193,10 @@
                 }
             }
         })
+    }
+
+    function menuConfirmDelete(_url, _id) {
+        warningDialog('block', '警告', '此操作不可恢复，你真的要删除吗?', "menuDelete('" + _url + "', '" + _id + "')");
     }
 
     function menuDelete(_url, _id) {

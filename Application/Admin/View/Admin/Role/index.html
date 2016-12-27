@@ -51,7 +51,7 @@
                                         <td><if condition="$item.status eq 1"><b class="label bg-green">已启用</b><else /><b class="label bg-red">已禁用</b></if></td>
                                         <td>{$item.module_name}</td>
                                         <td><a href="Javascript:void(0)" onclick="roleEdit('__MODULE__/role/roles/_id/{$item._id}/module_name/{$item.module_name}')">编辑</a> |
-                                            <a href="Javascript:void(0)" onclick="roleDelete('__MODULE__/role/roles', '{$item._id}')">删除</a></td>
+                                            <a href="Javascript:void(0)" onclick="userConfirmDelete('__MODULE__/role/roles', '{$item._id}')">删除</a></td>
                                     </tr>
                                 </foreach>
                                 </tbody>
@@ -96,18 +96,66 @@
                                 </select>
                             </div>
                         </div>
+                        <!--<div class="form-group">
+                            <label class="col-sm-2 control-label">权限列表</label>
+                            <div class="col-sm-6">
+                                <ul class="no-padding-left no-list-style">
+                                    <foreach name="permission" item="item">
+                                        <li class="margin-bottom10">
+                                            <i class="fa {$item.icon}"></i> <span>{$item.name}</span>
+                                            <foreach name="item.http_method" item="method">
+                                                <switch name="method">
+                                                    <case value="GET">
+                                                        <span><input type="checkbox" class="permission_id" value="{$item._id}"><label class="label bg-blue-active">{$method}</label></span>
+                                                    </case>
+                                                    <case value="PUT">
+                                                        <span><input type="checkbox" class="permission_id" value="{$item._id}"><label class="label bg-orange-active">{$method}</label></span>
+                                                    </case>
+                                                    <case value="POST">
+                                                        <span><input type="checkbox" class="permission_id" value="{$item._id}"><label class="label bg-green-active">{$method}</label></span>
+                                                    </case>
+                                                    <case value="DELETE">
+                                                        <span><input type="checkbox" class="permission_id" value="{$item._id}"><label class="label bg-red-active">{$method}</label></span>
+                                                    </case>
+                                                </switch>
+                                            </foreach>
+                                            <if condition="$item.child neq null">
+                                                <ul class="no-list-style">
+                                                    <foreach name="item.child" item="child">
+                                                        <li class="margin-bottom10">
+                                                            <i class="fa {$child.icon}"></i> {$child.name}
+                                                            <foreach name="child.http_method" item="child_method">
+                                                                <switch name="child_method">
+                                                                    <case value="GET">
+                                                                        <input type="checkbox" class="permission_id" value="{$item._id}"><label class="label bg-blue-active">{$child_method}</label>
+                                                                    </case>
+                                                                    <case value="PUT">
+                                                                        <input type="checkbox" class="permission_id" value="{$item._id}"><label class="label bg-orange-active">{$child_method}</label>
+                                                                    </case>
+                                                                    <case value="POST">
+                                                                        <input type="checkbox" class="permission_id" value="{$item._id}"><label class="label bg-green-active">{$child_method}</label>
+                                                                    </case>
+                                                                    <case value="DELETE">
+                                                                        <input type="checkbox" class="permission_id" value="{$item._id}"><label class="label bg-red-active">{$child_method}</label>
+                                                                    </case>
+                                                                </switch>
+                                                            </foreach>
+                                                        </li>
+
+                                                    </foreach>
+                                                </ul>
+                                            </if>
+                                        </li>
+                                    </foreach>
+                                </ul>
+                            </div>
+                        </div>-->
                         <div class="form-group">
                             <label for="permission" class="col-sm-2 control-label">权限列表</label>
                             <div class="col-sm-2">
                                 <div id="permission">
                                 </div>
                             </div>
-                            <!--<div class="col-sm-2">
-                                <button type="submit" class="btn btn-primary" onclick="chooseAll()">全选</button>
-                                <br>
-                                <br>
-                                <button type="submit" class="btn btn-warning" onclick="unChooseAll()">清空</button>
-                            </div>-->
                         </div>
                         <div class="form-group">
                             <div class="col-sm-offset-2 col-sm-4">
@@ -262,12 +310,15 @@
         })
     }
 
+    function userConfirmDelete(_url, _id) {
+        warningDialog('block', '警告', '此操作不可恢复，你真的要删除吗?', "roleDelete('" + _url + "', '" + _id + "')");
+    }
+
     function roleDelete(_url, _id) {
         var source = {
             _id: _id
         }
         ajaxRequest(_url, source, 'DELETE', 'json', function(result) {
-            console.log(result);
             if (!result) {
                 successDialog('block', '删除', '删除成功!');
                 menuClick('__MODULE__/role/roles');
