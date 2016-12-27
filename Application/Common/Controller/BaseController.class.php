@@ -16,45 +16,61 @@ class BaseController extends RestController {
         //连接数据库
         if (!$this->mongo_client) {
             $this->mongo_client = new \MongoClient(C('MONGO_SERVER'));
-            $db_name = C('MONGO_DB');
-            $this->mongo_db = $this->mongo_client->$db_name;
         }
+        $db_name = C('MONGO_DB');
+        $this->mongo_db = $this->mongo_client->$db_name;
         $action_name = strtolower(CONTROLLER_NAME . "/" . ACTION_NAME);
-
+        $http_method = strtoupper($_SERVER['REQUEST_METHOD']);
         //模板布局
         if ($action_name!="index/index") {
             layout(false);
         }
 
         //不需要权限的控制器
-        if ($action_name == 'index/login') {
+        if (in_array($action_name, array(
+            'index/login',
+            'user/token'
+        ))) {
             return;
         }
-        switch(MODULE_NAME) {
-            case 'Admin'://管理后台
-                //检查用户是否登录
-                if ($_SESSION['token']) {
-                    //取用户权限信息，判断用户是否有权限请求此接口
-                    $admin_role = $this->mongo_db->admin_role->findOne(array("_id"=>$_SESSION['admin']['role_id']));
-                    $menu = $this->menu_tree($admin_role['permission']);
-                    $this->assign("menu", $menu);
-                }
-                break;
-            case 'Agent'://代理后台
-                break;
+
+        //检查用户是否登录
+        if ($_SESSION['token']) {
+            //判断用户是否有权限请求此接口
+            $admin_action = $this->mongo_db->admin_menu->findOne(
+                array("action"=>$action_name,"http_method"=>new \MongoRegex("/$http_method/"),"module_name"=>MODULE_NAME)
+            );
+
+            //404 not found
+            if(!$admin_action) {
+                $this->response($this->_result, 'json', 404);
+            }
+            $admin_action = $admin_action['_id']->__toString();
+            //取用户权限信息
+            $admin_role = $this->mongo_db->admin_role->findOne(array("_id"=>$_SESSION['admin']['role_id']));
+
+            //403 no permission
+            if(!in_array($admin_action, $admin_role['permission'])) {
+                $this->response($this->_result, 'json', 403);
+            }
+            $menu = $this->menu_tree($admin_role['permission'], array("visible"=>1,"module_name"=>MODULE_NAME));
+            $this->assign("menu", $menu);
+        } else {
+            $this->redirect(MODULE_NAME."/Index/login");
         }
     }
 
     /**
      * @desc tree_menu
      * @param array $permission
-     * @param string $collection
+     * @param array $search
      * @return array
      */
-    protected function menu_tree($permission = array(), $collection='admin_menu') {
-        $admin_menu = $this->mongo_db->$collection->find()->sort(array('sort'=>1));
+    protected function menu_tree($permission = array(), $search = array()) {
+        $admin_menu = $this->mongo_db->admin_menu->find($search)->sort(array("module_name"=>1,"sort"=>1));
         $result = array();
         foreach ($admin_menu as $item) {
+            $item['http_method'] = explode(',', $item['http_method']);
             //permission
             if(in_array($item['_id']->__toString(), $permission)) {
                 $item['selected'] = 1;

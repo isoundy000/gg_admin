@@ -16,7 +16,8 @@ class RoleController extends BaseController {
         if (I('get._id')) {
             $search['_id'] = new \MongoId(I('get._id', null));
             $query = $admin_role->findOne($search);
-            $query['permission'] = $this->menu_tree($query['permission']);
+            $query['permission'] = $this->menu_tree($query['permission'],
+                array("module_name"=>I('get.module_name')?I('get.module_name'):MODULE_NAME));
             $this->_result['data']['roles'] = $query;
         } else {
             $search = array();
@@ -26,10 +27,7 @@ class RoleController extends BaseController {
             filter_array_element($option);
 
             $cursor = $admin_role->find($search)->limit($limit)->skip($skip);
-            $result = array();
-            foreach ($cursor as $item) {
-                array_push($result, $item);
-            }
+            $result = iterator_to_array($cursor);
 
             $count = $admin_role->count($search);
             $page = new Page($count, C('PAGE_NUM'));
@@ -47,14 +45,15 @@ class RoleController extends BaseController {
     }
 
     public function permissionGet() {
-        $this->_result['data']['menus'] = $this->menu_tree();
+        $this->_result['data']['menus'] = $this->menu_tree(array(),array("module_name"=>MODULE_NAME));
         $this->response($this->_result);
     }
 
     public function rolesPut() {
         $search['_id'] = new \MongoId(I('put._id'));
         $data['name'] = I('put.name', null, check_empty_string);
-        $data['status'] = intval(I('post.status'));
+        $data['status'] = intval(I('put.status'));
+        $data['module_name'] = I('put.module_name') ? I('put.module_name') : 'Admin';
         $data['permission'] = $this->handlePermission(I('put.permission'));
         merge_params_error($data['name'], 'name', '权限名称不能为空', $this->_result['error']);
 
@@ -83,12 +82,16 @@ class RoleController extends BaseController {
         $ids = array();
         foreach ($permission as $key => $value) {
             if ($value['state']['selected'] == 'true') {
-                array_push($ids, $value['tags'][0]['$id']);
+                if (!in_array($value['tags'][0]['$id'], $ids)) {
+                    array_push($ids, $value['tags'][0]['$id']);
+                }
             }
             if ($value['nodes']) {
                 foreach ($value['nodes'] as $k => $v) {
                     if ($v['state']['selected'] == 'true') {
-                        array_push($ids, $v['tags'][0]['$id']);
+                        if(!in_array($v['tags'][0]['$id'], $ids)) {
+                            array_push($ids, $v['tags'][0]['$id']);
+                        }
                     }
                 }
             }
@@ -99,6 +102,7 @@ class RoleController extends BaseController {
     public function rolesPost() {
         $data['name'] = I('post.name', null, check_empty_string);
         $data['status'] = intval(I('post.status'));
+        $data['module_name'] = I('post.module_name') ? I('post.module_name') : 'Admin';
         $data['permission'] = $this->handlePermission(I('post.permission'));
         merge_params_error($data['name'], 'name', '权限名称不能为空', $this->_result['error']);
 

@@ -43,7 +43,10 @@
                                         <th>名称</th>
                                         <th>父级</th>
                                         <th>动作</th>
+                                        <th>http方法</th>
+                                        <th>模块名</th>
                                         <th>图标</th>
+                                        <th>是否可见</th>
                                         <th>操作</th>
                                     </tr>
 
@@ -53,7 +56,10 @@
                                             <td>{$item.name}</td>
                                             <td>{$item.parent_name}</td>
                                             <td>{$item.action}</td>
+                                            <td>{$item.http_method}</td>
+                                            <td>{$item.module_name}</td>
                                             <td><i class="fa {$item.icon}"></i></td>
+                                            <td><if condition="$item.visible eq 1"><label class="label bg-green">可见</label><else/><label class="label bg-red">不可见</label></if></td>
                                             <td><a href="Javascript:void(0)" onclick="menuEdit('__MODULE__/menu/menus/_id/{$item._id}')">编辑</a> |
                                                 <a href="Javascript:void(0)" onclick="menuDelete('__MODULE__/menu/menus', '{$item._id}')">删除</a></td>
                                         </tr>
@@ -93,6 +99,20 @@
                             </div>
                         </div>
                         <div class="form-group">
+                            <label for="http_method" class="col-sm-2 control-label">操作方法</label>
+
+                            <div class="col-sm-4">
+                                <input class="form-control" id="http_method" placeholder="默认为所有，可多选，可选值:GET,PUT,POST,DELETE" type="text" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="module_name" class="col-sm-2 control-label">模块</label>
+
+                            <div class="col-sm-4">
+                                <input class="form-control" id="module_name" placeholder="模块为对应后台名称(固定值)，单选，可选值：Admin,Agent" type="text" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
                             <label for="icon" class="col-sm-2 control-label">图标</label>
 
                             <div class="col-sm-4">
@@ -109,6 +129,18 @@
                                         <option value="{$item._id}">{$item.name}</option>
                                     </foreach>
                                 </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="visible" class="col-sm-2 control-label">状态</label>
+
+                            <div class="col-sm-4">
+                                <!--<input class="form-control" id="status" placeholder="状态" type="text">-->
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" id="visible">是否可见
+                                    </label>
+                                </div>
                             </div>
                         </div>
                         <div class="form-group">
@@ -133,8 +165,11 @@
         $("#name").val("");
         $("#action").val("");
         $("#icon").val("");
+        $("#http_method").val("");
+        $("#module_name").val("");
         $("#pid").val("0");
         $("#_id").val("");
+        $("#visible").attr("checked", false);
         $("#menu_submit").html("添加");
     }
 
@@ -146,9 +181,16 @@
                 $("#sort").val(result.data.menus.sort);
                 $("#name").val(result.data.menus.name);
                 $("#action").val(result.data.menus.action);
+                $("#http_method").val(result.data.menus.http_method);
+                $("#module_name").val(result.data.menus.module_name);
                 $("#icon").val(result.data.menus.icon);
                 $("#pid").val(result.data.menus.pid);
                 $("#_id").val(result.data.menus._id.$id);
+                if (result.data.menus.visible) {
+                    $("#visible").attr("checked", true);
+                } else {
+                    $("#visible").attr("checked", false);
+                }
             }
         })
     }
@@ -171,16 +213,22 @@
         var sort = $("#sort").val();
         var name = $("#name").val();
         var action = $("#action").val();
+        var http_method = $("#http_method").val() ? $("#http_method").val() : "GET,PUT,POST,DELETE";
+        var module_name = $("#module_name").val() ? $("#module_name").val() : "Admin";
         var icon = $("#icon").val();
         var pid = $("#pid").val();
         var _id = $("#_id").val();
+        var visible = $("#visible").is(':checked') ? 1 : 0;
 
         var source = {
             sort:sort,
             name: name,
             action: action ? action : 'javascript:void(0)',
+            http_method: http_method,
+            module_name: module_name,
             icon: icon ? icon : 'fa-circle',
             pid:pid,
+            visible:visible,
             _id:_id
         };
         ajaxRequest(_url, source, method, 'json', function(result) {

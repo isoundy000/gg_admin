@@ -6,29 +6,20 @@
  * Time: 7:47
  */
 namespace Admin\Controller;
-use Common\Controller\BaseController;
+use Think\Controller\RestController;
 
-class TestController extends BaseController {
+class TestController extends RestController {
     public function indexGet() {
-        $admin_role = $this->mongo_db->admin_role;
-        $cursor = $admin_role->findOne();
-        $admin_menu = $this->mongo_db->admin_menu;
-        $result = array();
-        foreach ($cursor->permission as $item) {
-            foreach($item['child'] as $child) {
-                $tmp['id'] = $child['id'];
-                $tmp['name'] = $child['name'];
-                $tmp['action'] = $child['action'];
-                $tmp['icon'] = $child['icon'];
-                array_push($result, $tmp);
-            }
-            $tmp['id'] = $item['id'];
-            $tmp['name'] = $item['name'];
-            $tmp['action'] = $item['action'];
-            $tmp['icon'] = $item['icon'];
-            array_push($result, $tmp);
+        //连接数据库
+        $mongo_client = new \MongoClient(C('MONGO_SERVER'));
+        $db_name = C('MONGO_DB');
+        $mongo_db = $mongo_client->$db_name;
+        $admin_menu = $mongo_db->admin_menu;
+        $result = $admin_menu->find();
+        foreach ($result as $each) {
+            $admin_menu->update(array('_id' =>$each['_id']),array('visible'=>1));
         }
-        $admin_menu->insertMany($result);
+
     }
 
 }

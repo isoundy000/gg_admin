@@ -122,6 +122,7 @@ class UserController extends BaseController
         $data['repeat_password'] = I('post.repeat_password', null, check_empty_string);
         $data['role_id'] = I('post.role_id', null, check_empty_string);
         $data['status'] = intval(I('post.status'));
+        $data['date'] = date("Y-m-d H:i:s", time());
         merge_params_error($data['name'], 'name', '名字不能为空', $this->_result['error']);
         merge_params_error($data['password'], 'password', '密码不能为空', $this->_result['error']);
         merge_params_error($data['repeat_password'], '密码不能为空', 'repeat_password', $this->_result['error']);

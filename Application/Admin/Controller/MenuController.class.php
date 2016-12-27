@@ -25,23 +25,22 @@ class MenuController extends BaseController {
             filter_array_element($search);
             filter_array_element($option);
 
-            $cursor = $admin_menu->find($search)->limit($limit)->skip($skip);
+            $cursor = $admin_menu->find($search)->limit($limit)->skip($skip)->sort(array("sort"=>1));
             $result = array();
             foreach ($cursor as $item) {
                 if($item['pid']) {
                     $parent_id = new \MongoId($item['pid']);
+                    $parent = $admin_menu->findOne(array('_id'=>$parent_id), array('name' => 1));
+                    $item['parent_name'] = $parent ? $parent['name'] : "";
+                } else {
+                    $item['parent_name'] = "";
                 }
-                $parent = $admin_menu->findOne(array('_id'=>$parent_id), array('name' => 1));
-                $item['parent_name'] = $parent ? $parent['name'] : "";
                 array_push($result, $item);
             }
 
             //查找parent menu
             $parent_query = $admin_menu->find(array("pid"=>'0'));
-            $parent_result = array();
-            foreach($parent_query as $item) {
-                array_push($parent_result, $item);
-            }
+            $parent_result = iterator_to_array($parent_query);
 
             $count = $admin_menu->count($search);
             $page = new Page($count, C('PAGE_NUM'));
@@ -66,10 +65,15 @@ class MenuController extends BaseController {
         $data['sort'] = intval(I('put.sort'));
         $data['name'] = I('put.name', null, check_empty_string);
         $data['action'] = I('put.action', 'javascript:void(0)');
+        $data['module_name'] = I('put.module_name', null, check_empty_string);
+        $data['http_method'] = strtoupper(I('put.http_method', null, check_empty_string));
         $data['icon'] = I('put.icon', 'fa-circle');
         $data['pid'] = I('put.pid', '0');
+        $data['visible'] = I('put.visible') ? intval(I('put.visible')) : 0;
 
         merge_params_error($data['name'], 'name', '名称不能为空', $this->_result['error']);
+        merge_params_error($data['module_name'], 'module_name', '模块名不能为空', $this->_result['error']);
+        merge_params_error($data['http_method'], 'http_method', 'HTTP方法不能为空', $this->_result['error']);
 
         //检查参数
         if ($this->_result['error']) {
@@ -78,6 +82,13 @@ class MenuController extends BaseController {
             $this->response($this->_result, 'json', 400, $error[0]);
         }
         filter_array_element($data);
+        if(!strstr("GET,PUT,POST,DELETE", $data['http_method'])) {
+            $this->response($this->_result, 'json', 400, 'http方法必须为:GET,PUT,POST,DELETE');
+        }
+
+        if(!strstr("Admin,Agent", $data['module_name'])) {
+            $this->response($this->_result, 'json', 400, '模块名必须为:Admin,Agent中的一种');
+        }
 
         $update['$set'] = $data;
         $admin_menu = $this->mongo_db->admin_menu;
@@ -94,9 +105,14 @@ class MenuController extends BaseController {
         $data['sort'] = intval(I('post.sort'));
         $data['name'] = I('post.name', null, check_empty_string);
         $data['action'] = I('post.action', 'javascript:void(0)');
+        $data['module_name'] = I('post.module_name', null, check_empty_string);
+        $data['http_method'] = strtoupper(I('post.http_method', null, check_empty_string));
         $data['icon'] = I('post.icon', 'fa-circle');
         $data['pid'] = I('post.pid', '0');
+        $data['visible'] = I('post.visible') ? intval(I('post.visible')) : 0;
         merge_params_error($data['name'], 'name', '名称不能为空', $this->_result['error']);
+        merge_params_error($data['module_name'], 'module_name', '模块名不能为空', $this->_result['error']);
+        merge_params_error($data['http_method'], 'http_method', 'HTTP方法不能为空', $this->_result['error']);
 
         //检查参数
         if ($this->_result['error']) {
@@ -105,6 +121,14 @@ class MenuController extends BaseController {
             $this->response($this->_result, 'json', 400, $error[0]);
         }
         filter_array_element($data);
+
+        if(!strstr("GET,PUT,POST,DELETE", $data['http_method'])) {
+            $this->response($this->_result, 'json', 400, 'http方法必须为:GET,PUT,POST,DELETE');
+        }
+
+        if(!strstr("Admin,Agent", $data['module_name'])) {
+            $this->response($this->_result, 'json', 400, '模块名必须为:Admin,Agent中的一种');
+        }
 
         $admin_menu = $this->mongo_db->admin_menu;
         if ($admin_menu->insert($data)) {
