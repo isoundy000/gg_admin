@@ -29,7 +29,8 @@ class BaseController extends RestController {
         //不需要权限的控制器
         if (in_array($action_name, array(
             'index/login',
-            'user/token'
+            'user/token',
+            'index/verify',
         ))) {
             return;
         }
