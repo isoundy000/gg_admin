@@ -198,9 +198,9 @@ class UserController extends BaseController
             $this->response($this->_result, 'json', 400, 'the status');
         }
         //保存用户会话信息
-        $_SESSION['admin'] = $query;
+        $_SESSION[MODULE_NAME.'_admin'] = $query;
         //生成token
-        $_SESSION['token'] = $query['_id'];
+        $_SESSION[MODULE_NAME.'_token'] = $query['_id'];
 
         $this->_result['data']['user'] = $query;
         $this->_result['data']['url'] = U(MODULE_NAME . "/Index/index");
@@ -209,7 +209,7 @@ class UserController extends BaseController
 
     //用户注销
     public function tokenDelete() {
-        unset($_SESSION['admin'], $_SESSION['token']);
+        unset($_SESSION[MODULE_NAME.'_admin'], $_SESSION[MODULE_NAME.'_token']);
         $this->_result['data']['url'] = U(MODULE_NAME . "/Index/login");
         $this->response(null, 'json', 204);
     }
