@@ -5,7 +5,7 @@
 function logout(_url) {
     ajaxRequest(_url, null, 'delete', 'json', function(result) {
         if (!result) {
-            window.location.href = "/";
+            window.location.href = "/Agent/index/login";
         }
     });
 }
@@ -28,9 +28,15 @@ function ajaxRequest(url, data, type, dataType, success) {
             success && typeof success=='function' && success.call(null, res);
         },
         error : function(XMLHttpRequest, textStatus, errorThrown) {
-            var response = JSON.parse(XMLHttpRequest.responseText);
-            var message = response.msg ? response.msg : textStatus + " " + errorThrown;
-            errorDialog("block", XMLHttpRequest.status, message);
+            try {
+                var response = JSON.parse(XMLHttpRequest.responseText);
+                var message = response.msg ? response.msg : textStatus + " " + errorThrown;
+                errorDialog("block", XMLHttpRequest.status, message);
+            } catch (e) {
+                //var message = "无法解析的错误";
+                console.log(e.message);
+                //errorDialog("block", XMLHttpRequest.status, message);
+            }
         }
     });
 }

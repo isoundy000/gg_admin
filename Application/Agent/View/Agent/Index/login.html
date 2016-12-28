@@ -51,7 +51,7 @@
                 <input id="verify" class="form-control col-xs-1 pull-right" placeholder="验证码" type="text" required onkeydown="pressDown()">
             </div>
             <div class="form-group col-xs-8">
-                <img width="150" height="30" class="pull-right" src="__MODULE__/index/verify">
+                <img id="verify_img" onclick="this.src=this.src+'?'+Math.random();" class="pull-right" src="__MODULE__/index/verify">
             </div>
         </div>
         <div class="row">
@@ -83,6 +83,14 @@
 <div id="success-dialog" class="modal modal-danger"></div>
 </body>
 <script language="javascript">
+
+    /*$("#verify_img").click(function() {
+       ajaxRequest("__MODULE__/index/verify", null, 'get', 'image/!**', function(result) {
+           console.log(result);
+           $(this).attr("src", "Agent/index/verify");
+       });
+    });*/
+
     $(function () {
         $('input').iCheck({
             checkboxClass: 'icheckbox_square-blue',

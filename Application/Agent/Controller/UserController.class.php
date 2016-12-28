@@ -7,7 +7,6 @@
  */
 namespace Agent\Controller;
 use Common\Controller\BaseController;
-use Think\Page;
 
 class UserController extends BaseController
 {
@@ -19,17 +18,16 @@ class UserController extends BaseController
     }
 
     public function usersPut() {
-
-        $search['_id'] = new \MongoId(I('put._id'));
+        $admin_agent = $this->mongo_db->admin_agent;
+        $search['_id'] = $_SESSION[MODULE_NAME.'_admin']['_id'];
         $data['name'] = I('put.name', null, check_empty_string);
-        $data['role_id'] = I('put.role_id', null, check_empty_string);
         $data['password'] = I('put.password', null);
         $data['repeat_password'] = I('put.repeat_password', null);
-        $data['status'] = intval(I('put.status'));
+        $data['old_password'] = I('put.old_password', null);
+
+        $data['status'] = intval(I('put.status', $_SESSION[MODULE_NAME.'_admin']['status']));
         merge_params_error($data['name'], 'name', '名字不能为空', $this->_result['error'],false);
-        merge_params_error($data['role_id'], 'role_id', '权限组不能为空', $this->_result['error']);
-        merge_params_error($data['password'], 'password', '密码不能为空', $this->_result['error'], false);
-        merge_params_error($data['repeat_password'], 'repeat_password', '密码不能为空', $this->_result['error'], false);
+
         //检查参数
         if ($this->_result['error']) {
             $error = array_shift($this->_result['error']);
@@ -37,8 +35,11 @@ class UserController extends BaseController
             $this->response($this->_result, 'json', 400, $error[0]);
         }
 
-        if (checkTextLength6($data['name'])) {
-            $this->response($this->_result, 'json', 400, '用户名至少6个字符');
+        if ($data['old_password']) {
+            $user = $admin_agent->findOne(array("username"=>$_SESSION[MODULE_NAME.'_admin']['username']));
+            if (!$user || $user['password']!=md5($data['old_password'])) {
+                $this->response($this->_result, 'json', 400, '旧密码错误');
+            }
         }
 
         if ($data['password'] && $data['repeat_password']) {
@@ -58,11 +59,13 @@ class UserController extends BaseController
         if (isset($data['repeat_password']) && !$data['repeat_password']) {
             unset($data['repeat_password']);
         }
-        $data['role_id'] = new \MongoId($data['role_id']);
+        if (isset($data['old_password']) && !$data['old_password']) {
+            unset($data['old_password']);
+        }
+
         filter_array_element($data);
 
         $update['$set'] = $data;
-        $admin_agent = $this->mongo_db->admin_agent;
         if ($admin_agent->update($search,$update)) {
             $this->response($this->_result, 'json', 201, '保存成功');
         } else {
@@ -87,7 +90,7 @@ class UserController extends BaseController
             'level' => 1,
             'type' => 1,
             'role_id' => 1,
-            'date' => 1
+            'date' => 1,
         );
 
         if(!check_verify($code)) {
@@ -102,6 +105,8 @@ class UserController extends BaseController
         if (!$query['status']) {
             $this->response($this->_result, 'json', 400, '该账户已被禁用');
         }
+        //附加字段说明
+        $query['type_name'] = C('SYSTEM.AGENT_TYPE')[$query['type']];
         //保存用户会话信息
         $_SESSION[MODULE_NAME.'_admin'] = $query;
         //生成token

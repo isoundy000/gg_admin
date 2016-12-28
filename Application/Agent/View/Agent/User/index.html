@@ -1,7 +1,7 @@
 <!-- Content Header (Page header) -->
 <section class="content-header">
     <h1>
-        管理员管理
+        个人信息
     </h1>
     <ol class="breadcrumb">
         <li><a href="/"><i class="fa fa-dashboard"></i>首页</a></li>
@@ -27,14 +27,12 @@
 
                     <ul class="list-group list-group-unbordered">
                         <li class="list-group-item">
-                            <b>类型</b> <a class="pull-right">{$user.type}</a>
+                            <b>类型</b> <a class="pull-right">{$user.type_name}</a>
                         </li>
                         <li class="list-group-item">
-                            <b>加入日期</b> <a class="pull-right">13,287</a>
+                            <b>加入日期</b> <a class="pull-right">{$user.date}</a>
                         </li>
                     </ul>
-
-                    <a href="#" class="btn btn-primary btn-block"><b>Follow</b></a>
                 </div>
                 <!-- /.box-body -->
             </div>
@@ -44,186 +42,96 @@
         <div class="col-md-9">
             <div class="nav-tabs-custom">
                 <ul class="nav nav-tabs">
-                    <li class="active"><a href="#idata-toggle="tab" aria-expanded="true">补充信息</a></li>
+                    <li class="active"><a href="#info" data-toggle="tab" aria-expanded="true">补充信息</a></li>
                     <li class=""><a href="#settings" data-toggle="tab" aria-expanded="false">修改密码</a></li>
                 </ul>
                 <div class="tab-content">
                     <div class="tab-pane active" id="info">
-                        <!-- Post -->
-                        <div class="post">
-                            <div class="user-block">
-                                <img class="img-circle img-bordered-sm" src="/bower_components/AdminLTE/dist/img/user1-128x128.jpg"
-                                     alt="user image">
-                                <span class="username">
-                          <a href="#">Jonathan Burke Jr.</a>
-                          <a href="#" class="pull-right btn-box-tool"><i class="fa fa-times"></i></a>
-                        </span>
-                                <span class="description">Shared publicly - 7:30 PM today</span>
-                            </div>
-                            <!-- /.user-block -->
-                            <p>
-                                Lorem ipsum represents a long-held tradition for designers,
-                                typographers and the like. Some people hate it and argue for
-                                its demise, but others ignore the hate as they create awesome
-                                tools to help create filler text for everyone from bacon lovers
-                                to Charlie Sheen fans.
-                            </p>
-                            <ul class="list-inline">
-                                <li><a href="#" class="link-black text-sm"><i class="fa fa-share margin-r-5"></i> Share</a>
-                                </li>
-                                <li><a href="#" class="link-black text-sm"><i class="fa fa-thumbs-o-up margin-r-5"></i>
-                                    Like</a>
-                                </li>
-                                <li class="pull-right">
-                                    <a href="#" class="link-black text-sm"><i class="fa fa-comments-o margin-r-5"></i>
-                                        Comments
-                                        (5)</a></li>
-                            </ul>
+                        <form class="form-horizontal" onsubmit="return false;">
+                            <div class="form-group">
+                                <label for="name" class="col-sm-2 control-label">昵称</label>
 
-                            <input class="form-control input-sm" placeholder="Type a comment" type="text">
-                        </div>
-                        <!-- /.post -->
-
-                        <!-- Post -->
-                        <div class="post clearfix">
-                            <div class="user-block">
-                                <img class="img-circle img-bordered-sm" src="/bower_components/AdminLTE/dist/img/user7-128x128.jpg"
-                                     alt="User Image">
-                                <span class="username">
-                          <a href="#">Sarah Ross</a>
-                          <a href="#" class="pull-right btn-box-tool"><i class="fa fa-times"></i></a>
-                        </span>
-                                <span class="description">Sent you a message - 3 days ago</span>
-                            </div>
-                            <!-- /.user-block -->
-                            <p>
-                                Lorem ipsum represents a long-held tradition for designers,
-                                typographers and the like. Some people hate it and argue for
-                                its demise, but others ignore the hate as they create awesome
-                                tools to help create filler text for everyone from bacon lovers
-                                to Charlie Sheen fans.
-                            </p>
-
-                            <form class="form-horizontal">
-                                <div class="form-group margin-bottom-none">
-                                    <div class="col-sm-9">
-                                        <input class="form-control input-sm" placeholder="Response">
-                                    </div>
-                                    <div class="col-sm-3">
-                                        <button type="submit" class="btn btn-danger pull-right btn-block btn-sm">Send
-                                        </button>
-                                    </div>
+                                <div class="col-sm-10">
+                                    <input class="form-control" id="name" placeholder="昵称" type="text">
                                 </div>
-                            </form>
-                        </div>
-                        <!-- /.post -->
-
-                        <!-- Post -->
-                        <div class="post">
-                            <div class="user-block">
-                                <img class="img-circle img-bordered-sm" src="/bower_components/AdminLTE/dist/img/user6-128x128.jpg"
-                                     alt="User Image">
-                                <span class="username">
-                          <a href="#">Adam Jones</a>
-                          <a href="#" class="pull-right btn-box-tool"><i class="fa fa-times"></i></a>
-                        </span>
-                                <span class="description">Posted 5 photos - 5 days ago</span>
                             </div>
-                            <!-- /.user-block -->
-                            <div class="row margin-bottom">
-                                <div class="col-sm-6">
-                                    <img class="img-responsive" src="/bower_components/AdminLTE/dist/img/photo1.png" alt="Photo">
+                            <div class="form-group">
+                                <label for="type" class="col-sm-2 control-label">类型</label>
+
+                                <div class="col-sm-10">
+                                    <input class="form-control" id="type" placeholder="类型" value="{$user.type_name}" type="text" disabled>
                                 </div>
-                                <!-- /.col -->
-                                <div class="col-sm-6">
-                                    <div class="row">
-                                        <div class="col-sm-6">
-                                            <img class="img-responsive" src="/bower_components/AdminLTE/dist/img/photo2.png" alt="Photo">
-                                            <br>
-                                            <img class="img-responsive" src="/bower_components/AdminLTE/dist/img/photo3.jpg" alt="Photo">
-                                        </div>
-                                        <!-- /.col -->
-                                        <div class="col-sm-6">
-                                            <img class="img-responsive" src="/bower_components/AdminLTE/dist/img/photo4.jpg" alt="Photo">
-                                            <br>
-                                            <img class="img-responsive" src="/bower_components/AdminLTE/dist/img/photo1.png" alt="Photo">
-                                        </div>
-                                        <!-- /.col -->
-                                    </div>
-                                    <!-- /.row -->
-                                </div>
-                                <!-- /.col -->
                             </div>
-                            <!-- /.row -->
+                            <div class="form-group">
+                                <label for="username" class="col-sm-2 control-label">账号</label>
 
-                            <ul class="list-inline">
-                                <li><a href="#" class="link-black text-sm"><i class="fa fa-share margin-r-5"></i> Share</a>
-                                </li>
-                                <li><a href="#" class="link-black text-sm"><i class="fa fa-thumbs-o-up margin-r-5"></i>
-                                    Like</a>
-                                </li>
-                                <li class="pull-right">
-                                    <a href="#" class="link-black text-sm"><i class="fa fa-comments-o margin-r-5"></i>
-                                        Comments
-                                        (5)</a></li>
-                            </ul>
+                                <div class="col-sm-10">
+                                    <input class="form-control" id="username" placeholder="账号" {$user.username} type="text" disabled>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="wechat" class="col-sm-2 control-label">微信号</label>
 
-                            <input class="form-control input-sm" placeholder="Type a comment" type="text">
-                        </div>
-                        <!-- /.post -->
+                                <div class="col-sm-10">
+                                    <input class="form-control" id="wechat" placeholder="微信号" {$user.wechat} type="text" disabled>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="bank_name" class="col-sm-2 control-label">开户行</label>
+
+                                <div class="col-sm-10">
+                                    <input class="form-control" id="bank_name" placeholder="开户行" {$user.bank_name} type="text">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="bank_card" class="col-sm-2 control-label">卡号</label>
+
+                                <div class="col-sm-10">
+                                    <input class="form-control" id="bank_card" placeholder="卡号" {$user.bank_card} type="text">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="real_name" class="col-sm-2 control-label">姓名</label>
+
+                                <div class="col-sm-10">
+                                    <input class="form-control" id="real_name" placeholder="姓名" {$user.real_name} type="text">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-offset-2 col-sm-10">
+                                    <button type="submit" class="btn btn-danger" onclick="userSave('__MODULE__/user/users')">提交</button>
+                                </div>
+                            </div>
+                        </form>
                     </div>
                     <!-- /.tab-pane -->
 
                     <div class="tab-pane" id="settings">
-                        <form class="form-horizontal">
+                        <form class="form-horizontal" onsubmit="return false;">
                             <div class="form-group">
-                                <label for="inputName" class="col-sm-2 control-label">Name</label>
+                                <label for="old_password" class="col-sm-2 control-label">旧密码</label>
 
                                 <div class="col-sm-10">
-                                    <input class="form-control" id="inputName" placeholder="Name" type="email">
+                                    <input class="form-control" id="old_password" placeholder="旧密码" type="password">
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label for="inputEmail" class="col-sm-2 control-label">Email</label>
+                                <label for="password" class="col-sm-2 control-label">密码</label>
 
                                 <div class="col-sm-10">
-                                    <input class="form-control" id="inputEmail" placeholder="Email" type="email">
+                                    <input class="form-control" id="password" placeholder="密码" type="password">
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label for="inputName" class="col-sm-2 control-label">Name</label>
+                                <label for="repeat_password" class="col-sm-2 control-label">重复密码</label>
 
                                 <div class="col-sm-10">
-                                    <input class="form-control" id="inputName" placeholder="Name" type="text">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="inputExperience" class="col-sm-2 control-label">Experience</label>
-
-                                <div class="col-sm-10">
-                                    <textarea class="form-control" id="inputExperience"
-                                              placeholder="Experience"></textarea>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="inputSkills" class="col-sm-2 control-label">Skills</label>
-
-                                <div class="col-sm-10">
-                                    <input class="form-control" id="inputSkills" placeholder="Skills" type="text">
+                                    <input class="form-control" id="repeat_password" placeholder="重复密码" type="password">
                                 </div>
                             </div>
                             <div class="form-group">
                                 <div class="col-sm-offset-2 col-sm-10">
-                                    <div class="checkbox">
-                                        <label>
-                                            <input type="checkbox"> I agree to the <a href="#">terms and conditions</a>
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <div class="col-sm-offset-2 col-sm-10">
-                                    <button type="submit" class="btn btn-danger">Submit</button>
+                                    <button type="submit" class="btn btn-danger" onclick="userPassword('__MODULE__/user/users')">提交</button>
                                 </div>
                             </div>
                         </form>
@@ -240,74 +148,46 @@
 </section>
 <!-- /.content -->
 <script>
-    function userClear() {
-        $("#username").val("");
-        $("#name").val("");
-        $("#password").val("");
-        $("#repeat_password").val("");
-        $("#status").attr("checked", false);
-        $("#username").attr("disabled", false);
-        $("#_id").val("");
-        $("#user_submit").html("添加");
-    }
-
-    function userEdit(_url) {
-        ajaxRequest(_url, null, 'get', 'json', function (result) {
-            if (result.code == 200) {
-                $("#user_submit").html("保存");
-                $('#gg-tab a[href="#tab_2"]').tab('show');
-                $("#username").val(result.data.users.username);
-                $("#username").attr("disabled", true);
-                $("#name").val(result.data.users.name);
-                if (result.data.users.status) {
-                    $("#status").attr("checked", true);
-                } else {
-                    $("#status").attr("checked", false);
-                }
-                $("#role_id").val(result.data.users.role_id.$id);
-                $("#_id").val(result.data.users._id.$id);
-            }
-        })
-    }
-
-    function userDelete(_url, _id) {
-        var source = {
-            _id: _id
-        }
-        ajaxRequest(_url, source, 'DELETE', 'json', function (result) {
-            if (!result) {
-                successDialog('block', '删除', '删除成功!');
-                menuClick('__MODULE__/user/users');
-            }
-        })
-    }
-
     function userSave(_url) {
-        var method = $("#_id").val() ? "PUT" : "POST";
-        var username = $("#username").val();
+        var method = "PUT";
+        var old_password = $("#old_password").val();
         var password = $("#password").val();
         var repeat_password = $("#repeat_password").val();
-        var name = $("#name").val();
-        var role_id = $("#role_id").val();
-        var _id = $("#_id").val();
-        var status = $("#status").is(':checked') ? 1 : 0;
 
         var source = {
-            username: username,
+            old_password: old_password,
             password: password,
             repeat_password: repeat_password,
-            name: name,
-            role_id: role_id,
-            status: status,
-            _id: _id
         };
         ajaxRequest(_url, source, method, 'json', function (result) {
             if (result.code == 201) {
-                successDialog('block', '保存或新建', result.msg);
+                successDialog('block', '保存', result.msg);
                 menuClick('__MODULE__/user/users');
 
             } else {
-                errorDialog('block', '保存或新建', result.msg);
+                errorDialog('block', '保存', result.msg);
+            }
+        });
+    }
+
+    function userPassword(_url) {
+        var method = "PUT";
+        var old_password = $("#old_password").val();
+        var password = $("#password").val();
+        var repeat_password = $("#repeat_password").val();
+
+        var source = {
+            old_password: old_password,
+            password: password,
+            repeat_password: repeat_password,
+        };
+        ajaxRequest(_url, source, method, 'json', function (result) {
+            if (result.code == 201) {
+                successDialog('block', '保存', result.msg);
+                menuClick('__MODULE__/user/users');
+
+            } else {
+                errorDialog('block', '保存', result.msg);
             }
         });
     }

@@ -11,6 +11,12 @@ class IndexController extends BaseController {
         }
     }
 
+    public function homeGet() {
+        $html = $this->fetch("Index:index");
+        $this->_result['data']['html'] = $html;
+        $this->response($this->_result);
+    }
+
     public function profileGet() {
         $this->_result['data']['html'] = 'Profile';
         $this->response($this->_result, 'json', 200);
