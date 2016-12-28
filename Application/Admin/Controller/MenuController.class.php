@@ -110,6 +110,7 @@ class MenuController extends BaseController {
         $data['icon'] = I('post.icon', 'fa-circle');
         $data['pid'] = I('post.pid', '0');
         $data['visible'] = I('post.visible') ? intval(I('post.visible')) : 0;
+        $data['date'] = time();
         merge_params_error($data['name'], 'name', '名称不能为空', $this->_result['error']);
         merge_params_error($data['module_name'], 'module_name', '模块名不能为空', $this->_result['error']);
         merge_params_error($data['http_method'], 'http_method', 'HTTP方法不能为空', $this->_result['error']);

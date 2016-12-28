@@ -45,7 +45,8 @@ class AgentController extends BaseController
             $page = $page->show();
 
             //role list
-            $role_cursor = $admin_role->find(array("module_name"=>C('SYSTEM.MODULE_LIST')['Agent']));
+            $module_list = C('SYSTEM.MODULE_LIST');
+            $role_cursor = $admin_role->find(array("module_name"=>$module_list['Agent']));
             $roles = iterator_to_array($role_cursor);
 
             $this->assign("page", $page);
@@ -122,6 +123,7 @@ class AgentController extends BaseController
         $data['level'] = 1; //一级代理
         $data['status'] = intval(I('post.status'));
         $data['role_id'] = I('post.role_id');
+        $data['date'] = time();
         merge_params_error($data['username'], 'username', '用户名不能为空', $this->_result['error']);
         merge_params_error($data['name'], 'name', '名字不能为空', $this->_result['error']);
         merge_params_error($data['password'], 'password', '密码不能为空', $this->_result['error']);

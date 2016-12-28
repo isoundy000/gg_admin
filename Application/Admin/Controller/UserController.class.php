@@ -67,6 +67,7 @@ class UserController extends BaseController
         $data['password'] = I('put.password', null);
         $data['repeat_password'] = I('put.repeat_password', null);
         $data['status'] = intval(I('put.status'));
+        $data['date'] = time();
         merge_params_error($data['name'], 'name', '名字不能为空', $this->_result['error'],false);
         merge_params_error($data['role_id'], 'role_id', '权限组不能为空', $this->_result['error']);
         merge_params_error($data['password'], 'password', '密码不能为空', $this->_result['error'], false);
@@ -76,10 +77,6 @@ class UserController extends BaseController
             $error = array_shift($this->_result['error']);
             $error = array_values($error);
             $this->response($this->_result, 'json', 400, $error[0]);
-        }
-
-        if (checkTextLength6($data['name'])) {
-            $this->response($this->_result, 'json', 400, '用户名至少6个字符');
         }
 
         if ($data['password'] && $data['repeat_password']) {
@@ -122,7 +119,7 @@ class UserController extends BaseController
         $data['repeat_password'] = I('post.repeat_password', null, check_empty_string);
         $data['role_id'] = I('post.role_id', null, check_empty_string);
         $data['status'] = intval(I('post.status'));
-        $data['date'] = date("Y-m-d H:i:s", time());
+        $data['date'] = time();
         merge_params_error($data['name'], 'name', '名字不能为空', $this->_result['error']);
         merge_params_error($data['password'], 'password', '密码不能为空', $this->_result['error']);
         merge_params_error($data['repeat_password'], '密码不能为空', 'repeat_password', $this->_result['error']);

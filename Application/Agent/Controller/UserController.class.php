@@ -106,7 +106,8 @@ class UserController extends BaseController
             $this->response($this->_result, 'json', 400, '该账户已被禁用');
         }
         //附加字段说明
-        $query['type_name'] = C('SYSTEM.AGENT_TYPE')[$query['type']];
+        $type_list = C('SYSTEM.AGENT_TYPE');
+        $query['type_name'] = $type_list[$query['type']];
         //保存用户会话信息
         $_SESSION[MODULE_NAME.'_admin'] = $query;
         //生成token

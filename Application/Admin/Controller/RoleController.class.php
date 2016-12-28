@@ -108,6 +108,7 @@ class RoleController extends BaseController {
         $data['status'] = intval(I('post.status'));
         $data['module_name'] = I('post.module_name') ? I('post.module_name') : 'Admin';
         $data['permission'] = $this->handlePermission(I('post.permission'));
+        $data['date'] = time();
         merge_params_error($data['name'], 'name', '权限名称不能为空', $this->_result['error']);
 
         //检查参数
