@@ -17,8 +17,6 @@ return array(
     'MONGO_SERVER' => 'mongodb://backdbuser:backdbpwd@115.28.230.12:27017/backDb?authMechanism=SCRAM-SHA-1',
     'MONGO_DB' => 'backDb',
 
-    //theme
-    'DEFAULT_THEME' => 'Admin',
     'LAYOUT_ON' => true,
     'LAYOUT_NAME' => 'layout',
 

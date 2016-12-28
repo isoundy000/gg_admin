@@ -582,7 +582,7 @@ function check_verify($code, $id="") {
 			'reset' => false,//验证成功是否重置
 	);
 	$Verify = new Verify($config);
-	return $Verify->check_redis($code, $id);
+	return $Verify->check($code, $id);
 }
 
 

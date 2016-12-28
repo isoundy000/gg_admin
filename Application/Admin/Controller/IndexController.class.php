@@ -4,7 +4,7 @@ use Common\Controller\BaseController;
 
 class IndexController extends BaseController {
     public function indexGet(){
-        if($_SESSION['token']) {//已登陆
+        if($_SESSION[MODULE_NAME.'_token']) {//已登陆
             $this->display("Index:index");
         } else {//未登陆
             $this->redirect("Index/login");
@@ -17,7 +17,7 @@ class IndexController extends BaseController {
     }
 
     public function loginGet() {
-        if($_SESSION['token']) {
+        if($_SESSION[MODULE_NAME.'_token']) {
             $this->display("Index:index");
         } else {
             $this->display("Index:login");

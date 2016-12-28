@@ -84,7 +84,7 @@
     });
 
     function pressDown() {
-        $(document).keydown(function (event) {
+        $(document).onkeyup(function (event) {
             if (event.keyCode == 13) {
                 login()
             }

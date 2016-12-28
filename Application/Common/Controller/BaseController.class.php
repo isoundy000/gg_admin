@@ -29,13 +29,14 @@ class BaseController extends RestController {
         //不需要权限的控制器
         if (in_array($action_name, array(
             'index/login',
-            'user/token'
+            'user/token',
+            'index/verify',
         ))) {
             return;
         }
 
         //检查用户是否登录
-        if ($_SESSION['token']) {
+        if ($_SESSION[MODULE_NAME.'_token']) {
             //判断用户是否有权限请求此接口
             $admin_action = $this->mongo_db->admin_menu->findOne(
                 array("action"=>$action_name,"http_method"=>new \MongoRegex("/$http_method/"),"module_name"=>MODULE_NAME)
@@ -47,7 +48,7 @@ class BaseController extends RestController {
             }
             $admin_action = $admin_action['_id']->__toString();
             //取用户权限信息
-            $admin_role = $this->mongo_db->admin_role->findOne(array("_id"=>$_SESSION['admin']['role_id']));
+            $admin_role = $this->mongo_db->admin_role->findOne(array("_id"=>$_SESSION[MODULE_NAME.'_admin']['role_id']));
 
             //403 no permission
             if(!in_array($admin_action, $admin_role['permission'])) {
