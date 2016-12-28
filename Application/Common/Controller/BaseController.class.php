@@ -49,7 +49,6 @@ class BaseController extends RestController {
             $admin_action = $admin_action['_id']->__toString();
             //取用户权限信息
             $admin_role = $this->mongo_db->admin_role->findOne(array("_id"=>$_SESSION[MODULE_NAME.'_admin']['role_id']));
-
             //403 no permission
             if(!in_array($admin_action, $admin_role['permission'])) {
                 $this->response($this->_result, 'json', 403);

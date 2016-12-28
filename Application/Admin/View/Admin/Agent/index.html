@@ -109,6 +109,16 @@
                             </div>
                         </div>
                         <div class="form-group">
+                            <label for="role_id" class="col-sm-2 control-label">权限组</label>
+                            <div class="col-sm-4">
+                                <select class="form-control" id="role_id">
+                                    <foreach name="roles" item="item">
+                                        <option value="{$item._id}">{$item.name}</option>
+                                    </foreach>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
                             <label for="status" class="col-sm-2 control-label">状态</label>
 
                             <div class="col-sm-4">
@@ -143,6 +153,7 @@
         $("#password").val("");
         $("#repeat_password").val("");
         $("#status").attr("checked", false);
+        $("#role_id").val("");
         $("#_id").val("");
         $("#agent_submit").html("添加");
     }
@@ -155,6 +166,7 @@
                 $("#username").val(result.data.agents.username);
                 $("#name").val(result.data.agents.name);
                 $("#type").val(result.data.agents.type);
+                $("#role_id").val(result.data.agents.role_id.$id);
                 if (result.data.agents.status) {
                     $("#status").attr("checked", true);
                 } else {
@@ -189,6 +201,7 @@
         var repeat_password = $("#repeat_password").val();
         var name = $("#name").val();
         var type = $("#type").val();
+        var role_id = $("#role_id").val();
         var _id = $("#_id").val();
         var status = $("#status").is(':checked') ? 1 : 0;
 
@@ -198,6 +211,7 @@
             repeat_password:repeat_password,
             name: name,
             type: type,
+            role_id: role_id,
             status:status,
             _id:_id
         };

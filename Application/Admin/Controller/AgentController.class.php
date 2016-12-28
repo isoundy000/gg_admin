@@ -13,6 +13,8 @@ class AgentController extends BaseController
 {
     public function agentsGet() {
         $admin_agent = $this->mongo_db->admin_agent;
+        $admin_role = $this->mongo_db->admin_role;
+
         $agent_type = C('SYSTEM.AGENT_TYPE');
         $this->_result['data']['agent_type'] = $agent_type;
 
@@ -32,6 +34,8 @@ class AgentController extends BaseController
             $cursor = $admin_agent->find($search)->limit($limit)->skip($skip);
             $result = array();
             foreach ($cursor as $item) {
+                $role = $admin_role->findOne(array('_id' => $item['role_id']),array('name'=>1));
+                $item['role_name'] = $role['name'];
                 $item['type_name'] = $agent_type[$item['type']];
                 array_push($result, $item);
             }
@@ -40,7 +44,12 @@ class AgentController extends BaseController
             $page = new Page($count, C('PAGE_NUM'));
             $page = $page->show();
 
+            //role list
+            $role_cursor = $admin_role->find(array("module_name"=>C('SYSTEM.MODULE_LIST')['Agent']));
+            $roles = iterator_to_array($role_cursor);
+
             $this->assign("page", $page);
+            $this->assign("roles", $roles);
             $this->assign("agents", $result);
             $this->assign("agent_type", $agent_type);
             $this->_result['data']['html'] = $this->fetch("Agent:index");
@@ -48,6 +57,7 @@ class AgentController extends BaseController
             $this->_result['data']['count'] = $count;
             $this->_result['data']['page'] = $page;
             $this->_result['data']['agents'] = $result;
+            $this->_result['data']['roles'] = $roles;
         }
         $this->response($this->_result);
     }
@@ -60,6 +70,7 @@ class AgentController extends BaseController
         $data['repeat_password'] = I('put.repeat_password', null);
         $data['type'] = intval(I('put.type'));
         $data['status'] = intval(I('put.status'));
+        $data['role_id'] = I('put.role_id');
         merge_params_error($data['name'], 'name', '昵称不能为空', $this->_result['error']);
         merge_params_error($data['password'], 'password', '密码不能为空', $this->_result['error'], false);
         merge_params_error($data['repeat_password'], 'repeat_password', '密码不能为空', $this->_result['error'], false);
@@ -110,6 +121,7 @@ class AgentController extends BaseController
         $data['type'] = intval(I('post.type'));
         $data['level'] = 1; //一级代理
         $data['status'] = intval(I('post.status'));
+        $data['role_id'] = I('post.role_id');
         merge_params_error($data['username'], 'username', '用户名不能为空', $this->_result['error']);
         merge_params_error($data['name'], 'name', '名字不能为空', $this->_result['error']);
         merge_params_error($data['password'], 'password', '密码不能为空', $this->_result['error']);

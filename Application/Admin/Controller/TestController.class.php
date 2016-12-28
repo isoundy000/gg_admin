@@ -13,8 +13,7 @@ class TestController extends RestController {
         //连接数据库
         //$mongo_client = new \MongoClient(C('MONGO_SERVER'));
         //$db_name = C('MONGO_DB');
-        unset($_SESSION);
-
+        unset($_SESSION['Agent_token']);
     }
 
 }

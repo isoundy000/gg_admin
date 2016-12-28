@@ -12,126 +12,231 @@
 
 <!-- Main content -->
 <section class="content">
+
     <div class="row">
-        <div class="nav-tabs-custom">
-            <ul class="nav nav-tabs" id="gg-tab">
-                <li class="active"><a href="#tab_1" data-toggle="tab" aria-expanded="true"><b class="text-light-blue">管理员列表</b></a></li>
-                <li class=""><a href="#tab_2" data-toggle="tab" aria-expanded="false"><b class="text-green">新建</b> | <b class="text-blue">编辑</b></a></li>
-            </ul>
-            <div class="tab-content">
-                <div class="tab-pane active" id="tab_1">
-                    <div class="box">
-                        <div class="box-header">
-                            <h3 class="box-title"></h3>
+        <div class="col-md-3">
+            <!-- Profile Image -->
+            <div class="box box-primary">
+                <div class="box-body box-profile">
+                    <img class="profile-user-img img-responsive img-circle" src="/bower_components/AdminLTE/dist/img/photo1.png"
+                         alt="User profile picture">
 
-                            <div class="box-tools">
-                                <div class="input-group input-group-sm" style="width: 150px;">
-                                    <input name="table_search" class="form-control pull-right" placeholder="搜索..." type="text">
+                    <h3 class="profile-username text-center">{$user.name}</h3>
 
-                                    <div class="input-group-btn">
-                                        <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+                    <p class="text-muted text-center">{$user.username}</p>
+
+                    <ul class="list-group list-group-unbordered">
+                        <li class="list-group-item">
+                            <b>类型</b> <a class="pull-right">{$user.type}</a>
+                        </li>
+                        <li class="list-group-item">
+                            <b>加入日期</b> <a class="pull-right">13,287</a>
+                        </li>
+                    </ul>
+
+                    <a href="#" class="btn btn-primary btn-block"><b>Follow</b></a>
+                </div>
+                <!-- /.box-body -->
+            </div>
+            <!-- /.box -->
+        </div>
+        <!-- /.col -->
+        <div class="col-md-9">
+            <div class="nav-tabs-custom">
+                <ul class="nav nav-tabs">
+                    <li class="active"><a href="#idata-toggle="tab" aria-expanded="true">补充信息</a></li>
+                    <li class=""><a href="#settings" data-toggle="tab" aria-expanded="false">修改密码</a></li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane active" id="info">
+                        <!-- Post -->
+                        <div class="post">
+                            <div class="user-block">
+                                <img class="img-circle img-bordered-sm" src="/bower_components/AdminLTE/dist/img/user1-128x128.jpg"
+                                     alt="user image">
+                                <span class="username">
+                          <a href="#">Jonathan Burke Jr.</a>
+                          <a href="#" class="pull-right btn-box-tool"><i class="fa fa-times"></i></a>
+                        </span>
+                                <span class="description">Shared publicly - 7:30 PM today</span>
+                            </div>
+                            <!-- /.user-block -->
+                            <p>
+                                Lorem ipsum represents a long-held tradition for designers,
+                                typographers and the like. Some people hate it and argue for
+                                its demise, but others ignore the hate as they create awesome
+                                tools to help create filler text for everyone from bacon lovers
+                                to Charlie Sheen fans.
+                            </p>
+                            <ul class="list-inline">
+                                <li><a href="#" class="link-black text-sm"><i class="fa fa-share margin-r-5"></i> Share</a>
+                                </li>
+                                <li><a href="#" class="link-black text-sm"><i class="fa fa-thumbs-o-up margin-r-5"></i>
+                                    Like</a>
+                                </li>
+                                <li class="pull-right">
+                                    <a href="#" class="link-black text-sm"><i class="fa fa-comments-o margin-r-5"></i>
+                                        Comments
+                                        (5)</a></li>
+                            </ul>
+
+                            <input class="form-control input-sm" placeholder="Type a comment" type="text">
+                        </div>
+                        <!-- /.post -->
+
+                        <!-- Post -->
+                        <div class="post clearfix">
+                            <div class="user-block">
+                                <img class="img-circle img-bordered-sm" src="/bower_components/AdminLTE/dist/img/user7-128x128.jpg"
+                                     alt="User Image">
+                                <span class="username">
+                          <a href="#">Sarah Ross</a>
+                          <a href="#" class="pull-right btn-box-tool"><i class="fa fa-times"></i></a>
+                        </span>
+                                <span class="description">Sent you a message - 3 days ago</span>
+                            </div>
+                            <!-- /.user-block -->
+                            <p>
+                                Lorem ipsum represents a long-held tradition for designers,
+                                typographers and the like. Some people hate it and argue for
+                                its demise, but others ignore the hate as they create awesome
+                                tools to help create filler text for everyone from bacon lovers
+                                to Charlie Sheen fans.
+                            </p>
+
+                            <form class="form-horizontal">
+                                <div class="form-group margin-bottom-none">
+                                    <div class="col-sm-9">
+                                        <input class="form-control input-sm" placeholder="Response">
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <button type="submit" class="btn btn-danger pull-right btn-block btn-sm">Send
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <!-- /.post -->
+
+                        <!-- Post -->
+                        <div class="post">
+                            <div class="user-block">
+                                <img class="img-circle img-bordered-sm" src="/bower_components/AdminLTE/dist/img/user6-128x128.jpg"
+                                     alt="User Image">
+                                <span class="username">
+                          <a href="#">Adam Jones</a>
+                          <a href="#" class="pull-right btn-box-tool"><i class="fa fa-times"></i></a>
+                        </span>
+                                <span class="description">Posted 5 photos - 5 days ago</span>
+                            </div>
+                            <!-- /.user-block -->
+                            <div class="row margin-bottom">
+                                <div class="col-sm-6">
+                                    <img class="img-responsive" src="/bower_components/AdminLTE/dist/img/photo1.png" alt="Photo">
+                                </div>
+                                <!-- /.col -->
+                                <div class="col-sm-6">
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <img class="img-responsive" src="/bower_components/AdminLTE/dist/img/photo2.png" alt="Photo">
+                                            <br>
+                                            <img class="img-responsive" src="/bower_components/AdminLTE/dist/img/photo3.jpg" alt="Photo">
+                                        </div>
+                                        <!-- /.col -->
+                                        <div class="col-sm-6">
+                                            <img class="img-responsive" src="/bower_components/AdminLTE/dist/img/photo4.jpg" alt="Photo">
+                                            <br>
+                                            <img class="img-responsive" src="/bower_components/AdminLTE/dist/img/photo1.png" alt="Photo">
+                                        </div>
+                                        <!-- /.col -->
+                                    </div>
+                                    <!-- /.row -->
+                                </div>
+                                <!-- /.col -->
+                            </div>
+                            <!-- /.row -->
+
+                            <ul class="list-inline">
+                                <li><a href="#" class="link-black text-sm"><i class="fa fa-share margin-r-5"></i> Share</a>
+                                </li>
+                                <li><a href="#" class="link-black text-sm"><i class="fa fa-thumbs-o-up margin-r-5"></i>
+                                    Like</a>
+                                </li>
+                                <li class="pull-right">
+                                    <a href="#" class="link-black text-sm"><i class="fa fa-comments-o margin-r-5"></i>
+                                        Comments
+                                        (5)</a></li>
+                            </ul>
+
+                            <input class="form-control input-sm" placeholder="Type a comment" type="text">
+                        </div>
+                        <!-- /.post -->
+                    </div>
+                    <!-- /.tab-pane -->
+
+                    <div class="tab-pane" id="settings">
+                        <form class="form-horizontal">
+                            <div class="form-group">
+                                <label for="inputName" class="col-sm-2 control-label">Name</label>
+
+                                <div class="col-sm-10">
+                                    <input class="form-control" id="inputName" placeholder="Name" type="email">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="inputEmail" class="col-sm-2 control-label">Email</label>
+
+                                <div class="col-sm-10">
+                                    <input class="form-control" id="inputEmail" placeholder="Email" type="email">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="inputName" class="col-sm-2 control-label">Name</label>
+
+                                <div class="col-sm-10">
+                                    <input class="form-control" id="inputName" placeholder="Name" type="text">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="inputExperience" class="col-sm-2 control-label">Experience</label>
+
+                                <div class="col-sm-10">
+                                    <textarea class="form-control" id="inputExperience"
+                                              placeholder="Experience"></textarea>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="inputSkills" class="col-sm-2 control-label">Skills</label>
+
+                                <div class="col-sm-10">
+                                    <input class="form-control" id="inputSkills" placeholder="Skills" type="text">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-offset-2 col-sm-10">
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox"> I agree to the <a href="#">terms and conditions</a>
+                                        </label>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <!-- /.box-header -->
-                        <div class="box-body table-responsive no-padding">
-                            <table class="table table-hover">
-                                <tbody>
-                                <tr>
-                                    <th>用户名</th>
-                                    <th>名字</th>
-                                    <th>角色</th>
-                                    <th>状态</th>
-                                    <th>操作</th>
-                                </tr>
-                                <foreach name="users" item="item">
-                                    <tr>
-                                        <td>{$item.username}</td>
-                                        <td>{$item.name}</td>
-                                        <td>{$item.role_name}</td>
-                                        <td><if condition="$item.status eq 1"><b class="label bg-green">已启用</b><else /><b class="label bg-red">已禁用</b></if></td>
-                                        <td><a href="Javascript:void(0)" onclick="userEdit('__MODULE__/user/users/_id/{$item._id}')">编辑</a> |
-                                            <a href="Javascript:void(0)" onclick="userDelete('__MODULE__/user/users', '{$item._id}')">删除</a></td>
-                                    </tr>
-                                </foreach>
-                                </tbody>
-                            </table>
-                        </div>
-                        <!-- /.box-body -->
-                        <div class="box-footer clearfix">
-                            {$page}
-                        </div>
-
-                        <!-- /.box-footer -->
-                    </div>
-                </div>
-                <!-- /.tab-pane -->
-                <div class="tab-pane" id="tab_2">
-                    <form class="form-horizontal" onsubmit="return false;">
-                        <div class="form-group">
-                            <label for="username" class="col-sm-2 control-label">用户名</label>
-                            <div class="col-sm-4">
-                                <input class="form-control" id="username" placeholder="用户" type="text" required>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="password" class="col-sm-2 control-label">密码</label>
-
-                            <div class="col-sm-4">
-                                <input class="form-control" id="password" placeholder="密码" type="password">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="repeat_password" class="col-sm-2 control-label">重复密码</label>
-
-                            <div class="col-sm-4">
-                                <input class="form-control" id="repeat_password" placeholder="重复密码" type="password">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="name" class="col-sm-2 control-label">名字</label>
-
-                            <div class="col-sm-4">
-                                <input class="form-control" id="name" placeholder="名字" type="text" required>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="role_id" class="col-sm-2 control-label">角色</label>
-                            <div class="col-sm-4">
-                                <select class="form-control" id="role_id">
-                                    <foreach name="roles" item="item">
-                                        <option value="{$item._id}">{$item.name}</option>
-                                    </foreach>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="status" class="col-sm-2 control-label">状态</label>
-
-                            <div class="col-sm-4">
-                                <!--<input class="form-control" id="status" placeholder="状态" type="text">-->
-                                <div class="checkbox">
-                                    <label>
-                                        <input type="checkbox" id="status">是否激活
-                                    </label>
+                            <div class="form-group">
+                                <div class="col-sm-offset-2 col-sm-10">
+                                    <button type="submit" class="btn btn-danger">Submit</button>
                                 </div>
                             </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="col-sm-offset-2 col-sm-4">
-                                <button id="user_submit" type="submit" class="btn btn-primary" onclick="userSave('__MODULE__/user/users')">添加</button>
-                                <button type="submit" class="btn btn-warning" onclick="userClear()">清空</button>
-                                <input type="hidden" id="_id">
-                            </div>
-                        </div>
-                    </form>
+                        </form>
+                    </div>
+                    <!-- /.tab-pane -->
                 </div>
-
+                <!-- /.tab-content -->
             </div>
-            <!-- /.tab-content -->
+            <!-- /.nav-tabs-custom -->
         </div>
+        <!-- /.col -->
     </div>
+    <!-- /.row -->
 </section>
 <!-- /.content -->
 <script>
@@ -147,7 +252,7 @@
     }
 
     function userEdit(_url) {
-        ajaxRequest(_url, null, 'get', 'json', function(result) {
+        ajaxRequest(_url, null, 'get', 'json', function (result) {
             if (result.code == 200) {
                 $("#user_submit").html("保存");
                 $('#gg-tab a[href="#tab_2"]').tab('show');
@@ -169,7 +274,7 @@
         var source = {
             _id: _id
         }
-        ajaxRequest(_url, source, 'DELETE', 'json', function(result) {
+        ajaxRequest(_url, source, 'DELETE', 'json', function (result) {
             if (!result) {
                 successDialog('block', '删除', '删除成功!');
                 menuClick('__MODULE__/user/users');
@@ -188,16 +293,16 @@
         var status = $("#status").is(':checked') ? 1 : 0;
 
         var source = {
-            username:username,
-            password:password,
-            repeat_password:repeat_password,
+            username: username,
+            password: password,
+            repeat_password: repeat_password,
             name: name,
-            role_id:role_id,
-            status:status,
-            _id:_id
+            role_id: role_id,
+            status: status,
+            _id: _id
         };
-        ajaxRequest(_url, source, method, 'json', function(result) {
-            if(result.code == 201) {
+        ajaxRequest(_url, source, method, 'json', function (result) {
+            if (result.code == 201) {
                 successDialog('block', '保存或新建', result.msg);
                 menuClick('__MODULE__/user/users');
 
