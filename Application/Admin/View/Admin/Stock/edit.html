@@ -1,0 +1,102 @@
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <h1>
+        库存管理
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="__MODULE__/index/index"><i class="fa fa-dashboard"></i>首页</a></li>
+        <foreach name="breadcrumb" item="item">
+            <li><a <if condition="$item.active eq 1">class="active"</if> href="javascript:void(0)" onclick="menuClick('{$item.action}')">{$item.name}</a></li>
+        </foreach>
+    </ol>
+</section>
+
+<!-- Main content -->
+<section class="content">
+    <div class="row">
+        <foreach name="stock_amount" item="item">
+            <div class="col-lg-3 col-xs-6">
+                <!-- small box -->
+                <div class="small-box bg-green">
+                    <div class="inner">
+                        <p><b>类型:</b> {$item.name}</p>
+                        <p>剩余数量: <label> {$item.amount}</label></p>
+
+                    </div>
+                </div>
+            </div>
+        </foreach>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box box-primary">
+                <div class="box-header">
+                    <!--<h3>申请库存</h3>-->
+                </div>
+                <div class="box-body">
+                    <form class="form-horizontal" onsubmit="return false;">
+                        <div class="form-group">
+                            <label for="type" class="col-sm-2 control-label">类型</label>
+
+                            <div class="col-sm-2">
+                                <select class="form-control" id="type">
+                                    <foreach name="stock_type" key="k" item="item">
+                                        <option value="{$k}">{$item}</option>
+                                    </foreach>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="amount" class="col-sm-2 control-label">数量</label>
+                            <div class="col-sm-2">
+                                <select class="form-control" id="amount">
+                                    <foreach name="stock_amount_type" key="k" item="item">
+                                        <option value="{$k}">{$item}</option>
+                                    </foreach>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="remark" class="col-sm-2 control-label">备注</label>
+                            <div class="col-sm-2">
+                                <input class="form-control" id="remark" placeholder="备注" type="text" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-offset-2 col-sm-4">
+                                <button id="stock_submit" type="submit" class="btn btn-primary" onclick="stockSave('__MODULE__/stock/stocks')">添加</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="box-footer">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- /.content -->
+<script>
+    function stockSave(_url) {
+        var method = "POST";
+        var type = $("#type").val();
+        var amount = $("#amount").val();
+        var remark = $("#remark").val();
+
+        var source = {
+            type: type,
+            amount: amount,
+            remark: remark
+        };
+        ajaxRequest(_url, source, method, 'json', function(result) {
+            if(result.code == 201) {
+                successDialog('block', '新建', result.msg);
+                menuClick('__MODULE__/stock/stocks/tab/edit');
+
+            } else {
+                errorDialog('block', '新建', result.msg);
+            }
+        });
+    }
+</script>

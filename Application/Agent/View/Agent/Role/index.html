@@ -4,9 +4,10 @@
         权限管理
     </h1>
     <ol class="breadcrumb">
-        <li><a href="/"><i class="fa fa-dashboard"></i>首页</a></li>
-        <li><a href="#">一级</a></li>
-        <li class="active">二级</li>
+        <li><a href="__MODULE__/index/index"><i class="fa fa-dashboard"></i>首页</a></li>
+        <foreach name="breadcrumb" item="item">
+            <li><a <if condition="$item.active eq 1">class="active"</if> href="javascript:void(0)" onclick="menuClick('{$item.action}')">{$item.name}</a></li>
+        </foreach>
     </ol>
 </section>
 
@@ -126,7 +127,7 @@
                 var tmp = {
                     text: value.name,
                     icon: "fa " + value.icon,
-                    tags: [value._id],
+                    tags: [value.visible],
                     state: {
                         selected: value.selected==1 ? true : false
                     }
@@ -137,7 +138,7 @@
                         var child_tmp = {
                             text: v.name,
                             icon: "fa " + v.icon,
-                            tags: [v._id],
+                            tags: [v.visible],
                             state: {
                                 selected: v.selected==1 ? true : false
                             }
@@ -158,7 +159,7 @@
                     var tmp = {
                         text: value.name,
                         icon: "fa " + value.icon,
-                        tags: [value._id],
+                        tags: [value.visible],
                         state: {
                             selected: value.selected==1 ? true : false
                         }
@@ -169,7 +170,7 @@
                             var child_tmp = {
                                 text: v.name,
                                 icon: "fa " + v.icon,
-                                tags: [v._id],
+                                tags: [v.visible],
                                 state: {
                                     selected: v.selected==1 ? true : false
                                 }
@@ -194,7 +195,7 @@
             {
                 data: tree,
                 multiSelect: true,
-                //showTags: true,
+                showTags: true,
                 selectedIcon: "fa fa-check-square-o",
                 onNodeSelected: function(event, node) {
                     if(node.parentId) {
@@ -251,6 +252,7 @@
         ajaxRequest(_url, source, 'DELETE', 'json', function(result) {
             console.log(result);
             if (!result) {
+                warningDialog('none');
                 successDialog('block', '删除', '删除成功!');
                 menuClick('__MODULE__/role/roles');
             }

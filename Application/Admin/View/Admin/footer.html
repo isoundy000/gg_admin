@@ -11,6 +11,14 @@
 <div id="warning-dialog" class="modal modal-warning"></div>
 </div>
 <script>
+    function logout(_url) {
+        ajaxRequest(_url, null, 'delete', 'json', function(result) {
+            if (!result) {
+                window.location.href = "/Admin/index/login";
+            }
+        });
+    }
+
     $(function () {
         //Initialize Select2 Elements
         $(".select2").select2();

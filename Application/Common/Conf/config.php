@@ -34,5 +34,14 @@ return array(
             'Admin' => 'Admin',
             'Agent' => 'Agent',
         ),
+        'STOCK_TYPE' => array(//库存类型
+            1 => '普通',
+            2 => '活动',
+        ),
+        'STOCK_AMOUNT_TYPE' => array(//库存数量
+            10000 => 10000,
+            20000 => 20000,
+            30000 => 30000,
+        ),
     ),
 );

@@ -82,7 +82,9 @@ class MenuController extends BaseController {
             $this->response($this->_result, 'json', 400, $error[0]);
         }
         filter_array_element($data);
-        if(!strstr("GET,PUT,POST,DELETE", $data['http_method'])) {
+        $method_list = array('GET','PUT','POST','DELETE');
+        $method = explode(",", $data['http_method']);
+        if($method != array_intersect($method, $method_list)) {
             $this->response($this->_result, 'json', 400, 'http方法必须为:GET,PUT,POST,DELETE');
         }
 

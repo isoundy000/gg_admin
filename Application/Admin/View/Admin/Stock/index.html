@@ -1,12 +1,14 @@
 <!-- Content Header (Page header) -->
 <section class="content-header">
     <h1>
-        库存管理
+        {$title}
     </h1>
+    <input type="hidden" value="{$query}" id="query">
     <ol class="breadcrumb">
-        <li><a href="/"><i class="fa fa-dashboard"></i>首页</a></li>
-        <li><a href="#">一级</a></li>
-        <li class="active">二级</li>
+        <li><a href="__MODULE__/index/index"><i class="fa fa-dashboard"></i>首页</a></li>
+        <foreach name="breadcrumb" item="item">
+            <li><a <if condition="$item.active eq 1">class="active"</if> href="javascript:void(0)" onclick="menuClick('{$item.action}')">{$item.name}</a></li>
+        </foreach>
     </ol>
 </section>
 
@@ -14,80 +16,92 @@
 <section class="content">
     <div class="row">
         <div class="col-md-12">
-            <div class="box box-primary">
+            <div class="box">
                 <div class="box-header">
-                    <!--<h3>申请库存</h3>-->
-                </div>
-                <div class="box-body">
-                    <form class="form-horizontal" onsubmit="return false;">
-                        <div class="form-group">
-                            <label for="type" class="col-sm-2 control-label">类型</label>
+                    <h3 class="box-title"></h3>
 
-                            <div class="col-sm-2">
-                                <select class="form-control" id="type">
-                                    <option value="1">普通</option>
-                                    <option value="2">活动</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="amount" class="col-sm-2 control-label">数量</label>
-                            <div class="col-sm-2">
-                                <select class="form-control" id="amount">
-                                    <option value="10000">10000</option>
-                                    <option value="30000">30000</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="remark" class="col-sm-2 control-label">备注</label>
-                            <div class="col-sm-2">
-                                <input class="form-control" id="remark" placeholder="备注" type="text" required>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="col-sm-offset-2 col-sm-4">
-                                <button id="stock_submit" type="submit" class="btn btn-primary" onclick="stockSave('__MODULE__/stock/stocks')">添加</button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="box-footer">
+                    <div class="box-tools">
+                        <div class="input-group input-group-sm" style="width: 150px;">
+                            <input name="table_search" class="form-control pull-right" placeholder="搜索..." type="text">
 
+                            <div class="input-group-btn">
+                                <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
+                <!-- /.box-header -->
+                <div class="box-body table-responsive no-padding">
+                    <table class="table table-hover">
+                        <tbody>
+                        <tr>
+                            <th>申请时间</th>
+                            <th>类型</th>
+                            <th>数量</th>
+                            <th>备注</th>
+                            <if condition="$query eq verify">
+                                <th>申请人</th>
+                                <th>操作</th>
+                            <else/>
+                                <th>审核结果</th>
+                            </if>
+
+                        </tr>
+                        <foreach name="stocks" item="item">
+                            <tr>
+                                <td>{$item.date}</td>
+                                <td>{$item.type}</td>
+                                <td>{$item.amount}</td>
+                                <td>{$item.remark}</td>
+                                <if condition="$query eq verify">
+                                    <td>{$item.apply_user}</td>
+                                    <td>
+                                        <button class="btn btn-success btn-sm" onclick="stockSave('__MODULE__/stock/stocks', '{$item._id}', 1)">通过</button>
+                                        <button class="btn btn-primary btn-sm" onclick="stockSave('__MODULE__/stock/stocks', '{$item._id}', 0)">拒绝</button>
+                                    </td>
+                                <else/>
+                                    <td>
+                                        <if condition="$item.status eq 1">
+                                            <label class="label bg-green">成功</label>
+                                        <else/>
+                                            <label class="label bg-red">失败</label>
+                                        </if>
+                                    </td>
+                                </if>
+                            </tr>
+
+                        </foreach>
+                        </tbody>
+                    </table>
+                </div>
+                <!-- /.box-body -->
+                <div class="box-footer clearfix">
+                    {$page}
+                </div>
+
+                <!-- /.box-footer -->
             </div>
         </div>
     </div>
 </section>
 <!-- /.content -->
 <script>
-    function stockSave(_url) {
-        var method = $("#_id").val() ? "PUT" : "POST";
-        var sort = $("#sort").val();
-        var name = $("#name").val();
-        var action = $("#action").val();
-        var http_method = $("#http_method").val() ? $("#http_method").val() : "GET,PUT,POST,DELETE";
-        var module_name = $("#module_name").val() ? $("#module_name").val() : "Admin";
-        var icon = $("#icon").val();
-        var pid = $("#pid").val();
-        var _id = $("#_id").val();
-        var visible = $("#visible").is(':checked') ? 1 : 0;
-
+    function stockSave(_url, _id, status) {
+        var method = 'PUT';
+        var query = $("#query").val();
+        if (query=='verify') {
+            query = '/tab/verify';
+        } else {
+            query = '/tab/status';
+        }
         var source = {
-            sort:sort,
-            name: name,
-            action: action ? action : 'javascript:void(0)',
-            http_method: http_method,
-            module_name: module_name,
-            icon: icon ? icon : 'fa-circle',
-            pid:pid,
-            visible:visible,
+            status:status,
             _id:_id
         };
         ajaxRequest(_url, source, method, 'json', function(result) {
             if(result.code == 201) {
                 successDialog('block', '保存或新建', result.msg);
-                menuClick('__MODULE__/stock/stocks');
+                menuClick('__MODULE__/stock/stocks' + query);
 
             } else {
                 errorDialog('block', '保存或新建', result.msg);

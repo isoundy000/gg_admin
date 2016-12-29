@@ -4,9 +4,10 @@
         菜单管理
     </h1>
     <ol class="breadcrumb">
-        <li><a href="/"><i class="fa fa-dashboard"></i>首页</a></li>
-        <li><a href="#">一级</a></li>
-        <li class="active">二级</li>
+        <li><a href="__MODULE__/index/index"><i class="fa fa-dashboard"></i>首页</a></li>
+        <foreach name="breadcrumb" item="item">
+            <li><a <if condition="$item.active eq 1">class="active"</if> href="javascript:void(0)" onclick="menuClick('{$item.action}')">{$item.name}</a></li>
+        </foreach>
     </ol>
 </section>
 
@@ -160,6 +161,7 @@
         ajaxRequest(_url, source, 'DELETE', 'json', function(result) {
             console.log(result);
             if (!result) {
+                warningDialog('none');
                 successDialog('block', '删除', '删除成功!');
                 menuClick('__MODULE__/menu/menus');
             }

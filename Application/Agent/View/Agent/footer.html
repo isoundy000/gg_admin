@@ -10,6 +10,13 @@
 <div id="success-dialog" class="modal modal-success"></div>
 </div>
 <script>
+    function logout(_url) {
+        ajaxRequest(_url, null, 'delete', 'json', function(result) {
+            if (!result) {
+                window.location.href = "/Agent/index/login";
+            }
+        });
+    }
     $(function () {
         //Initialize Select2 Elements
         $(".select2").select2();

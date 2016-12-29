@@ -6,93 +6,94 @@
  * Time: 9:47
  */
 namespace Admin\Controller;
+
 use Common\Controller\BaseController;
 use Think\Page;
 
-class StockController extends BaseController {
-    public function stocksGet() {
-        $admin_stock = $this->mongo_db->admin_stock;
-
-        if (I('get._id')) {
-            $search['_id'] = new \MongoId(I('get._id', null));
-            $option = array();
-            $query = $admin_stock->findOne($search, $option);
-            $this->_result['data']['stocks'] = $query;
-        } else {
-            $search = array();
-            $limit = intval(I('get.limit', C('PAGE_NUM')));
-            $skip = (intval(I('get.p', 1)) - 1) * $limit;
-            filter_array_element($search);
-            filter_array_element($option);
-
-            $cursor = $admin_stock->find($search)->limit($limit)->skip($skip)->sort(array("sort"=>1));
-            $result = array();
-            foreach ($cursor as $item) {
-                if($item['pid']) {
-                    $parent_id = new \MongoId($item['pid']);
-                    $parent = $admin_stock->findOne(array('_id'=>$parent_id), array('name' => 1));
-                    $item['parent_name'] = $parent ? $parent['name'] : "";
-                } else {
-                    $item['parent_name'] = "";
-                }
-                array_push($result, $item);
-            }
-
-            //查找parent stock
-            $parent_query = $admin_stock->find(array("pid"=>'0'));
-            $parent_result = iterator_to_array($parent_query);
-
-            $count = $admin_stock->count($search);
-            $page = new Page($count, C('PAGE_NUM'));
-            $page = $page->show();
-
-            $this->assign("page", $page);
-            $this->assign("stocks", $result);
-            $this->assign("parent_stock", $parent_result);
-            $this->_result['data']['html'] = $this->fetch("Stock:index");
-
-            $this->_result['data']['count'] = $count;
-            $this->_result['data']['page'] = $page;
-            $this->_result['data']['stocks'] = $result;
-            $this->_result['data']['parent_stock'] = $parent_result;
+class StockController extends BaseController
+{
+    public function stocksGet()
+    {
+        $stock_type = C('SYSTEM.STOCK_TYPE');
+        $stock_amount_type = C('SYSTEM.STOCK_AMOUNT_TYPE');
+        $stock_amount = $_SESSION[MODULE_NAME.'_admin']['stock_amount'];
+        foreach ($stock_amount as $key => $value) {
+            $stock_amount[$key] = array(
+                'name' => $stock_type[$key],
+                'amount' => $value
+            );
         }
+        $search = array();
+        $tab = I('get.tab') ? I('get.tab') : 'edit';
+        switch ($tab) {
+            case 'edit'://申请页面
+                $this->assign("stock_type", $stock_type);
+                $this->assign("stock_amount", $stock_amount);
+                $this->assign("stock_amount_type", $stock_amount_type);
+                $html = $this->fetch("Stock:edit");
+                $this->_result['data']['html'] = $html;
+                $this->response($this->_result);
+                break;
+            case 'verify'://申请记录页面
+                $search['verify'] = 0;
+                $this->assign("query", "verify");
+                $this->assign("title", "申请记录");
+                break;
+            case 'status'://审核结果页面
+                $this->assign("title", "审核结果");
+                $this->assign("query", "status");
+                $search['verify'] = 1;
+                break;
+        }
+
+        $admin_stock = $this->mongo_db->admin_stock;
+        $limit = intval(I('get.limit', C('PAGE_NUM')));
+        $skip = (intval(I('get.p', 1)) - 1) * $limit;
+        filter_array_element($search);
+
+        $cursor = $admin_stock->find($search)->limit($limit)->skip($skip)->sort(array("sort" => 1));
+        $result = array();
+        foreach ($cursor as $item) {
+            $item['type'] = $stock_type[$item['type']];
+            $item['date'] = date("Y-m-d H:i:s", $item['date']);
+            array_push($result, $item);
+        }
+
+        $count = $admin_stock->count($search);
+        $page = new Page($count, C('PAGE_NUM'));
+        $page = $page->show();
+
+        $this->assign("page", $page);
+        $this->assign("stocks", $result);
+        $this->_result['data']['html'] = $this->fetch("Stock:index");
+
+        $this->_result['data']['count'] = $count;
+        $this->_result['data']['page'] = $page;
+        $this->_result['data']['stocks'] = $result;
         $this->response($this->_result);
     }
 
-    public function stocksPut() {
-
+    public function stocksPut()
+    {
         $search['_id'] = new \MongoId(I('put._id'));
-        $data['sort'] = intval(I('put.sort'));
-        $data['name'] = I('put.name', null, check_empty_string);
-        $data['action'] = I('put.action', 'javascript:void(0)');
-        $data['module_name'] = I('put.module_name', null, check_empty_string);
-        $data['http_method'] = strtoupper(I('put.http_method', null, check_empty_string));
-        $data['icon'] = I('put.icon', 'fa-circle');
-        $data['pid'] = I('put.pid', '0');
-        $data['visible'] = I('put.visible') ? intval(I('put.visible')) : 0;
-
-        merge_params_error($data['name'], 'name', '名称不能为空', $this->_result['error']);
-        merge_params_error($data['module_name'], 'module_name', '模块名不能为空', $this->_result['error']);
-        merge_params_error($data['http_method'], 'http_method', 'HTTP方法不能为空', $this->_result['error']);
-
-        //检查参数
-        if ($this->_result['error']) {
-            $error = array_shift($this->_result['error']);
-            $error = array_values($error);
-            $this->response($this->_result, 'json', 400, $error[0]);
-        }
-        filter_array_element($data);
-        if(!strstr("GET,PUT,POST,DELETE", $data['http_method'])) {
-            $this->response($this->_result, 'json', 400, 'http方法必须为:GET,PUT,POST,DELETE');
-        }
-
-        if(!strstr("Admin,Agent", $data['module_name'])) {
-            $this->response($this->_result, 'json', 400, '模块名必须为:Admin,Agent中的一种');
-        }
+        $data['status'] = I('put.status', null, check_empty_string);
+        $data['verify'] = 1;//已审核
+        $data['audit_user'] = $_SESSION[MODULE_NAME.'_admin']['username'];
+        $data['audit_time'] = time();
 
         $update['$set'] = $data;
         $admin_stock = $this->mongo_db->admin_stock;
-        if ($admin_stock->update($search,$update)) {
+        $admin_user = $this->mongo_db->admin_user;
+
+        if ($modify = $admin_stock->findAndModify($search, $update)) {
+            //给apply_user记录生成的数量
+            $admin_user->update(array("username"=>$modify['apply_user']),
+                array('$inc' =>
+                    array(
+                    "stock_amount.{$modify['type']}" => $modify['amount']
+                    )
+                )
+            );
             $this->response($this->_result, 'json', 201, '保存成功');
         } else {
             $this->_result['data']['param'] = $data;
@@ -101,18 +102,13 @@ class StockController extends BaseController {
 
     }
 
-    public function stocksPost() {
-        $data['sort'] = intval(I('post.sort'));
-        $data['name'] = I('post.name', null, check_empty_string);
-        $data['action'] = I('post.action', 'javascript:void(0)');
-        $data['module_name'] = I('post.module_name', null, check_empty_string);
-        $data['http_method'] = strtoupper(I('post.http_method', null, check_empty_string));
-        $data['icon'] = I('post.icon', 'fa-circle');
-        $data['pid'] = I('post.pid', '0');
-        $data['visible'] = I('post.visible') ? intval(I('post.visible')) : 0;
-        merge_params_error($data['name'], 'name', '名称不能为空', $this->_result['error']);
-        merge_params_error($data['module_name'], 'module_name', '模块名不能为空', $this->_result['error']);
-        merge_params_error($data['http_method'], 'http_method', 'HTTP方法不能为空', $this->_result['error']);
+    public function stocksPost()
+    {
+        $data['type'] = I('post.type', null, check_empty_string);
+        $data['amount'] = I('post.amount', null, check_empty_string);
+        $data['remark'] = I('post.remark', '');
+        merge_params_error($data['type'], 'type', '类型不能为空', $this->_result['error']);
+        merge_params_error($data['amount'], 'amount', '数量不能为空', $this->_result['error']);
 
         //检查参数
         if ($this->_result['error']) {
@@ -121,14 +117,12 @@ class StockController extends BaseController {
             $this->response($this->_result, 'json', 400, $error[0]);
         }
         filter_array_element($data);
-
-        if(!strstr("GET,PUT,POST,DELETE", $data['http_method'])) {
-            $this->response($this->_result, 'json', 400, 'http方法必须为:GET,PUT,POST,DELETE');
-        }
-
-        if(!strstr("Admin,Agent", $data['module_name'])) {
-            $this->response($this->_result, 'json', 400, '模块名必须为:Admin,Agent中的一种');
-        }
+        $data['type'] = intval($data['type']);
+        $data['amount'] = intval($data['amount']);
+        $data['apply_user'] = $_SESSION[MODULE_NAME.'_admin']['username'];
+        $data['verify'] = 0;
+        $data['status'] = 0;
+        $data['date'] = time();
 
         $admin_stock = $this->mongo_db->admin_stock;
         if ($admin_stock->insert($data)) {
@@ -138,7 +132,8 @@ class StockController extends BaseController {
         }
     }
 
-    public function stocksDelete() {
+    public function stocksDelete()
+    {
         $search['_id'] = new \MongoId(I('delete._id'));
         $admin_stock = $this->mongo_db->admin_stock;
         if ($admin_stock->remove($search)) {

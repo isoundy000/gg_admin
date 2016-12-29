@@ -2,14 +2,6 @@
  * Created by Cherish on 2016/12/22.
  */
 
-function logout(_url) {
-    ajaxRequest(_url, null, 'delete', 'json', function(result) {
-        if (!result) {
-            window.location.href = "/Agent/index/login";
-        }
-    });
-}
-
 function menuClick(_url) {
     ajaxRequest(_url, null, 'get', 'json', function(result) {
         if(result.code == 200) {
@@ -33,9 +25,12 @@ function ajaxRequest(url, data, type, dataType, success) {
                 var message = response.msg ? response.msg : textStatus + " " + errorThrown;
                 errorDialog("block", XMLHttpRequest.status, message);
             } catch (e) {
-                //var message = "无法解析的错误";
-                console.log(e.message);
-                //errorDialog("block", XMLHttpRequest.status, message);
+                var message = "该功能未实现";
+                if(XMLHttpRequest.status!=200 && XMLHttpRequest.status!=201) {
+                    errorDialog("block", XMLHttpRequest.status, message);
+                } else {
+                    console.log("返回非JSON格式数据");
+                }
             }
         }
     });

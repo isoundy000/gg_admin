@@ -1,7 +1,7 @@
 <?php
 /**
  * Created by PhpStorm.
- * User: Cherish
+ * card: Cherish
  * Date: 2016/12/22
  * Time: 9:46
  */
@@ -9,16 +9,20 @@ namespace Admin\Controller;
 use Common\Controller\BaseController;
 use Think\Page;
 
-class UserController extends BaseController
+class CardController extends BaseController
 {
-    public function usersGet() {
-        $admin_user = $this->mongo_db->admin_user;
+    public function cardsGet() {
+        $admin_card = $this->mongo_db->admin_card;
         $admin_role = $this->mongo_db->admin_role;
+
+        $card_type = C('SYSTEM.card_TYPE');
+        $this->_result['data']['card_type'] = $card_type;
+
         if (I('get._id')) {
             $search['_id'] = new \MongoId(I('get._id', null));
             $option = array('password' => 0);
-            $query = $admin_user->findOne($search, $option);
-            $this->_result['data']['users'] = $query;
+            $query = $admin_card->findOne($search, $option);
+            $this->_result['data']['cards'] = $query;
 
         } else {
             $search = array();
@@ -27,49 +31,48 @@ class UserController extends BaseController
             filter_array_element($search);
             filter_array_element($option);
 
-            $cursor = $admin_user->find($search)->limit($limit)->skip($skip);
+            $cursor = $admin_card->find($search)->limit($limit)->skip($skip);
             $result = array();
             foreach ($cursor as $item) {
                 $role = $admin_role->findOne(array('_id' => $item['role_id']),array('name'=>1));
                 $item['role_name'] = $role['name'];
+                $item['type_name'] = $card_type[$item['type']];
                 array_push($result, $item);
             }
 
-            $count = $admin_user->count($search);
+            $count = $admin_card->count($search);
             $page = new Page($count, C('PAGE_NUM'));
             $page = $page->show();
 
             //role list
-            $role_cursor = $admin_role->find();
-            $roles = array();
-            foreach($role_cursor as $item) {
-                array_push($roles, $item);
-            }
+            $module_list = C('SYSTEM.MODULE_LIST');
+            $role_cursor = $admin_role->find(array("module_name"=>$module_list['card']));
+            $roles = iterator_to_array($role_cursor);
 
-            $this->assign("roles", $roles);
             $this->assign("page", $page);
-            $this->assign("users", $result);
-            $this->_result['data']['html'] = $this->fetch("User:index");
+            $this->assign("roles", $roles);
+            $this->assign("cards", $result);
+            $this->assign("card_type", $card_type);
+            $this->_result['data']['html'] = $this->fetch("card:index");
 
             $this->_result['data']['count'] = $count;
             $this->_result['data']['page'] = $page;
-            $this->_result['data']['users'] = $result;
+            $this->_result['data']['cards'] = $result;
             $this->_result['data']['roles'] = $roles;
         }
         $this->response($this->_result);
     }
 
-    public function usersPut() {
+    public function cardsPut() {
 
         $search['_id'] = new \MongoId(I('put._id'));
         $data['name'] = I('put.name', null, check_empty_string);
-        $data['role_id'] = I('put.role_id', null, check_empty_string);
         $data['password'] = I('put.password', null);
         $data['repeat_password'] = I('put.repeat_password', null);
+        $data['type'] = intval(I('put.type'));
         $data['status'] = intval(I('put.status'));
-        $data['date'] = time();
-        merge_params_error($data['name'], 'name', '名字不能为空', $this->_result['error'],false);
-        merge_params_error($data['role_id'], 'role_id', '权限组不能为空', $this->_result['error']);
+        $data['role_id'] = I('put.role_id');
+        merge_params_error($data['name'], 'name', '昵称不能为空', $this->_result['error']);
         merge_params_error($data['password'], 'password', '密码不能为空', $this->_result['error'], false);
         merge_params_error($data['repeat_password'], 'repeat_password', '密码不能为空', $this->_result['error'], false);
         //检查参数
@@ -100,8 +103,8 @@ class UserController extends BaseController
         filter_array_element($data);
 
         $update['$set'] = $data;
-        $admin_user = $this->mongo_db->admin_user;
-        if ($admin_user->update($search,$update)) {
+        $admin_card = $this->mongo_db->admin_card;
+        if ($admin_card->update($search,$update)) {
             $this->response($this->_result, 'json', 201, '保存成功');
         } else {
             $this->_result['data']['param'] = $data;
@@ -110,20 +113,21 @@ class UserController extends BaseController
 
     }
 
-    public function usersPost() {
-        $admin_user = $this->mongo_db->admin_user;
-
-        $data['username'] = I('post.username');
+    public function cardsPost() {
+        $admin_card = $this->mongo_db->admin_card;
+        $data['username'] = I('post.username', null, check_empty_string);
         $data['name'] = I('post.name', null, check_empty_string);
         $data['password'] = I('post.password', null, check_empty_string);
         $data['repeat_password'] = I('post.repeat_password', null, check_empty_string);
-        $data['role_id'] = I('post.role_id', null, check_empty_string);
+        $data['type'] = intval(I('post.type'));
+        $data['level'] = 1; //一级代理
         $data['status'] = intval(I('post.status'));
+        $data['role_id'] = I('post.role_id');
         $data['date'] = time();
+        merge_params_error($data['username'], 'username', '用户名不能为空', $this->_result['error']);
         merge_params_error($data['name'], 'name', '名字不能为空', $this->_result['error']);
         merge_params_error($data['password'], 'password', '密码不能为空', $this->_result['error']);
-        merge_params_error($data['repeat_password'], '密码不能为空', 'repeat_password', $this->_result['error']);
-        merge_params_error($data['role_id'], 'role_id', '请选择权限组', $this->_result['error']);
+        merge_params_error($data['repeat_password'], 'repeat_password', '密码不能为空', $this->_result['error']);
 
         //检查参数
         if ($this->_result['error']) {
@@ -133,7 +137,7 @@ class UserController extends BaseController
         }
 
         if (checkTextLength6($data['username'])) {
-            $this->response($this->_result, 'json', 400, 'username length less 6');
+            $this->response($this->_result, 'json', 400, '用户名至少6个字符');
         }
 
         if ($data['password'] != $data['repeat_password']) {
@@ -144,7 +148,7 @@ class UserController extends BaseController
             $this->response($this->_result, 'json', 400, '密码至少6个字符');
         }
 
-        if (findRecord('username', $data['username'], $admin_user)) {
+        if (findRecord('username', $data['username'], $admin_card)) {
             $this->response($this->_result, 'json', 400, '用户名已经存在');
         }
 
@@ -154,57 +158,21 @@ class UserController extends BaseController
         $data['password'] = md5($data['password']);
         unset($data['repeat_password']);
 
-        if ($admin_user->insert($data)) {
-            $this->_result['data']['url'] = U(MODULE_NAME.'/user/users');
+        if ($admin_card->insert($data)) {
+            $this->_result['data']['url'] = U(MODULE_NAME.'/card/cards');
             $this->response($this->_result, 'json', 201, '新建成功');
         } else {
             $this->response($this->_result, 'json', 400, '新建失败');
         }
     }
 
-    public function usersDelete() {
+    public function cardsDelete() {
         $search['_id'] = new \MongoId(I('delete._id'));
-        $admin_user = $this->mongo_db->admin_user;
-        if ($admin_user->remove($search)) {
+        $admin_card = $this->mongo_db->admin_card;
+        if ($admin_card->remove($search)) {
             $this->response($this->_result, 'json', 204, '删除成功');
         } else {
             $this->response($this->_result, 'json', 400, '删除失败');
         }
-    }
-
-    //用户登录
-    public function tokenGet()
-    {
-        $search['username'] = I('get.username');
-        $search['password'] = MD5(I('get.password'));
-        //$search['status'] = 1; //已激活用户
-
-        $option = array(
-            'password' => 0
-        );
-
-        $admin_user = $this->mongo_db->admin_user;
-        $query = $admin_user->findOne($search, $option);
-        if (!$query) {
-            $this->response($this->_result, 'json', 400, '用户不存在或者密码错误');
-        }
-        if (!$query['status']) {
-            $this->response($this->_result, 'json', 400, 'the status');
-        }
-        //保存用户会话信息
-        $_SESSION[MODULE_NAME.'_admin'] = $query;
-        //生成token
-        $_SESSION[MODULE_NAME.'_token'] = $query['_id'];
-
-        $this->_result['data']['user'] = $query;
-        $this->_result['data']['url'] = U(MODULE_NAME . "/Index/index");
-        $this->response($this->_result, 'json', 200);
-    }
-
-    //用户注销
-    public function tokenDelete() {
-        unset($_SESSION[MODULE_NAME.'_admin'], $_SESSION[MODULE_NAME.'_token']);
-        $this->_result['data']['url'] = U(MODULE_NAME . "/Index/login");
-        $this->response(null, 'json', 204);
     }
 }
