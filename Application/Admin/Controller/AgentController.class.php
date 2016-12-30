@@ -12,18 +12,38 @@ use Think\Page;
 class AgentController extends BaseController
 {
     public function agentsGet() {
+
         $admin_agent = $this->mongo_db->admin_agent;
         $admin_role = $this->mongo_db->admin_role;
 
         $agent_type = C('SYSTEM.AGENT_TYPE');
+        $stock_type = C('SYSTEM.STOCK_TYPE');
         $this->_result['data']['agent_type'] = $agent_type;
+        $this->assign("stock_type", $stock_type);
 
         if (I('get._id')) {
             $search['_id'] = new \MongoId(I('get._id', null));
             $option = array('password' => 0);
             $query = $admin_agent->findOne($search, $option);
             $this->_result['data']['agents'] = $query;
-
+            if (I('get.tab') == 'card') {//充卡页面
+                $stock_amount_type = C('SYSTEM.STOCK_AMOUNT_TYPE');
+                $query['type_name'] = $stock_type[$query['type']];
+                $query['agent_type_name'] = $agent_type[$query['level']];
+                $stock_amount = $query['stock_amount'];
+                foreach ($stock_amount as $key => $value) {
+                    $stock_amount[$key] = array(
+                        'name' => $stock_type[$key],
+                        'amount' => $value
+                    );
+                }
+                $this->assign("agents", $query);
+                $this->assign("stock_amount", $stock_amount);
+                $this->assign("stock_amount_type", $stock_amount_type);
+                $html = $this->fetch("Agent:card");
+                $this->_result['data']['html'] = $html;
+                $this->response($this->_result);
+            }
         } else {
             $search = array();
             $limit = intval(I('get.limit', C('PAGE_NUM')));
@@ -64,15 +84,16 @@ class AgentController extends BaseController
     }
 
     public function agentsPut() {
-
         $search['_id'] = new \MongoId(I('put._id'));
         $data['name'] = I('put.name', null, check_empty_string);
         $data['password'] = I('put.password', null);
         $data['repeat_password'] = I('put.repeat_password', null);
         $data['type'] = intval(I('put.type'));
-        $data['status'] = intval(I('put.status'));
-        $data['role_id'] = I('put.role_id');
-        merge_params_error($data['name'], 'name', '昵称不能为空', $this->_result['error']);
+        if (I('put.status') !== '') {
+            $data['status'] = intval(I('put.status'));
+        }
+        $data['role_id'] = I('put.role_id', null);
+        merge_params_error($data['name'], 'name', '昵称不能为空', $this->_result['error'], false);
         merge_params_error($data['password'], 'password', '密码不能为空', $this->_result['error'], false);
         merge_params_error($data['repeat_password'], 'repeat_password', '密码不能为空', $this->_result['error'], false);
         //检查参数
@@ -99,7 +120,19 @@ class AgentController extends BaseController
         if (isset($data['repeat_password']) && !$data['repeat_password']) {
             unset($data['repeat_password']);
         }
-        $data['role_id'] = new \MongoId($data['role_id']);
+
+        //充卡
+        $amount = intval(I('put.amount'));
+
+        if (!check_positive_integer($amount)) {
+            $this->response($this->_result, 'json', 400, '房卡数量必须为正整数');
+        } else {
+            $update['$inc'] = array("stock_amount.{$data['type']}" => $amount);
+        }
+
+        if ($data['role_id']) {
+            $data['role_id'] = new \MongoId($data['role_id']);
+        }
         filter_array_element($data);
 
         $update['$set'] = $data;

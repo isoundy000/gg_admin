@@ -44,6 +44,7 @@
                                     <th>昵称</th>
                                     <th>类型</th>
                                     <th>状态</th>
+                                    <th>房卡剩余</th>
                                     <th>操作</th>
                                 </tr>
                                 <foreach name="agents" item="item">
@@ -52,8 +53,16 @@
                                         <td>{$item.name}</td>
                                         <td>{$item.type_name}</td>
                                         <td><if condition="$item.status eq 1"><b class="label bg-green">已启用</b><else /><b class="label bg-red">已禁用</b></if></td>
-                                        <td><a href="Javascript:void(0)" onclick="agentEdit('__MODULE__/agent/agents/_id/{$item._id}')">编辑</a> |
-                                            <a href="Javascript:void(0)" onclick="agentConfirmDelete('__MODULE__/agent/agents', '{$item._id}')">删除</a></td>
+                                        <td>
+                                            <foreach name="item.stock_amount" key="k" item="stock_amount">
+                                                {$stock_type[$k]}: {$stock_amount}<br>
+                                            </foreach>
+                                        </td>
+                                        <td>
+                                            <a href="Javascript:void(0)" onclick="menuClick('__MODULE__/agent/agents/tab/card/_id/{$item._id}')">充卡</a> |
+                                            <a href="Javascript:void(0)" onclick="agentEdit('__MODULE__/agent/agents/_id/{$item._id}')">编辑</a> |
+                                            <a href="Javascript:void(0)" onclick="agentConfirmDelete('__MODULE__/agent/agents', '{$item._id}')">删除</a>
+                                        </td>
                                     </tr>
 
                                 </foreach>
@@ -72,9 +81,9 @@
                 <div class="tab-pane" id="tab_2">
                     <form class="form-horizontal" onsubmit="return false;">
                         <div class="form-group">
-                            <label for="username" class="col-sm-2 control-label">用户</label>
+                            <label for="username" class="col-sm-2 control-label">用户名</label>
                             <div class="col-sm-4">
-                                <input class="form-control" id="username" placeholder="用户" type="text" required>
+                                <input class="form-control" id="username" placeholder="用户名确定后无法修改" type="text" required>
                             </div>
                         </div>
                         <div class="form-group">

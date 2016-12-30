@@ -1,0 +1,96 @@
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <h1>
+        代理充卡
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="__MODULE__/index/index"><i class="fa fa-dashboard"></i>首页</a></li>
+        <foreach name="breadcrumb" item="item">
+            <li><a <if condition="$item.active eq 1">class="active"</if> href="javascript:void(0)" onclick="menuClick('{$item.action}')">{$item.name}</a></li>
+        </foreach>
+    </ol>
+</section>
+
+<!-- Main content -->
+<section class="content">
+    <div class="row">
+        <foreach name="stock_amount" item="item">
+            <div class="col-lg-3 col-xs-6">
+                <!-- small box -->
+                <div class="small-box bg-green">
+                    <div class="inner">
+                        <p><b>类型:</b> {$item.name}</p>
+                        <p>剩余数量: <label> {$item.amount}</label></p>
+                    </div>
+                </div>
+            </div>
+        </foreach>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box box-primary">
+                <div class="box-header">
+                    <!--<h3>申请库存</h3>-->
+                </div>
+                <div class="box-body">
+                    <form class="form-horizontal" onsubmit="return false;">
+                        <div class="form-group">
+                            <label for="level" class="col-sm-2 control-label">级别</label>
+                            <div class="col-sm-2">
+                                <input id="level" type="text" class="form-control" value="{$agents.agent_type_name}" disabled>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="type" class="col-sm-2 control-label">房卡类型</label>
+                            <div class="col-sm-2">
+                                <select class="form-control" id="type">
+                                    <foreach name="stock_type" key="k" item="item">
+                                        <option value="{$k}">{$item}</option>
+                                    </foreach>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="amount" class="col-sm-2 control-label">数量</label>
+                            <div class="col-sm-2">
+                                <input type="number" class="form-control" id="amount" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-offset-2 col-sm-4">
+                                <button id="agent_submit" type="submit" class="btn btn-primary" onclick="agentSave('__MODULE__/agent/agents')">添加</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="box-footer">
+                    <input type="hidden" id="_id" value="{$agents._id}">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- /.content -->
+<script>
+    function agentSave(_url) {
+        var method = "PUT";
+        var type = $("#type").val();
+        var _id = $("#_id").val();
+        var amount = $("#amount").val();
+
+        var source = {
+            type: type,
+            amount: amount,
+            _id:_id
+        };
+        ajaxRequest(_url, source, method, 'json', function(result) {
+            if(result.code == 201) {
+                successDialog('block', '保存', result.msg);
+                menuClick('__MODULE__/agent/agents');
+
+            } else {
+                errorDialog('block', '保存', result.msg);
+            }
+        });
+    }
+</script>
