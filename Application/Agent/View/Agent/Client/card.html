@@ -1,7 +1,7 @@
 <!-- Content Header (Page header) -->
 <section class="content-header">
     <h1>
-        代理充卡
+        玩家充卡
     </h1>
     <ol class="breadcrumb">
         <li><a href="__MODULE__/index/index"><i class="fa fa-dashboard"></i>首页</a></li>
@@ -35,15 +35,21 @@
                 <div class="box-body">
                     <form class="form-horizontal" onsubmit="return false;">
                         <div class="form-group">
-                            <label for="level" class="col-sm-2 control-label">级别</label>
+                            <label for="roleid" class="col-sm-2 control-label">玩家ID</label>
                             <div class="col-sm-2">
-                                <input id="level" type="text" class="form-control" value="{$agents.agent_type_name}" disabled>
+                                <input id="roleid" type="text" class="form-control" value="{$clients.roleid}" disabled>
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="type" class="col-sm-2 control-label">房卡类型</label>
+                            <label for="nickname" class="col-sm-2 control-label">昵称</label>
                             <div class="col-sm-2">
-                                <select class="form-control" id="type">
+                                <input id="nickname" type="text" class="form-control" value="{$clients.nickname}" disabled>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="stock_type" class="col-sm-2 control-label">房卡类型</label>
+                            <div class="col-sm-2">
+                                <select class="form-control" id="stock_type">
                                     <foreach name="stock_type" key="k" item="item">
                                         <option value="{$k}">{$item}</option>
                                     </foreach>
@@ -53,19 +59,19 @@
                         <div class="form-group">
                             <label for="amount" class="col-sm-2 control-label">数量</label>
                             <div class="col-sm-2">
-                                <input type="number" class="form-control" id="amount" required>
+                                <input type="number" min="1" class="form-control" id="amount" required>
                             </div>
                         </div>
                         <div class="form-group">
                             <div class="col-sm-offset-2 col-sm-4">
-                                <button id="agent_submit" type="submit" class="btn btn-primary" onclick="agentSave('__MODULE__/agent/agents')">添加</button>
-                                <button id="agent_back" type="submit" class="btn btn-warning" onclick="menuClick('__MODULE__/agent/agents')">返回</button>
+                                <button id="agent_submit" type="submit" class="btn btn-primary" onclick="clientSave('__MODULE__/client/clients')">添加</button>
+                                <button id="agent_back" type="submit" class="btn btn-warning" onclick="menuClick('__MODULE__/client/clients')">返回</button>
                             </div>
                         </div>
                     </form>
                 </div>
                 <div class="box-footer">
-                    <input type="hidden" id="_id" value="{$agents._id}">
+                    <input type="hidden" id="_id" value="{$clients._id}">
                 </div>
             </div>
         </div>
@@ -73,22 +79,25 @@
 </section>
 <!-- /.content -->
 <script>
-    function agentSave(_url) {
+    function clientSave(_url) {
         var method = "PUT";
-        var type = $("#type").val();
+        var stock_type = $("#stock_type").val();
         var _id = $("#_id").val();
+        var roleid = $("#roleid").val();
+        var nickname = $("#nickname").val();
         var amount = $("#amount").val();
 
         var source = {
-            type: type,
+            stock_type: stock_type,
             amount: amount,
+            roleid:roleid,
+            nickname: nickname,
             _id:_id
         };
         ajaxRequest(_url, source, method, 'json', function(result) {
             if(result.code == 201) {
                 successDialog('block', '保存', result.msg);
-                menuClick('__MODULE__/agent/agents');
-
+                menuClick('__MODULE__/client/clients');
             } else {
                 errorDialog('block', '保存', result.msg);
             }

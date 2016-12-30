@@ -14,9 +14,12 @@ class StockController extends BaseController
 {
     public function stocksGet()
     {
+        $admin_user = $this->mongo_db->admin_user;
+
         $stock_type = C('SYSTEM.STOCK_TYPE');
         $stock_amount_type = C('SYSTEM.STOCK_AMOUNT_TYPE');
-        $stock_amount = $_SESSION[MODULE_NAME.'_admin']['stock_amount'];
+        $stock_amount = $admin_user->findOne(array("_id"=>$_SESSION[MODULE_NAME.'_admin']['_id']));
+        $stock_amount = $stock_amount['stock_amount'];
         foreach ($stock_amount as $key => $value) {
             $stock_amount[$key] = array(
                 'name' => $stock_type[$key],

@@ -84,6 +84,10 @@ class AgentController extends BaseController
     }
 
     public function agentsPut() {
+        $admin_agent = $this->mongo_db->admin_agent;
+        $admin_user = $this->mongo_db->admin_user;
+        $admin_stock_grant_record = $this->mongo_db->admin_stock_grant_record;
+
         $search['_id'] = new \MongoId(I('put._id'));
         $data['name'] = I('put.name', null, check_empty_string);
         $data['password'] = I('put.password', null);
@@ -127,6 +131,11 @@ class AgentController extends BaseController
         if (!check_positive_integer($amount)) {
             $this->response($this->_result, 'json', 400, '房卡数量必须为正整数');
         } else {
+            //库存是否充足
+            $user = $admin_user->findOne(array("_id" => $_SESSION[MODULE_NAME.'_admin']['_id']));
+            if($user['stock_amount'][$data['type']] < $amount) {
+                $this->response($this->_result, 'json', 400, '房卡库存不足，请前往"库存管理"申请足量房卡');
+            }
             $update['$inc'] = array("stock_amount.{$data['type']}" => $amount);
         }
 
@@ -136,8 +145,22 @@ class AgentController extends BaseController
         filter_array_element($data);
 
         $update['$set'] = $data;
-        $admin_agent = $this->mongo_db->admin_agent;
-        if ($admin_agent->update($search,$update)) {
+        if ($agent = $admin_agent->findAndModify($search,$update)) {
+            if($update['$inc']) {//给代理充卡后要扣除管理员相应的库存卡数量
+                $admin_user->update(array("_id" => $_SESSION[MODULE_NAME.'_admin']['_id']),
+                    array('$inc' => array("stock_amount.{$data['type']}" => -$amount))
+                );
+                //充卡记录
+                $admin_stock_grant_record->insert(
+                    array(
+                        'from_user' => $_SESSION[MODULE_NAME.'_admin']['username'],
+                        'to_user' => $agent['username'],
+                        'type' => $data['type'],
+                        'amount' => $amount,
+                        'date' => time(),
+                    )
+                );
+            }
             $this->response($this->_result, 'json', 201, '保存成功');
         } else {
             $this->_result['data']['param'] = $data;
@@ -207,5 +230,28 @@ class AgentController extends BaseController
         } else {
             $this->response($this->_result, 'json', 400, '删除失败');
         }
+    }
+
+    //给代理发放房卡记录
+    public function recordGet() {
+        $stock_type = C('SYSTEM.STOCK_TYPE');
+        $admin_stock_grant_record = $this->mongo_db->admin_stock_grant_record;
+        $search['from_user'] = $_SESSION[MODULE_NAME.'_admin']['username'];
+        $limit = intval(I('get.limit', C('PAGE_NUM')));
+        $skip = (intval(I('get.p', 1)) - 1) * $limit;
+        $option = array();
+        $cursor = $admin_stock_grant_record->find($search, $option)->sort(array('date' => 1))->skip($skip)->limit($limit);
+        $result = array();
+        foreach ($cursor as $item) {
+            $item['date'] = date("Y-m-d H:i:s");
+            $item['type_name'] = $stock_type[$item['type']];
+            array_push($result, $item);
+        }
+
+        $this->assign("record", $result);
+        $html = $this->fetch("Agent:record");
+        $this->_result['data']['html'] = $html;
+        $this->_result['data']['record'] = $result;
+        $this->response($this->_result);
     }
 }
