@@ -1,5 +1,19 @@
 <!-- Content Header (Page header) -->
 <section class="content-header">
+    <div class="row">
+        <div class="col-md-3 col-sm-6 col-xs-12">
+            <div class="info-box">
+                <span class="info-box-icon bg-aqua"><i class="fa fa-dollar"></i></span>
+
+                <div class="info-box-content">
+                    <span class="info-box-text">房卡数量</span>
+                    <span class="info-box-number">{$stock_amount}</span>
+                </div>
+                <!-- /.info-box-content -->
+            </div>
+            <!-- /.info-box -->
+        </div>
+    </div>
     <h1>
         玩家充卡
     </h1>
@@ -14,17 +28,9 @@
 <!-- Main content -->
 <section class="content">
     <div class="row">
-        <div class="nav-tabs-custom">
-            <ul class="nav nav-tabs" id="gg-tab">
-                <li class="active"><a href="#tab_1" data-toggle="tab" aria-expanded="true"><b class="text-light-blue">玩家列表</b></a></li>
-                <!--<li class=""><a href="#tab_2" data-toggle="tab" aria-expanded="false"><b class="text-green">新建</b> | <b class="text-blue">编辑</b></a></li>-->
-            </ul>
-            <div class="tab-content">
-                <div class="tab-pane active" id="tab_1">
-                    <div class="box">
+        <div class="box">
                         <div class="box-header">
                             <h3 class="box-title"></h3>
-
                             <div class="box-tools">
                                 <div class="input-group input-group-sm" style="width: 150px;">
                                     <input name="table_search" class="form-control pull-right" placeholder="搜索..." type="text">
@@ -70,14 +76,6 @@
 
                         <!-- /.box-footer -->
                     </div>
-                </div>
-                <!-- /.tab-pane -->
-                <div class="tab-pane" id="tab_2">
-                </div>
-
-            </div>
-            <!-- /.tab-content -->
-        </div>
     </div>
 </section>
 <!-- /.content -->

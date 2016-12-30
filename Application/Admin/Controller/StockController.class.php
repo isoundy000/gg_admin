@@ -54,7 +54,7 @@ class StockController extends BaseController
         $skip = (intval(I('get.p', 1)) - 1) * $limit;
         filter_array_element($search);
 
-        $cursor = $admin_stock->find($search)->limit($limit)->skip($skip)->sort(array("sort" => 1));
+        $cursor = $admin_stock->find($search)->limit($limit)->skip($skip)->sort(array("date" => -1));
         $result = array();
         foreach ($cursor as $item) {
             $item['type'] = $stock_type[$item['type']];
