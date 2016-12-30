@@ -79,7 +79,7 @@ class StockController extends BaseController
     public function stocksPut()
     {
         $search['_id'] = new \MongoId(I('put._id'));
-        $data['status'] = I('put.status', null, check_empty_string);
+        $data['status'] = intval(I('put.status', null, check_empty_string));
         $data['verify'] = 1;//已审核
         $data['audit_user'] = $_SESSION[MODULE_NAME.'_admin']['username'];
         $data['audit_time'] = time();
@@ -89,14 +89,16 @@ class StockController extends BaseController
         $admin_user = $this->mongo_db->admin_user;
 
         if ($modify = $admin_stock->findAndModify($search, $update)) {
-            //给apply_user记录生成的数量
-            $admin_user->update(array("username"=>$modify['apply_user']),
-                array('$inc' =>
-                    array(
-                    "stock_amount.{$modify['type']}" => $modify['amount']
+            //审核通过则，给apply_user记录生成的数量
+            if ($data['status']) {
+                $admin_user->update(array("username" => $modify['apply_user']),
+                    array('$inc' =>
+                        array(
+                            "stock_amount.{$modify['type']}" => $modify['amount']
+                        )
                     )
-                )
-            );
+                );
+            }
             $this->response($this->_result, 'json', 201, '保存成功');
         } else {
             $this->_result['data']['param'] = $data;
