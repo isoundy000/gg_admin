@@ -6,12 +6,14 @@
  * Time: 9:46
  */
 namespace Agent\Controller;
+
 use Common\Controller\BaseController;
 use Think\Page;
 
 class ClientController extends BaseController
 {
-    public function clientsGet() {
+    public function clientsGet()
+    {
 
         $admin_client = $this->mongo_db->role_info;
         $stock_type = C('SYSTEM.STOCK_TYPE');
@@ -64,7 +66,8 @@ class ClientController extends BaseController
         $this->response($this->_result);
     }
 
-    public function clientsPut() {
+    public function clientsPut()
+    {
         $admin_client = $this->mongo_db->role_info;
         $admin_agent = $this->mongo_db->admin_agent;
         $agent_stock_grant_record = $this->mongo_db->agent_stock_grant_record;
@@ -75,45 +78,45 @@ class ClientController extends BaseController
         $stock_type = intval(I('put.stock_type'));
         //充卡
         $amount = intval(I('put.amount'));
-        $update = array();
         if (!check_positive_integer($amount)) {
             $this->response($this->_result, 'json', 400, '房卡数量必须为正整数');
         } else {
             //库存是否充足
-            $user = $admin_agent->findOne(array("_id" => $_SESSION[MODULE_NAME.'_admin']['_id']));
-            if($user['stock_amount'][$stock_type] < $amount) {
+            $user = $admin_agent->findOne(array("_id" => $_SESSION[MODULE_NAME . '_admin']['_id']));
+            if ($user['stock_amount'][$stock_type] < $amount) {
                 $this->response($this->_result, 'json', 400, '房卡库存不足，请前往"库存管理"申请足量房卡');
             }
-            $update['$inc'] = array("stock_amount.{$stock_type}" => $amount);
+            //$update['$inc'] = array("stock_amount.{$stock_type}" => $amount);
         }
-        if ($client = $admin_client->findAndModify($search,$update)) {
-            if($update['$inc']) {//给代理充卡后要扣除代理相应的库存卡数量
-                $admin_agent->update(array("_id" => $_SESSION[MODULE_NAME.'_admin']['_id']),
-                    array('$inc' => array("stock_amount.{$stock_type}" => -$amount))
-                );
-                //充卡记录，代理后台使用
-                $agent_stock_grant_record->insert(
-                    array(
-                        'from_user' => $_SESSION[MODULE_NAME.'_admin']['username'],
-                        'to_user' => $client['roleid'],
-                        'nickname' => $client['nickname'],
-                        'type' => $stock_type,
-                        'amount' => $amount,
-                        'date' => time(),
-                    )
-                );
-                //充卡记录mmo，游戏内使用
-                $agent_stock_grant_record_mmo->insert(
-                    array(
-                        'from_user' => $_SESSION[MODULE_NAME.'_admin']['username'],
-                        'to_user' => $client['roleid'],
-                        'nickname' => $client['nickname'],
-                        'type' => $stock_type,
-                        'amount' => $amount,
-                        'date' => time(),
-                    )
-                );
-            }
+        $client = $admin_client->findOne($search);
+        if ($client) {
+            //给代理充卡后要扣除代理相应的库存卡数量
+            $admin_agent->update(array("_id" => $_SESSION[MODULE_NAME . '_admin']['_id']),
+                array('$inc' => array("stock_amount.{$stock_type}" => -$amount))
+            );
+            //充卡记录，代理后台使用
+            $agent_stock_grant_record->insert(
+                array(
+                    'from_user' => $_SESSION[MODULE_NAME . '_admin']['username'],
+                    'to_user' => $client['roleid'],
+                    'nickname' => $client['nickname'],
+                    'type' => $stock_type,
+                    'amount' => $amount,
+                    'date' => time(),
+                )
+            );
+            //充卡记录mmo，游戏内使用
+            $agent_stock_grant_record_mmo->insert(
+                array(
+                    'from_user' => $_SESSION[MODULE_NAME . '_admin']['username'],
+                    'to_user' => $client['roleid'],
+                    'nickname' => $client['nickname'],
+                    'type' => $stock_type,
+                    'amount' => $amount,
+                    'date' => time(),
+                )
+            );
+
             $this->response($this->_result, 'json', 201, '充卡成功');
         } else {
             $this->response($this->_result, 'json', 400, '充卡失败');
@@ -122,10 +125,11 @@ class ClientController extends BaseController
     }
 
     //给代理发放房卡记录
-    public function recordGet() {
+    public function recordGet()
+    {
         $stock_type = C('SYSTEM.STOCK_TYPE');
         $agent_stock_grant_record = $this->mongo_db->agent_stock_grant_record;
-        $search['from_user'] = $_SESSION[MODULE_NAME.'_admin']['username'];
+        $search['from_user'] = $_SESSION[MODULE_NAME . '_admin']['username'];
         $limit = intval(I('get.limit', C('PAGE_NUM')));
         $skip = (intval(I('get.p', 1)) - 1) * $limit;
         $option = array();
