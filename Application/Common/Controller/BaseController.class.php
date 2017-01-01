@@ -7,6 +7,7 @@
  */
 namespace Common\Controller;
 use Think\Controller\RestController;
+use Think\Exception;
 
 class BaseController extends RestController {
     protected $mongo_client; //mongo 实例
@@ -64,6 +65,21 @@ class BaseController extends RestController {
             $this->redirect(MODULE_NAME."/Index/login");
         }
     }
+
+
+    protected function getMongoClient($seeds = "", $options = array(), $retry = 3)
+    {
+        try {
+            return new \MongoClient($seeds, $options);
+        } catch (Exception $e) {
+            /* Log the exception so we can look into why mongod failed later */
+        }
+        if ($retry > 0) {
+            return $this->getMongoClient($seeds, $options, --$retry);
+        }
+        throw new Exception("I've tried several times getting MongoClient.. Is mongod really running?");
+    }
+
 
     protected function breadcrumb($menu_id) {
         $bread_crumb = array();

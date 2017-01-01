@@ -51,12 +51,13 @@ class AgentController extends BaseController
             filter_array_element($search);
             filter_array_element($option);
 
-            $cursor = $admin_agent->find($search)->limit($limit)->skip($skip);
+            $cursor = $admin_agent->find($search)->sort(array('date' => -1))->limit($limit)->skip($skip);
             $result = array();
             foreach ($cursor as $item) {
                 $role = $admin_role->findOne(array('_id' => $item['role_id']),array('name'=>1));
                 $item['role_name'] = $role['name'];
                 $item['type_name'] = $agent_type[$item['type']];
+                $item['date'] = date('Y-m-d H:i:s', $item['date']);
                 array_push($result, $item);
             }
 
@@ -179,6 +180,7 @@ class AgentController extends BaseController
         $data['level'] = 1; //一级代理
         $data['status'] = intval(I('post.status'));
         $data['role_id'] = I('post.role_id');
+        $data['pid'] = 0;
         $data['date'] = time();
         merge_params_error($data['username'], 'username', '用户名不能为空', $this->_result['error']);
         merge_params_error($data['name'], 'name', '名字不能为空', $this->_result['error']);

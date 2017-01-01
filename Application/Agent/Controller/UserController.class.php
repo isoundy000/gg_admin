@@ -7,26 +7,37 @@
  */
 namespace Agent\Controller;
 use Common\Controller\BaseController;
+use Think\Page;
 
 class UserController extends BaseController
 {
-    public function usersGet() {
-        $this->assign("user", $_SESSION[MODULE_NAME.'_admin']);
+    public function usersGet()
+    {
+        $user = $_SESSION[MODULE_NAME . '_admin'];
+        $agent_type = C('SYSTEM.AGENT_TYPE');
+        $user['type_name'] = $agent_type[$user['type']];
+        $user['date'] = date("Y-m-d H:i:s", $user['date']);
+        $this->assign("user", $user);
         $html = $this->fetch("User:index");
         $this->_result['data']['html'] = $html;
         $this->response($this->_result);
     }
 
-    public function usersPut() {
+    public function usersPut()
+    {
         $admin_agent = $this->mongo_db->admin_agent;
-        $search['_id'] = $_SESSION[MODULE_NAME.'_admin']['_id'];
+        $search['_id'] = $_SESSION[MODULE_NAME . '_admin']['_id'];
         $data['name'] = I('put.name', null, check_empty_string);
+        $data['bank_name'] = I('put.bank_name', null, check_empty_string);
+        $data['bank_card'] = I('put.bank_card', null, check_empty_string);
+        $data['real_name'] = I('put.real_name', null, check_empty_string);
+        $data['wechat'] = I('put.wechat', null, check_empty_string);
         $data['password'] = I('put.password', null);
         $data['repeat_password'] = I('put.repeat_password', null);
         $data['old_password'] = I('put.old_password', null);
 
-        $data['status'] = intval(I('put.status', $_SESSION[MODULE_NAME.'_admin']['status']));
-        merge_params_error($data['name'], 'name', '名字不能为空', $this->_result['error'],false);
+        $data['status'] = intval(I('put.status', $_SESSION[MODULE_NAME . '_admin']['status']));
+        merge_params_error($data['name'], 'name', '名字不能为空', $this->_result['error'], false);
 
         //检查参数
         if ($this->_result['error']) {
@@ -36,8 +47,8 @@ class UserController extends BaseController
         }
 
         if ($data['old_password']) {
-            $user = $admin_agent->findOne(array("username"=>$_SESSION[MODULE_NAME.'_admin']['username']));
-            if (!$user || $user['password']!=md5($data['old_password'])) {
+            $user = $admin_agent->findOne(array("username" => $_SESSION[MODULE_NAME . '_admin']['username']));
+            if (!$user || $user['password'] != md5($data['old_password'])) {
                 $this->response($this->_result, 'json', 400, '旧密码错误');
             }
         }
@@ -66,7 +77,9 @@ class UserController extends BaseController
         filter_array_element($data);
 
         $update['$set'] = $data;
-        if ($admin_agent->update($search,$update)) {
+        if ($agent = $admin_agent->findAndModify($search, $update, null, array('new' => true))) {
+            unset($agent['password']);
+            $_SESSION[MODULE_NAME.'_admin'] = $agent;
             $this->response($this->_result, 'json', 201, '保存成功');
         } else {
             $this->_result['data']['param'] = $data;
@@ -93,7 +106,7 @@ class UserController extends BaseController
             'date' => 1,
         );
 
-        if(!check_verify($code)) {
+        if (!check_verify($code)) {
             $this->response($this->_result, 'json', 400, '验证码错误');
         }
 
@@ -109,9 +122,9 @@ class UserController extends BaseController
         $type_list = C('SYSTEM.AGENT_TYPE');
         $query['type_name'] = $type_list[$query['type']];
         //保存用户会话信息
-        $_SESSION[MODULE_NAME.'_admin'] = $query;
+        $_SESSION[MODULE_NAME . '_admin'] = $query;
         //生成token
-        $_SESSION[MODULE_NAME.'_token'] = $query['_id'];
+        $_SESSION[MODULE_NAME . '_token'] = $query['_id'];
 
         $this->_result['data']['user'] = $query;
         $this->_result['data']['url'] = U(MODULE_NAME . "/Index/index");
@@ -119,9 +132,109 @@ class UserController extends BaseController
     }
 
     //用户注销
-    public function tokenDelete() {
-        unset($_SESSION[MODULE_NAME.'_admin'], $_SESSION[MODULE_NAME.'_token']);
+    public function tokenDelete()
+    {
+        unset($_SESSION[MODULE_NAME . '_admin'], $_SESSION[MODULE_NAME . '_token']);
         $this->_result['data']['url'] = U(MODULE_NAME . "/Index/login");
         $this->response(null, 'json', 204);
+    }
+
+    //二级代理
+    public function agentsGet()
+    {
+        $admin_agent = $this->mongo_db->admin_agent;
+
+        $agent_type = C('SYSTEM.AGENT_TYPE');
+        $stock_type = C('SYSTEM.STOCK_TYPE');
+        $this->_result['data']['agent_type'] = $agent_type;
+        $this->assign("stock_type", $stock_type);
+
+
+        $search = array();
+        $search['pid'] = $_SESSION[MODULE_NAME.'_admin']['_id']->__toString();
+        $limit = intval(I('get.limit', C('PAGE_NUM')));
+        $skip = (intval(I('get.p', 1)) - 1) * $limit;
+        filter_array_element($search);
+        filter_array_element($option);
+
+        $cursor = $admin_agent->find($search)->sort(array('date' => -1))->limit($limit)->skip($skip);
+        $result = array();
+        foreach ($cursor as $item) {
+            $item['type_name'] = $agent_type[$item['type']];
+            $item['date'] = date('Y-m-d H:i:s', $item['date']);
+            array_push($result, $item);
+        }
+
+        $count = $admin_agent->count($search);
+        $page = new Page($count, C('PAGE_NUM'));
+        $page = $page->show();
+
+        $this->assign("page", $page);
+        $this->assign("agents", $result);
+        $this->assign("agent_type", $agent_type);
+        $this->_result['data']['html'] = $this->fetch("User:agent");
+
+        $this->_result['data']['count'] = $count;
+        $this->_result['data']['page'] = $page;
+        $this->_result['data']['agents'] = $result;
+
+        $this->response($this->_result);
+    }
+
+    public function agentsPost()
+    {
+        $admin_agent = $this->mongo_db->admin_agent;
+        $data['cellphone'] = I('post.cellphone', null, check_empty_string);
+        $data['username'] = $data['cellphone'];
+        $data['wechat'] = I('post.wechat', null, check_empty_string);
+        $data['name'] = I('post.name', null, check_empty_string);
+        $data['password'] = I('post.password', null, check_empty_string);
+        $data['repeat_password'] = I('post.repeat_password', null, check_empty_string);
+        $data['type'] = intval(I('post.type'));
+        //$data['level'] = 1;
+        $data['status'] = 1;
+        $data['pid'] = $_SESSION[MODULE_NAME.'_admin']['_id']->__toString();
+        $data['role_id'] = $_SESSION[MODULE_NAME.'_admin']['role_id'];
+        $data['date'] = time();
+        merge_params_error($data['cellphone'], 'cellphone', '手机号码不能为空', $this->_result['error']);
+        merge_params_error($data['wechat'], 'wechat', '微信号不能为空', $this->_result['error']);
+        merge_params_error($data['name'], 'name', '昵称不能为空', $this->_result['error']);
+        merge_params_error($data['password'], 'password', '密码不能为空', $this->_result['error']);
+        merge_params_error($data['repeat_password'], 'repeat_password', '密码不能为空', $this->_result['error']);
+
+        //检查参数
+        if ($this->_result['error']) {
+            $error = array_shift($this->_result['error']);
+            $error = array_values($error);
+            $this->response($this->_result, 'json', 400, $error[0]);
+        }
+
+        if (checkTextLength6($data['username'])) {
+            $this->response($this->_result, 'json', 400, '用户名至少6个字符');
+        }
+
+        if ($data['password'] != $data['repeat_password']) {
+            $this->response($this->_result, 'json', 400, '两次输入的密码不一致');
+        }
+
+        if (checkTextLength6($data['password'])||checkTextLength6($data['repeat_password'])) {
+            $this->response($this->_result, 'json', 400, '密码至少6个字符');
+        }
+
+        if (findRecord('username', $data['username'], $admin_agent)) {
+            $this->response($this->_result, 'json', 400, '用户名已经存在');
+        }
+
+        filter_array_element($data);
+
+        $data['password'] = md5($data['password']);
+        unset($data['repeat_password']);
+
+        if ($admin_agent->insert($data)) {
+            $this->_result['data']['url'] = U(MODULE_NAME.'/user/agents');
+            $this->response($this->_result, 'json', 201, '新建成功');
+        } else {
+            $this->response($this->_result, 'json', 400, '新建失败');
+        }
     }
 }

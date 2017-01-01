@@ -35,8 +35,9 @@
                     <tbody>
                     <tr>
                         <th>时间</th>
-                        <th>管理员(发放者)</th>
-                        <th>代理(接收者)</th>
+                        <!--<th>我(发放者)</th>-->
+                        <th>玩家ID</th>
+                        <th>玩家昵称</th>
                         <th>类型</th>
                         <th>数量</th>
                     </tr>
@@ -44,8 +45,9 @@
                     <foreach name="record" item="item">
                         <tr>
                             <td>{$item.date}</td>
-                            <td>{$item.from_user}</td>
-                            <td>{$item.to_user} | {$item.nickname}</td>
+                            <!--<td>{$item.from_user}</td>-->
+                            <td>{$item.to_user}</td>
+                            <td>{$item.nickname}</td>
                             <td>{$item.type_name}</td>
                             <td>{$item.amount}</td>
                         </tr>
