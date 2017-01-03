@@ -75,7 +75,6 @@ class ActivityController extends BaseController {
             $this->response($this->_result, 'json', 400, $error[0]);
         }
 
-        filter_array_element($data);
         $data['interval'] = intval($data['interval']);
         $date_range = I('post.date_range');
         $date_range = explode('-', $date_range);
@@ -84,11 +83,12 @@ class ActivityController extends BaseController {
         }
         $data['start_date'] = strtotime(trim($date_range[0]));
         $data['end_date'] = strtotime(trim($date_range[1]));
-
+        $data['content'] = strip_tags($data['content']);
         if ($data['interval'] > ($data['end_date'] - $data['start_date'])) {
             $this->response($this->_result, 'json', 400, '时间间隔不能大于起始时间差');
         }
 
+        filter_array_element($data);
         $admin_trotting = $this->mongo_db->admin_trotting;
         if ($admin_trotting->insert($data)) {
             $this->response($this->_result, 'json', 201, '新建成功');
@@ -111,7 +111,6 @@ class ActivityController extends BaseController {
             $error = array_values($error);
             $this->response($this->_result, 'json', 400, $error[0]);
         }
-        filter_array_element($data);
         $data['interval'] = intval($data['interval']);
         $date_range = I('put.date_range');
         $date_range = explode('-', $date_range);
@@ -121,10 +120,12 @@ class ActivityController extends BaseController {
         $data['start_date'] = strtotime(trim($date_range[0]));
         $data['end_date'] = strtotime(trim($date_range[1]));
         $data['admin'] = $_SESSION[MODULE_NAME.'_admin']['username'];
+        $data['content'] = strip_tags($data['content']);
         if ($data['interval'] > ($data['end_date'] - $data['start_date'])) {
             $this->response($this->_result, 'json', 400, '时间间隔不能大于起始时间差');
         }
 
+        filter_array_element($data);
         $update['$set'] = $data;
         $admin_trotting = $this->mongo_db->admin_trotting;
         if ($admin_trotting->update($search,$update)) {

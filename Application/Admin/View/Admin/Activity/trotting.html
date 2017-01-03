@@ -132,10 +132,10 @@
     });
 
     //加载编辑器
-    CKEDITOR.replace("content");
+    var editor = CKEDITOR.replace("content");
     function trottingClear() {
         $("#interval").val("");
-        $("#content").val("");
+        editor.setData("");
         $("#trotting_submit").html("添加");
     }
 
@@ -147,6 +147,7 @@
                 $("#date_range").val(result.data.trotting.date_range);
                 $("#interval").val(result.data.trotting.interval);
                 $("#content").val(result.data.trotting.content);
+                editor.setData(result.data.trotting.content);
                 $("#_id").val(result.data.trotting._id.$id);
             }
         })
@@ -173,7 +174,7 @@
         var method = $("#_id").val() ? "PUT" : "POST";
         var date_range = $("#date_range").val();
         var interval = $("#interval").val();
-        var content = $("#content").val();
+        var content = editor.getData();
         var _id = $("#_id").val();
 
         var source = {
