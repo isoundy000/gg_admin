@@ -3,13 +3,26 @@
     <div class="pull-right hidden-xs">
         <b>版本</b> 1.0.0
     </div>
-    <strong>Copyright © 2016-2017 <a href="http://www.mumushen.com">杠杠麻将</a>.</strong> All rights
-    reserved.
+    <strong>Copyright © 2016-2017 <a href="http://www.mumushen.com">广州三缺一</a>.</strong> 版本所有.
 </footer>
 <div id="error-dialog" class="modal modal-danger"></div>
 <div id="success-dialog" class="modal modal-success"></div>
 <div id="warning-dialog" class="modal modal-warning"></div>
 </div>
+<!-- Bootstrap core JavaScript
+    ================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="/bower_components/AdminLTE/plugins/jQuery/jquery-2.2.3.min.js"></script>
+<script src="/bower_components/AdminLTE/bootstrap/js/bootstrap.min.js"></script>
+<script src="/bower_components/moment/min/moment-with-locales.min.js"></script>
+<script src="/bower_components/AdminLTE/plugins/daterangepicker/daterangepicker.js"></script>
+<script src="/bower_components/AdminLTE/plugins/slimScroll/jquery.slimscroll.min.js"></script>
+<script src="/bower_components/AdminLTE/plugins/iCheck/icheck.min.js"></script>
+<script src="/bower_components/AdminLTE/plugins/fastclick/fastclick.min.js"></script>
+<script src="/bower_components/AdminLTE/plugins/bootstrap-treeview/bootstrap-treeview.min.js"></script>
+<script src="/bower_components/AdminLTE/dist/js/app.min.js"></script>
+<script src="/bower_components/AdminLTE/plugins/ckeditor/ckeditor.js"></script>
+<script src="/Public/Common/js/common.js"></script>
 <script>
     function logout(_url) {
         ajaxRequest(_url, null, 'delete', 'json', function(result) {
@@ -18,49 +31,6 @@
             }
         });
     }
-
-    $(function () {
-        //Initialize Select2 Elements
-        $(".select2").select2();
-
-        //Datemask dd/mm/yyyy
-        $("#datemask").inputmask("dd/mm/yyyy", {"placeholder": "dd/mm/yyyy"});
-        //Datemask2 mm/dd/yyyy
-        $("#datemask2").inputmask("mm/dd/yyyy", {"placeholder": "mm/dd/yyyy"});
-        //Money Euro
-        $("[data-mask]").inputmask();
-
-        //Date picker
-        $('#datepicker').datepicker({
-            autoclose: true
-        });
-
-        //iCheck for checkbox and radio inputs
-        $('input[type="checkbox"].minimal, input[type="radio"].minimal').iCheck({
-            checkboxClass: 'icheckbox_minimal-blue',
-            radioClass: 'iradio_minimal-blue'
-        });
-        //Red color scheme for iCheck
-        $('input[type="checkbox"].minimal-red, input[type="radio"].minimal-red').iCheck({
-            checkboxClass: 'icheckbox_minimal-red',
-            radioClass: 'iradio_minimal-red'
-        });
-        //Flat red color scheme for iCheck
-        $('input[type="checkbox"].flat-red, input[type="radio"].flat-red').iCheck({
-            checkboxClass: 'icheckbox_flat-green',
-            radioClass: 'iradio_flat-green'
-        });
-
-        //Colorpicker
-        $(".my-colorpicker1").colorpicker();
-        //color picker with addon
-        $(".my-colorpicker2").colorpicker();
-
-        //Timepicker
-        $(".timepicker").timepicker({
-            showInputs: false
-        });
-    });
 </script>
 </body>
 </html>
