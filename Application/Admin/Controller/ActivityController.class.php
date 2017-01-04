@@ -148,7 +148,88 @@ class ActivityController extends BaseController {
     
     //邮件
     public function mailGet() {
+        $admin_mail = $this->mongo_db->admin_mail;
+        $search = array();
 
+        if (I('get._id')) {
+            $search['_id'] = new \MongoId(I('get._id'));
+            $query = $admin_mail->findOne($search);
+            $query['date_range'] = date("Y/m/d H:i:s", $query['start_date']) . ' - ' . date("Y/m/d H:i:s", $query['end_date']);
+            $this->_result['data']['mail'] = $query;
+        } else {
+            $limit = intval(I('get.limit', C('PAGE_NUM')));
+            $skip = (intval(I('get.p', 1)) - 1) * $limit;
+            filter_array_element($search);
+
+            $cursor = $admin_mail->find($search)->limit($limit)->skip($skip)->sort(array("start_date" => -1));
+            $result = array();
+            $now = time();
+            foreach ($cursor as $item) {
+                $item['date'] = date("Y-m-d H:i:s", $item['date']);
+                if ($now < $item['start_date']) {
+                    $item['expire'] = 0; //未开始
+                }
+                if ($now >= $item['start_date'] && $now <= $item['end_date']) {
+                    $item['expire'] = 1; //播放中
+                }
+                if ($now > $item['end_date']) {
+                    $item['expire'] = 2; //已过期
+                }
+                $item['start_date'] = date("Y-m-d H:i:s", $item['start_date']);
+                $item['end_date'] = date("Y-m-d H:i:s", $item['end_date']);
+                array_push($result, $item);
+            }
+
+            $count = $admin_mail->count($search);
+            $page = new Page($count, C('PAGE_NUM'));
+            $page = $page->show();
+
+            $this->assign("page", $page);
+            $this->assign("mail", $result);
+            $this->_result['data']['html'] = $this->fetch("Activity:mail");
+
+            $this->_result['data']['count'] = $count;
+            $this->_result['data']['page'] = $page;
+            $this->_result['data']['mail'] = $result;
+        }
+        $this->response($this->_result);
+    }
+
+    public function mailPost() {
+        $data['scope'] = I('post.scope', 0, check_numeric);//0 全服 1 多人
+        $role_list = I('post.role_list', null);
+        $data['title'] = I('post.title', null, check_empty_string);
+        $data['content'] = I('post.content', null, check_empty_string);
+        $data['date'] = time();
+        $data['admin'] = $_SESSION[MODULE_NAME.'_admin']['username'];
+        merge_params_error($data['title'], 'title', '标题不能为空', $this->_result['error']);
+        merge_params_error($data['content'], 'content', '邮件内容不能为空', $this->_result['error']);
+
+        //检查参数
+        if ($this->_result['error']) {
+            $error = array_shift($this->_result['error']);
+            $error = array_values($error);
+            $this->response($this->_result, 'json', 400, $error[0]);
+        }
+
+        $role_list = explode(',', $role_list);
+        if ($role_list) {
+            $role_list = array_map("intval", $role_list);
+            $data['role_list'] = $role_list;
+        } else {
+            $data['role_list'] = array();
+        }
+
+        $data['title'] = strip_tags($data['title']);
+        $data['content'] = strip_tags($data['content']);
+
+        filter_array_element($data);
+        $admin_mail = $this->mongo_db->admin_mail;
+        if ($admin_mail->insert($data)) {
+            $this->response($this->_result, 'json', 201, '新建成功');
+        } else {
+            $this->response($this->_result, 'json', 400, '新建失败');
+        }
     }
 
     //公告
