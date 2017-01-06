@@ -12,12 +12,12 @@ use Think\Upload;
 class MaterialController extends BaseController {
     public function materialPost() {
         $config = array(
-            'rootPath'   =>    C('FILE_DIR'),
+            'rootPath'   =>    './Uploads/',
             'savePath'   =>    '',
             'exts'       =>    array('jpg', 'png'),
         );
-        $ftpConfig = C('FTP');
-        $upload= new Upload($config, 'Ftp', $ftpConfig);
+
+        $upload= new Upload($config);
         $info = $upload->upload();
         if (!$info) {
             $this->_result['error'] = $upload->getError();

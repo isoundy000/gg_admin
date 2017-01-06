@@ -383,6 +383,7 @@ class ActivityController extends BaseController {
         }
         $data['start_date'] = strtotime(trim($date_range[0]));
         $data['end_date'] = strtotime(trim($date_range[1]));
+        $data['image'] = substr($data['image'], 1);
         filter_array_element($data);
         $admin_popup = $this->mongo_db->admin_popup;
         if ($admin_popup->insert($data)) {
@@ -413,7 +414,9 @@ class ActivityController extends BaseController {
         $data['start_date'] = strtotime(trim($date_range[0]));
         $data['end_date'] = strtotime(trim($date_range[1]));
         $data['admin'] = $_SESSION[MODULE_NAME.'_admin']['username'];
-
+        if (strpos($data['image'], '.') == 0) {
+            $data['image'] = substr($data['image'], 1);
+        }
         filter_array_element($data);
         $update['$set'] = $data;
         $admin_popup = $this->mongo_db->admin_popup;

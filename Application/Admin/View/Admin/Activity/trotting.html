@@ -142,7 +142,7 @@
         ajaxRequest(_url, null, 'get', 'json', function(result) {
             if (result.code == 200) {
                 $("#trotting_submit").html("保存");
-                $('#gg-tab a[href="#tab_2"]').tab('show');
+                $('#gg-tab a[href="#tab_2"]').tab('show'); 
                 $("#date_range").val(result.data.trotting.date_range);
                 $("#interval").val(result.data.trotting.interval);
                 $("#content").val(result.data.trotting.content);

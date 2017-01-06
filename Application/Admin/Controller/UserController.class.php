@@ -191,6 +191,7 @@ class UserController extends BaseController
         if (!$query['status']) {
             $this->response($this->_result, 'json', 400, 'the status');
         }
+        $query['date'] = date("Y-m-d H:i:s", $query['date']);
         //保存用户会话信息
         $_SESSION[MODULE_NAME.'_admin'] = $query;
         //生成token

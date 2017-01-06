@@ -88,7 +88,7 @@
                         <div class="form-group">
                             <label for="image" class="col-sm-2 control-label">图片上传</label>
                             <div class="col-sm-4">
-                                <input id="image" name="image" type="file" multiple class="file file-loading" data-allowed-file-extesions='["jpg","png"]'>
+                                <input id="image" name="image" type="file" class="file file-loading" data-allowed-file-extesions='["jpg","png"]'>
                             </div>
                         </div>
                         <input type="hidden" id="image_preview">
@@ -127,13 +127,14 @@
     });
 
     //file-input
-    var input = $("#image").fileinput({
+    $("#image").fileinput({
         language: "zh",
-        uploadAsync: false,
-        overwriteInitial: true,
+        uploadAsync: true,
+        maxFileCount: 0,
+        dropZoneEnabled:false,
+        allowedFileExtensions : ['png', 'jpg'],
         uploadUrl: "__MODULE__/Material/material",
-    });
-    input.on('fileuploaded', function(event, data) {
+    }).on('fileuploaded', function(event, data) {
         $("#image_preview").val(data.response.data.file_path);
     });
     function popupEdit(_url) {
@@ -149,13 +150,15 @@
                     $("#visible").attr("checked", false);
                 }
                 $("#image_preview").val(result.data.popup.image);
-                var input_new = $("#image").fileinput("refresh", {
+                $("#image").fileinput("refresh", {
                     language: "zh",
-                    uploadAsync: false,
+                    uploadAsync: true,
+                    maxFileCount: 0,
+                    dropZoneEnabled:false,
+                    allowedFileExtensions : ['png', 'jpg'],
                     uploadUrl: "__MODULE__/Material/material",
                     initialPreview: ["<img src='" + result.data.popup.image + "' style='width:auto;height:160px;' class='kv-preview-data file-preview-image' alt='预览' title='预览'>"]
-                });
-                input_new.on('fileuploaded', function(event, data) {
+                }).on('fileuploaded', function(event, data) {
                     $("#image_preview").val(data.response.data.file_path);
                 });
             }
