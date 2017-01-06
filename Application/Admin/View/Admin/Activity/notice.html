@@ -41,34 +41,18 @@
                                 <tbody>
                                 <tr>
                                     <th>创建时间</th>
-                                    <th>开始时间</th>
-                                    <th>结束时间</th>
-                                    <th>间隔秒数</th>
-                                    <th>消息内容</th>
-                                    <th>状态</th>
+                                    <th>类型</th>
+                                    <th>标题</th>
+                                    <th>内容</th>
                                     <th>操作</th>
                                 </tr>
 
                                 <foreach name="notice" item="item">
                                     <tr>
                                         <td>{$item.date}</td>
-                                        <td>{$item.start_date}</td>
-                                        <td>{$item.end_date}</td>
-                                        <td>{$item.interval}</td>
+                                        <td>{$item.type_name}</td>
+                                        <td>{$item.title}</td>
                                         <td>{$item.content}</td>
-                                        <td>
-                                            <switch name="item.expire">
-                                                <case value="0">
-                                                    <label class="label bg-orange-active">未开始</label>
-                                                </case>
-                                                <case value="1">
-                                                    <label class="label bg-green-active">播放中</label>
-                                                </case>
-                                                <case value="2">
-                                                    <label class="label bg-red-active">已过期</label>
-                                                </case>
-                                            </switch>
-                                        </td>
                                         <td><a href="Javascript:void(0)" onclick="noticeEdit('__MODULE__/activity/notice/_id/{$item._id}')">编辑</a> |
                                             <a href="Javascript:void(0)" onclick="noticeConfirmDelete('__MODULE__/activity/notice', '{$item._id}')">删除</a></td>
                                     </tr>
@@ -88,22 +72,32 @@
                 <div class="tab-pane" id="tab_2">
                     <form class="form-horizontal" onsubmit="return false;">
                         <div class="form-group">
-                            <label for="date_range" class="col-sm-2 control-label">开始-结束 时间</label>
+                            <label class="col-sm-2 control-label">类型</label>
                             <div class="col-sm-4">
-                                <input class="form-control pull-right" id="date_range" type="text">
+                                <div class="radio col-sm-2 no-padding-left">
+                                    <label>
+                                        <input onclick="showType(0)" type="radio" id="type1" name="type" value="0" checked>
+                                        游戏
+                                    </label>
+                                </div>
+                                <div class="radio col-sm-2 no-padding-left">
+                                    <label>
+                                        <input onclick="showType(1)" type="radio" id="type2" name="type" value="1">
+                                        后台
+                                    </label>
+                                </div>
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="interval" class="col-sm-2 control-label">时间间隔</label>
+                            <label for="title" class="col-sm-2 control-label">标题</label>
                             <div class="col-sm-4">
-                                <input class="form-control" id="interval" placeholder="时间间隔(秒)" min="5" type="number">
+                                <input class="form-control" id="title" placeholder="标题">
                             </div>
                         </div>
                         <div class="form-group">
                             <label for="content" class="col-sm-2 control-label">消息内容</label>
                             <div class="col-sm-4">
-                                <textarea class="form-control" id="content" rows="3">
-                                </textarea>
+                                <textarea class="form-control" id="content" rows="3"></textarea>
                             </div>
                         </div>
                         <div class="form-group">
@@ -123,31 +117,28 @@
 </section>
 <!-- /.content -->
 <script>
-    $('#date_range').daterangepicker({
-        timePicker: true,
-        timePicker24Hour: true,
-        timePickerIncrement: 30,
-        format: 'YYYY/MM/DD HH:mm:ss',
-        locale: moment.locale('zh-cn'),
-    });
-
-    //加载编辑器
-    var editor = CKEDITOR.replace("content");
+    function showType(show) {
+        if (show == 1) {
+            $("#role_list_group").css("display", "block");
+        } else {
+            $("#role_list_group").css("display", "none");
+        }
+    }
     function noticeClear() {
-        $("#interval").val("");
-        editor.setData("");
+        $("#title").val("");
+        $("#content").val("");
+        $("#_id").val("");
         $("#notice_submit").html("添加");
     }
 
     function noticeEdit(_url) {
         ajaxRequest(_url, null, 'get', 'json', function(result) {
             if (result.code == 200) {
+                $("input[name='type'][value='" + result.data.notice.type + "']").attr("checked", true);
                 $("#notice_submit").html("保存");
                 $('#gg-tab a[href="#tab_2"]').tab('show');
-                $("#date_range").val(result.data.notice.date_range);
-                $("#interval").val(result.data.notice.interval);
+                $("#title").val(result.data.notice.title);
                 $("#content").val(result.data.notice.content);
-                editor.setData(result.data.notice.content);
                 $("#_id").val(result.data.notice._id.$id);
             }
         })
@@ -172,14 +163,14 @@
 
     function noticeSave(_url) {
         var method = $("#_id").val() ? "PUT" : "POST";
-        var date_range = $("#date_range").val();
-        var interval = $("#interval").val();
-        var content = editor.getData();
+        var type = $("input[name='type']:checked").val();
+        var title = $("#title").val();
+        var content = $("#content").val();
         var _id = $("#_id").val();
 
         var source = {
-            date_range:date_range,
-            interval: interval,
+            type: type,
+            title: title,
             content: content,
             _id:_id
         };

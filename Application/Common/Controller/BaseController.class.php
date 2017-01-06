@@ -32,6 +32,7 @@ class BaseController extends RestController {
             'index/login',
             'user/token',
             'index/verify',
+            'material/material',
         ))) {
             return;
         }

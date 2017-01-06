@@ -106,20 +106,19 @@
                             <div class="col-sm-4">
                                 <div class="radio col-sm-2 no-padding-left">
                                     <label>
-                                        <input onclick="showScope(0)" type="radio" id="radio1" name="scope" value="0">
+                                        <input onclick="showScope(0)" type="radio" id="radio1" name="scope" value="0" checked>
                                         全服
                                     </label>
                                 </div>
                                 <div class="radio col-sm-2 no-padding-left">
                                     <label>
-                                        <input onclick="showScope(1)" type="radio" id="radio2" name="scope" value="1"
-                                               checked>
+                                        <input onclick="showScope(1)" type="radio" id="radio2" name="scope" value="1">
                                         多人
                                     </label>
                                 </div>
                             </div>
                         </div>
-                        <div class="form-group" id="role_list_group">
+                        <div class="form-group" style="display: none;" id="role_list_group">
                             <label for="role_list" class="col-sm-2 control-label">玩家ID</label>
                             <div class="col-sm-4">
                                 <textarea class="form-control" id="role_list" placeholder="以英文逗号分隔" size="3"></textarea>
@@ -165,6 +164,7 @@
     function mailClear() {
         $("#title").val("");
         $("#content").val("");
+        $("#_id").val("");
     }
 
     function mailSave(_url) {

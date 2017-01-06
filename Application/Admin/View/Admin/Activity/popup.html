@@ -1,7 +1,7 @@
 <!-- Content Header (Page header) -->
 <section class="content-header">
     <h1>
-        跑马灯公告
+        登录弹窗
     </h1>
     <ol class="breadcrumb">
         <li><a href="__MODULE__/index/index"><i class="fa fa-dashboard"></i>首页</a></li>
@@ -16,7 +16,7 @@
     <div class="row">
         <div class="nav-tabs-custom">
             <ul class="nav nav-tabs" id="gg-tab">
-                <li class="active"><a href="#tab_1" data-toggle="tab" aria-expanded="true"><b class="text-light-blue">跑马灯列表</b></a></li>
+                <li class="active"><a href="#tab_1" data-toggle="tab" aria-expanded="true"><b class="text-light-blue">弹窗列表</b></a></li>
                 <li class=""><a href="#tab_2" data-toggle="tab" aria-expanded="false"><b class="text-green">新建</b> | <b class="text-blue">编辑</b></a></li>
             </ul>
             <div class="tab-content">
@@ -43,34 +43,26 @@
                                     <th>创建时间</th>
                                     <th>开始时间</th>
                                     <th>结束时间</th>
-                                    <th>间隔秒数</th>
-                                    <th>消息内容</th>
+                                    <th>弹窗图片</th>
                                     <th>状态</th>
                                     <th>操作</th>
                                 </tr>
 
-                                <foreach name="trotting" item="item">
+                                <foreach name="popup" item="item">
                                     <tr>
                                         <td>{$item.date}</td>
                                         <td>{$item.start_date}</td>
                                         <td>{$item.end_date}</td>
-                                        <td>{$item.interval}</td>
-                                        <td>{$item.content}</td>
+                                        <td><img height="80" src="{$item.image}"></td>
                                         <td>
-                                            <switch name="item.expire">
-                                                <case value="0">
-                                                    <label class="label bg-orange-active">未开始</label>
-                                                </case>
-                                                <case value="1">
-                                                    <label class="label bg-green-active">播放中</label>
-                                                </case>
-                                                <case value="2">
-                                                    <label class="label bg-red-active">已过期</label>
-                                                </case>
-                                            </switch>
+                                            <if condition="$item.visible eq 0">
+                                                <label class="label bg-red">失效</label>
+                                            <else/>
+                                                <label class="label bg-green">显示</label>
+                                            </if>
                                         </td>
-                                        <td><a href="Javascript:void(0)" onclick="trottingEdit('__MODULE__/activity/trotting/_id/{$item._id}')">编辑</a> |
-                                            <a href="Javascript:void(0)" onclick="trottingConfirmDelete('__MODULE__/activity/trotting', '{$item._id}')">删除</a></td>
+                                        <td><a href="Javascript:void(0)" onclick="popupEdit('__MODULE__/activity/popup/_id/{$item._id}')">编辑</a> |
+                                            <a href="Javascript:void(0)" onclick="popupConfirmDelete('__MODULE__/activity/popup', '{$item._id}')">删除</a></td>
                                     </tr>
                                 </foreach>
                                 </tbody>
@@ -94,22 +86,25 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="interval" class="col-sm-2 control-label">时间间隔</label>
+                            <label for="image" class="col-sm-2 control-label">图片上传</label>
                             <div class="col-sm-4">
-                                <input class="form-control" id="interval" placeholder="时间间隔(秒)" min="5" type="number">
+                                <input id="image" name="image" type="file" multiple class="file file-loading" data-allowed-file-extesions='["jpg","png"]'>
                             </div>
                         </div>
+                        <input type="hidden" id="image_preview">
                         <div class="form-group">
-                            <label for="content" class="col-sm-2 control-label">消息内容</label>
+                            <label for="visible" class="col-sm-2 control-label">状态</label>
                             <div class="col-sm-4">
-                                <textarea class="form-control" id="content" rows="3">
-                                </textarea>
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" id="visible">是否显示
+                                    </label>
+                                </div>
                             </div>
                         </div>
                         <div class="form-group">
                             <div class="col-sm-offset-2 col-sm-4">
-                                <button id="trotting_submit" type="submit" class="btn btn-primary" onclick="trottingSave('__MODULE__/activity/trotting')">添加</button>
-                                <button type="submit" class="btn btn-warning" onclick="trottingClear()">清空</button>
+                                <button id="popup_submit" type="submit" class="btn btn-primary" onclick="popupSave('__MODULE__/activity/popup')">添加</button>
                                 <input type="hidden" id="_id">
                             </div>
                         </div>
@@ -131,33 +126,47 @@
         locale: moment.locale('zh-cn'),
     });
 
-    //加载编辑器
-    var editor = CKEDITOR.replace("content");
-    function trottingClear() {
-        $("#interval").val("");
-        editor.setData("");
-        $("#trotting_submit").html("添加");
-    }
-
-    function trottingEdit(_url) {
+    //file-input
+    var input = $("#image").fileinput({
+        language: "zh",
+        uploadAsync: false,
+        overwriteInitial: true,
+        uploadUrl: "__MODULE__/Material/material",
+    });
+    input.on('fileuploaded', function(event, data) {
+        $("#image_preview").val(data.response.data.file_path);
+    });
+    function popupEdit(_url) {
         ajaxRequest(_url, null, 'get', 'json', function(result) {
             if (result.code == 200) {
-                $("#trotting_submit").html("保存");
+                $("#popup_submit").html("保存");
                 $('#gg-tab a[href="#tab_2"]').tab('show');
-                $("#date_range").val(result.data.trotting.date_range);
-                $("#interval").val(result.data.trotting.interval);
-                $("#content").val(result.data.trotting.content);
-                editor.setData(result.data.trotting.content);
-                $("#_id").val(result.data.trotting._id.$id);
+                $("#date_range").val(result.data.popup.date_range);
+                $("#_id").val(result.data.popup._id.$id);
+                if (result.data.popup.visible) {
+                    $("#visible").attr("checked", true);
+                } else {
+                    $("#visible").attr("checked", false);
+                }
+                $("#image_preview").val(result.data.popup.image);
+                var input_new = $("#image").fileinput("refresh", {
+                    language: "zh",
+                    uploadAsync: false,
+                    uploadUrl: "__MODULE__/Material/material",
+                    initialPreview: ["<img src='" + result.data.popup.image + "' style='width:auto;height:160px;' class='kv-preview-data file-preview-image' alt='预览' title='预览'>"]
+                });
+                input_new.on('fileuploaded', function(event, data) {
+                    $("#image_preview").val(data.response.data.file_path);
+                });
             }
         })
     }
 
-    function trottingConfirmDelete(_url, _id) {
-        warningDialog('block', '警告', '此操作不可恢复，你真的要删除吗?', "trottingDelete('" + _url + "', '" + _id + "')");
+    function popupConfirmDelete(_url, _id) {
+        warningDialog('block', '警告', '此操作不可恢复，你真的要删除吗?', "popupDelete('" + _url + "', '" + _id + "')");
     }
 
-    function trottingDelete(_url, _id) {
+    function popupDelete(_url, _id) {
         var source = {
             _id: _id
         }
@@ -165,28 +174,27 @@
             if (!result) {
                 warningDialog('none');
                 successDialog('block', '删除', '删除成功!');
-                menuClick('__MODULE__/activity/trotting');
+                menuClick('__MODULE__/activity/popup');
             }
         })
     }
 
-    function trottingSave(_url) {
+    function popupSave(_url) {
         var method = $("#_id").val() ? "PUT" : "POST";
         var date_range = $("#date_range").val();
-        var interval = $("#interval").val();
-        var content = editor.getData();
         var _id = $("#_id").val();
-
+        var image = $("#image_preview").val();
+        var visible = $("#visible").is(':checked') ? 1 : 0;
         var source = {
             date_range:date_range,
-            interval: interval,
-            content: content,
+            image: image,
+            visible: visible,
             _id:_id
         };
         ajaxRequest(_url, source, method, 'json', function(result) {
             if(result.code == 201) {
                 successDialog('block', '保存或新建', result.msg);
-                menuClick('__MODULE__/activity/trotting');
+                menuClick('__MODULE__/activity/popup');
 
             } else {
                 errorDialog('block', '保存或新建', result.msg);
