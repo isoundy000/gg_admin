@@ -1,7 +1,7 @@
 <!-- Content Header (Page header) -->
 <section class="content-header">
     <h1>
-        跑马灯公告
+        公告
     </h1>
     <ol class="breadcrumb">
         <li><a href="__MODULE__/index/index"><i class="fa fa-dashboard"></i>首页</a></li>
@@ -16,7 +16,7 @@
     <div class="row">
         <div class="nav-tabs-custom">
             <ul class="nav nav-tabs" id="gg-tab">
-                <li class="active"><a href="#tab_1" data-toggle="tab" aria-expanded="true"><b class="text-light-blue">跑马灯列表</b></a></li>
+                <li class="active"><a href="#tab_1" data-toggle="tab" aria-expanded="true"><b class="text-light-blue">公告列表</b></a></li>
                 <li class=""><a href="#tab_2" data-toggle="tab" aria-expanded="false"><b class="text-green">新建</b> | <b class="text-blue">编辑</b></a></li>
             </ul>
             <div class="tab-content">
@@ -49,7 +49,7 @@
                                     <th>操作</th>
                                 </tr>
 
-                                <foreach name="trotting" item="item">
+                                <foreach name="notice" item="item">
                                     <tr>
                                         <td>{$item.date}</td>
                                         <td>{$item.start_date}</td>
@@ -69,8 +69,8 @@
                                                 </case>
                                             </switch>
                                         </td>
-                                        <td><a href="Javascript:void(0)" onclick="trottingEdit('__MODULE__/activity/trotting/_id/{$item._id}')">编辑</a> |
-                                            <a href="Javascript:void(0)" onclick="trottingConfirmDelete('__MODULE__/activity/trotting', '{$item._id}')">删除</a></td>
+                                        <td><a href="Javascript:void(0)" onclick="noticeEdit('__MODULE__/activity/notice/_id/{$item._id}')">编辑</a> |
+                                            <a href="Javascript:void(0)" onclick="noticeConfirmDelete('__MODULE__/activity/notice', '{$item._id}')">删除</a></td>
                                     </tr>
                                 </foreach>
                                 </tbody>
@@ -108,8 +108,8 @@
                         </div>
                         <div class="form-group">
                             <div class="col-sm-offset-2 col-sm-4">
-                                <button id="trotting_submit" type="submit" class="btn btn-primary" onclick="trottingSave('__MODULE__/activity/trotting')">添加</button>
-                                <button type="submit" class="btn btn-warning" onclick="trottingClear()">清空</button>
+                                <button id="notice_submit" type="submit" class="btn btn-primary" onclick="noticeSave('__MODULE__/activity/notice')">添加</button>
+                                <button type="submit" class="btn btn-warning" onclick="noticeClear()">清空</button>
                                 <input type="hidden" id="_id">
                             </div>
                         </div>
@@ -133,31 +133,31 @@
 
     //加载编辑器
     var editor = CKEDITOR.replace("content");
-    function trottingClear() {
+    function noticeClear() {
         $("#interval").val("");
         editor.setData("");
-        $("#trotting_submit").html("添加");
+        $("#notice_submit").html("添加");
     }
 
-    function trottingEdit(_url) {
+    function noticeEdit(_url) {
         ajaxRequest(_url, null, 'get', 'json', function(result) {
             if (result.code == 200) {
-                $("#trotting_submit").html("保存");
+                $("#notice_submit").html("保存");
                 $('#gg-tab a[href="#tab_2"]').tab('show');
-                $("#date_range").val(result.data.trotting.date_range);
-                $("#interval").val(result.data.trotting.interval);
-                $("#content").val(result.data.trotting.content);
-                editor.setData(result.data.trotting.content);
-                $("#_id").val(result.data.trotting._id.$id);
+                $("#date_range").val(result.data.notice.date_range);
+                $("#interval").val(result.data.notice.interval);
+                $("#content").val(result.data.notice.content);
+                editor.setData(result.data.notice.content);
+                $("#_id").val(result.data.notice._id.$id);
             }
         })
     }
 
-    function trottingConfirmDelete(_url, _id) {
-        warningDialog('block', '警告', '此操作不可恢复，你真的要删除吗?', "trottingDelete('" + _url + "', '" + _id + "')");
+    function noticeConfirmDelete(_url, _id) {
+        warningDialog('block', '警告', '此操作不可恢复，你真的要删除吗?', "noticeDelete('" + _url + "', '" + _id + "')");
     }
 
-    function trottingDelete(_url, _id) {
+    function noticeDelete(_url, _id) {
         var source = {
             _id: _id
         }
@@ -165,12 +165,12 @@
             if (!result) {
                 warningDialog('none');
                 successDialog('block', '删除', '删除成功!');
-                menuClick('__MODULE__/activity/trotting');
+                menuClick('__MODULE__/activity/notice');
             }
         })
     }
 
-    function trottingSave(_url) {
+    function noticeSave(_url) {
         var method = $("#_id").val() ? "PUT" : "POST";
         var date_range = $("#date_range").val();
         var interval = $("#interval").val();
@@ -186,7 +186,7 @@
         ajaxRequest(_url, source, method, 'json', function(result) {
             if(result.code == 201) {
                 successDialog('block', '保存或新建', result.msg);
-                menuClick('__MODULE__/activity/trotting');
+                menuClick('__MODULE__/activity/notice');
 
             } else {
                 errorDialog('block', '保存或新建', result.msg);

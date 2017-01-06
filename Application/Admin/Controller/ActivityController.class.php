@@ -212,12 +212,10 @@ class ActivityController extends BaseController {
             $this->response($this->_result, 'json', 400, $error[0]);
         }
 
-        $role_list = explode(',', $role_list);
         if ($role_list) {
+            $role_list = explode(',', $role_list);
             $role_list = array_map("intval", $role_list);
             $data['role_list'] = $role_list;
-        } else {
-            $data['role_list'] = array();
         }
 
         $data['title'] = strip_tags($data['title']);

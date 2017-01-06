@@ -102,8 +102,7 @@
                         <div class="form-group">
                             <label for="content" class="col-sm-2 control-label">消息内容</label>
                             <div class="col-sm-4">
-                                <textarea class="form-control" id="content" rows="3">
-                                </textarea>
+                                <textarea class="form-control" id="content" rows="3" placeholder="消息内容"></textarea>
                             </div>
                         </div>
                         <div class="form-group">
@@ -132,10 +131,9 @@
     });
 
     //加载编辑器
-    var editor = CKEDITOR.replace("content");
     function trottingClear() {
         $("#interval").val("");
-        editor.setData("");
+        $("#content").val("");
         $("#trotting_submit").html("添加");
     }
 
@@ -147,7 +145,6 @@
                 $("#date_range").val(result.data.trotting.date_range);
                 $("#interval").val(result.data.trotting.interval);
                 $("#content").val(result.data.trotting.content);
-                editor.setData(result.data.trotting.content);
                 $("#_id").val(result.data.trotting._id.$id);
             }
         })
@@ -174,7 +171,7 @@
         var method = $("#_id").val() ? "PUT" : "POST";
         var date_range = $("#date_range").val();
         var interval = $("#interval").val();
-        var content = editor.getData();
+        var content = $("#content").val();
         var _id = $("#_id").val();
 
         var source = {
