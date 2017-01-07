@@ -79,6 +79,7 @@ class UserController extends BaseController
         $update['$set'] = $data;
         if ($agent = $admin_agent->findAndModify($search, $update, null, array('new' => true))) {
             unset($agent['password']);
+            $agent['date'] = date("Y-m-d H:i:s", $agent['date']);
             $_SESSION[MODULE_NAME.'_admin'] = $agent;
             $this->response($this->_result, 'json', 201, '保存成功');
         } else {
@@ -235,6 +236,30 @@ class UserController extends BaseController
             $this->response($this->_result, 'json', 201, '新建成功');
         } else {
             $this->response($this->_result, 'json', 400, '新建失败');
+        }
+    }
+
+    public function verifyCodeGet() {
+        $cellphone = I('get.cellphone');
+        if (!check_cellphone_format($cellphone)) {
+            $this->response($this->_result, 'json', 400, '手机号码格式错误');
+        }
+        require 'ThinkPHP/Library/Think/Dayu/TopSdk.php';
+        $c = new \TopClient();
+        $c->appkey = C('DAYU.APP_ID');
+        $c->secretKey = C('DAYU.APP_SECRET');
+        $req = new \AlibabaAliqinFcSmsNumSendRequest();
+        $req->setExtend("ggmj");
+        $req->setSmsType("normal");
+        $req->setSmsFreeSignName(C('DAYU.SIGN_NAME'));
+        $req->setSmsParam("{verify_code:'131420'}");
+        $req->setRecNum($cellphone);
+        $req->setSmsTemplateCode("DAYU.TEMPLATE_CODE");
+        $resp = $c->execute($req);
+        if ($resp->result->err_code == 0) {
+            $this->response($this->_result, 'json', 200, '发送成功');
+        } else {
+            $this->response($this->_result, 'json', 400, $resp->result->sub_msg);
         }
     }
 }
