@@ -46,7 +46,7 @@ class CardController extends BaseController
             $this->assign("page", $page);
             $this->assign("cards", $result);
             $this->assign("card_type", $card_type);
-            $this->_result['data']['html'] = $this->fetch("card:index");
+            $this->_result['data']['html'] = $this->fetch("Card:index");
 
             $this->_result['data']['count'] = $count;
             $this->_result['data']['page'] = $page;
