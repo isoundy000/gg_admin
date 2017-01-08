@@ -4,7 +4,7 @@ return array(
     'MODULE_ALLOW_LIST' => array('Admin','Agent'),
     'DEFAULT_MODULE' => 'Admin', //默认模块
     'URL_CASE_INSENSITIVE' => true, //URL不区分大小写
-    'URL_MODEL' => 2, // nginx为1 PATH_INFO模式 http://www.example.com/admin/user || Apache为2 REWRITE模式
+    'URL_MODEL' => 1, // nginx为1 PATH_INFO模式 http://www.example.com/admin/user || Apache为2 REWRITE模式
 
     //REST API
     'REST_ENABLE' => true,
@@ -14,7 +14,7 @@ return array(
     'REST_DELETE' => 'Delete',
 
     //数据库配置 mongodb socketTimeoutMS=-1
-    'MONGO_SERVER' => 'mongodb://backdbuser:backdbpwd@115.28.230.12:27017/backDb?authMechanism=SCRAM-SHA-1&socketTimeoutMS=-1',
+    'MONGO_SERVER' => 'mongodb://backdbuser:backdbpwd@115.28.230.12:27017/backDb?authMechanism=SCRAM-SHA-1',
     'MONGO_DB' => 'backDb',
 
     'LAYOUT_ON' => true,
@@ -23,14 +23,6 @@ return array(
     //分页
     'PAGE_NUM' => 10,
     'PAGE_CALLBACK' => 'menuClick',
-
-    //阿里大于
-    'DAYU' => array(
-        'APP_ID' => '23594607',
-        'APP_SECRET' => '95436c0d9318109e10dffa7fdaf34914',
-        'SIGN_NAME' => '捷叔叔',
-        'TEMPLATE_CODE' => 'SMS_39325049', //你好，${verify_code}为你的验证码，请在10分钟内使用。
-    ),
 
     //业务配置
     'SYSTEM' => array(
@@ -42,7 +34,7 @@ return array(
             'Admin' => 'Admin',
             'Agent' => 'Agent',
         ),
-        'STOCK_TYPE' => array(//库存类型
+        'STOCK_TYPE' => array(//库存（房卡）类型
             1 => '普通',
             2 => '活动',
         ),

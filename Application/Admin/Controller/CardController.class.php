@@ -13,17 +13,17 @@ class CardController extends BaseController
 {
     public function cardsGet() {
         $admin_card = $this->mongo_db->admin_card;
-        $admin_role = $this->mongo_db->admin_role;
 
-        $card_type = C('SYSTEM.card_TYPE');
-        $this->_result['data']['card_type'] = $card_type;
+        $card_type = C('SYSTEM.STOCK_TYPE');
+        $this->assign("stock_type", $card_type);
+        $this->_result['data']['stock_type'] = $card_type;
 
         if (I('get._id')) {
             $search['_id'] = new \MongoId(I('get._id', null));
-            $option = array('password' => 0);
+            $option = array();
             $query = $admin_card->findOne($search, $option);
+            $query['date'] = date("Y-m-d H:i:s", $query['date']);
             $this->_result['data']['cards'] = $query;
-
         } else {
             $search = array();
             $limit = intval(I('get.limit', C('PAGE_NUM')));
@@ -34,9 +34,8 @@ class CardController extends BaseController
             $cursor = $admin_card->find($search)->limit($limit)->skip($skip);
             $result = array();
             foreach ($cursor as $item) {
-                $role = $admin_role->findOne(array('_id' => $item['role_id']),array('name'=>1));
-                $item['role_name'] = $role['name'];
                 $item['type_name'] = $card_type[$item['type']];
+                $item['date'] = date("Y-m-d H:i:s", $item['date']);
                 array_push($result, $item);
             }
 
@@ -44,13 +43,7 @@ class CardController extends BaseController
             $page = new Page($count, C('PAGE_NUM'));
             $page = $page->show();
 
-            //role list
-            $module_list = C('SYSTEM.MODULE_LIST');
-            $role_cursor = $admin_role->find(array("module_name"=>$module_list['card']));
-            $roles = iterator_to_array($role_cursor);
-
             $this->assign("page", $page);
-            $this->assign("roles", $roles);
             $this->assign("cards", $result);
             $this->assign("card_type", $card_type);
             $this->_result['data']['html'] = $this->fetch("card:index");
@@ -58,7 +51,6 @@ class CardController extends BaseController
             $this->_result['data']['count'] = $count;
             $this->_result['data']['page'] = $page;
             $this->_result['data']['cards'] = $result;
-            $this->_result['data']['roles'] = $roles;
         }
         $this->response($this->_result);
     }
@@ -66,15 +58,14 @@ class CardController extends BaseController
     public function cardsPut() {
 
         $search['_id'] = new \MongoId(I('put._id'));
+        $data['desc'] = I('put.desc', null, check_empty_string);
         $data['name'] = I('put.name', null, check_empty_string);
-        $data['password'] = I('put.password', null);
-        $data['repeat_password'] = I('put.repeat_password', null);
-        $data['type'] = intval(I('put.type'));
-        $data['status'] = intval(I('put.status'));
-        $data['role_id'] = I('put.role_id');
-        merge_params_error($data['name'], 'name', '昵称不能为空', $this->_result['error']);
-        merge_params_error($data['password'], 'password', '密码不能为空', $this->_result['error'], false);
-        merge_params_error($data['repeat_password'], 'repeat_password', '密码不能为空', $this->_result['error'], false);
+        $data['price'] = intval(I('put.price', 0));
+        $data['status'] = intval(I('put.status', 0));
+        $data['admin'] = $_SESSION[MODULE_NAME.'_admin']['username'];
+        merge_params_error($data['desc'], 'desc', '请填写描述信息', $this->_result['error']);
+        merge_params_error($data['name'], 'name', '名字不能为空', $this->_result['error']);
+
         //检查参数
         if ($this->_result['error']) {
             $error = array_shift($this->_result['error']);
@@ -82,24 +73,23 @@ class CardController extends BaseController
             $this->response($this->_result, 'json', 400, $error[0]);
         }
 
-        if ($data['password'] && $data['repeat_password']) {
-            if ($data['password'] != $data['repeat_password']) {
-                $this->response($this->_result, 'json', 400, '两次输入的密码不一致');
-            }
+        if ($data['price'] <= 0) {
+            $this->response($this->_result, 'json', 400, '价格必须大于0');
+        }
 
-            if (checkTextLength6($data['password']) || checkTextLength6($data['repeat_password'])) {
-                $this->response($this->_result, 'json', 400, '密码至少6个字符');
-            }
-            unset($data['repeat_password']);
-            $data['password'] = md5($data['password']);
+        //检查房卡配置
+        $stock_type = C('SYSTEM.STOCK_TYPE');
+        $data['config'] = array();
+        $count = 0;
+        foreach ($stock_type as $key => $value) {
+            $num = intval(I("put.config_{$key}", 0));
+            $count += $num;
+            $config = array($key => $num);
+            array_push($data['config'], $config);
         }
-        if (isset($data['password']) && !$data['password']) {
-            unset($data['password']);
+        if ($count <= 0) {
+            $this->response($this->_result, 'json', 400, '配置数量必须大于0');
         }
-        if (isset($data['repeat_password']) && !$data['repeat_password']) {
-            unset($data['repeat_password']);
-        }
-        $data['role_id'] = new \MongoId($data['role_id']);
         filter_array_element($data);
 
         $update['$set'] = $data;
@@ -115,19 +105,14 @@ class CardController extends BaseController
 
     public function cardsPost() {
         $admin_card = $this->mongo_db->admin_card;
-        $data['username'] = I('post.username', null, check_empty_string);
+        $data['desc'] = I('post.desc', null, check_empty_string);
         $data['name'] = I('post.name', null, check_empty_string);
-        $data['password'] = I('post.password', null, check_empty_string);
-        $data['repeat_password'] = I('post.repeat_password', null, check_empty_string);
-        $data['type'] = intval(I('post.type'));
-        $data['level'] = 1; //一级代理
-        $data['status'] = intval(I('post.status'));
-        $data['role_id'] = I('post.role_id');
+        $data['price'] = intval(I('post.price', 0));
+        $data['status'] = intval(I('post.status', 0));
+        $data['admin'] = $_SESSION[MODULE_NAME.'_admin']['username'];
         $data['date'] = time();
-        merge_params_error($data['username'], 'username', '用户名不能为空', $this->_result['error']);
+        merge_params_error($data['desc'], 'desc', '请填写描述信息', $this->_result['error']);
         merge_params_error($data['name'], 'name', '名字不能为空', $this->_result['error']);
-        merge_params_error($data['password'], 'password', '密码不能为空', $this->_result['error']);
-        merge_params_error($data['repeat_password'], 'repeat_password', '密码不能为空', $this->_result['error']);
 
         //检查参数
         if ($this->_result['error']) {
@@ -136,28 +121,24 @@ class CardController extends BaseController
             $this->response($this->_result, 'json', 400, $error[0]);
         }
 
-        if (checkTextLength6($data['username'])) {
-            $this->response($this->_result, 'json', 400, '用户名至少6个字符');
+        if ($data['price'] <= 0) {
+            $this->response($this->_result, 'json', 400, '价格必须大于0');
         }
 
-        if ($data['password'] != $data['repeat_password']) {
-            $this->response($this->_result, 'json', 400, '两次输入的密码不一致');
+        //检查房卡配置
+        $stock_type = C('SYSTEM.STOCK_TYPE');
+        $data['config'] = array();
+        $count = 0;
+        foreach ($stock_type as $key => $value) {
+            $num = intval(I("post.config_{$key}", 0));
+            $count += $num;
+            $config = array($key => $num);
+            array_push($data['config'], $config);
         }
-
-        if (checkTextLength6($data['password'])||checkTextLength6($data['repeat_password'])) {
-            $this->response($this->_result, 'json', 400, '密码至少6个字符');
+        if ($count <= 0) {
+            $this->response($this->_result, 'json', 400, '配置数量必须大于0');
         }
-
-        if (findRecord('username', $data['username'], $admin_card)) {
-            $this->response($this->_result, 'json', 400, '用户名已经存在');
-        }
-
         filter_array_element($data);
-
-        $data['role_id'] = new \MongoId($data['role_id']);
-        $data['password'] = md5($data['password']);
-        unset($data['repeat_password']);
-
         if ($admin_card->insert($data)) {
             $this->_result['data']['url'] = U(MODULE_NAME.'/card/cards');
             $this->response($this->_result, 'json', 201, '新建成功');
