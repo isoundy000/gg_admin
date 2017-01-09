@@ -83,7 +83,7 @@ class ActivityController extends BaseController {
         }
         $data['start_date'] = strtotime(trim($date_range[0]));
         $data['end_date'] = strtotime(trim($date_range[1]));
-        $data['content'] = strip_tags($data['content'], '<a>');
+        //$data['content'] = strip_tags($data['content'], '<a>');
         if ($data['interval'] > ($data['end_date'] - $data['start_date'])) {
             $this->response($this->_result, 'json', 400, '时间间隔不能大于起始时间差');
         }
@@ -120,7 +120,7 @@ class ActivityController extends BaseController {
         $data['start_date'] = strtotime(trim($date_range[0]));
         $data['end_date'] = strtotime(trim($date_range[1]));
         $data['admin'] = $_SESSION[MODULE_NAME.'_admin']['username'];
-        $data['content'] = strip_tags($data['content'], '<a>');
+        //$data['content'] = strip_tags($data['content'], '<a>');
         if ($data['interval'] > ($data['end_date'] - $data['start_date'])) {
             $this->response($this->_result, 'json', 400, '时间间隔不能大于起始时间差');
         }
@@ -211,7 +211,7 @@ class ActivityController extends BaseController {
         }
 
         $data['title'] = strip_tags($data['title']);
-        $data['content'] = strip_tags($data['content'], '<a>');
+        //$data['content'] = strip_tags($data['content'], '<a>');
 
         filter_array_element($data);
         $admin_mail = $this->mongo_db->admin_mail;
@@ -275,7 +275,7 @@ class ActivityController extends BaseController {
             $this->response($this->_result, 'json', 400, $error[0]);
         }
         $data['title'] = strip_tags($data['title']);
-        $data['content'] = strip_tags($data['content'], '<a>');
+        //$data['content'] = strip_tags($data['content'], '<a>');
         $admin_notice = $this->mongo_db->admin_notice;
         if ($admin_notice->insert($data)) {
             $this->response($this->_result, 'json', 201, '新建成功');
@@ -300,7 +300,7 @@ class ActivityController extends BaseController {
             $this->response($this->_result, 'json', 400, $error[0]);
         }
         $data['title'] = strip_tags($data['title']);
-        $data['content'] = strip_tags($data['content'], '<a>');
+        //$data['content'] = strip_tags($data['content'], '<a>');
         $update['$set'] = $data;
         $admin_notice = $this->mongo_db->admin_notice;
         if ($admin_notice->update($search,$update)) {
