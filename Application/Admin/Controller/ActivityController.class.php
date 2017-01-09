@@ -61,11 +61,12 @@ class ActivityController extends BaseController {
     }
 
     public function trottingPost() {
-        $data['interval'] = I('post.interval', null, check_positive_integer);
+        //$data['interval'] = I('post.interval', null, check_positive_integer);
         $data['content'] = I('post.content', null, check_empty_string);
+        $data['top'] = intval(I('post.top', 0));
         $data['date'] = time();
         $data['admin'] = $_SESSION[MODULE_NAME.'_admin']['username'];
-        merge_params_error($data['interval'], 'interval', '间隔为正整数', $this->_result['error']);
+        //merge_params_error($data['interval'], 'interval', '间隔为正整数', $this->_result['error']);
         merge_params_error($data['content'], 'content', '消息内容不能为空', $this->_result['error']);
 
         //检查参数
@@ -75,7 +76,7 @@ class ActivityController extends BaseController {
             $this->response($this->_result, 'json', 400, $error[0]);
         }
 
-        $data['interval'] = intval($data['interval']);
+        //$data['interval'] = intval($data['interval']);
         $date_range = I('post.date_range');
         $date_range = explode('-', $date_range);
         if (!$date_range) {
@@ -84,12 +85,15 @@ class ActivityController extends BaseController {
         $data['start_date'] = strtotime(trim($date_range[0]));
         $data['end_date'] = strtotime(trim($date_range[1]));
         //$data['content'] = strip_tags($data['content'], '<a>');
-        if ($data['interval'] > ($data['end_date'] - $data['start_date'])) {
-            $this->response($this->_result, 'json', 400, '时间间隔不能大于起始时间差');
-        }
+        //if ($data['interval'] > ($data['end_date'] - $data['start_date'])) {
+        //    $this->response($this->_result, 'json', 400, '时间间隔不能大于起始时间差');
+        //}
 
         filter_array_element($data);
         $admin_trotting = $this->mongo_db->admin_trotting;
+        if($data['top']) {//将其他公告置为非置顶
+            $admin_trotting->update(array('top' => 1),array('$set'=>array('top' => 0)));
+        }
         if ($admin_trotting->insert($data)) {
             $this->response($this->_result, 'json', 201, '新建成功');
         } else {
@@ -99,10 +103,10 @@ class ActivityController extends BaseController {
     
     public function trottingPut() {
         $search['_id'] = new \MongoId(I('put._id'));
-        $data['interval'] = I('put.interval', null, check_positive_integer);
+        //$data['interval'] = I('put.interval', null, check_positive_integer);
         $data['content'] = I('put.content', null, check_empty_string);
-
-        merge_params_error($data['interval'], 'interval', '时间应为正整数', $this->_result['error']);
+        $data['top'] = intval(I('put.top', 0));
+        //merge_params_error($data['interval'], 'interval', '时间应为正整数', $this->_result['error']);
         merge_params_error($data['content'], 'content', '消息内容不能为空', $this->_result['error']);
 
         //检查参数
@@ -111,7 +115,7 @@ class ActivityController extends BaseController {
             $error = array_values($error);
             $this->response($this->_result, 'json', 400, $error[0]);
         }
-        $data['interval'] = intval($data['interval']);
+        //$data['interval'] = intval($data['interval']);
         $date_range = I('put.date_range');
         $date_range = explode('-', $date_range);
         if (!$date_range) {
@@ -121,13 +125,16 @@ class ActivityController extends BaseController {
         $data['end_date'] = strtotime(trim($date_range[1]));
         $data['admin'] = $_SESSION[MODULE_NAME.'_admin']['username'];
         //$data['content'] = strip_tags($data['content'], '<a>');
-        if ($data['interval'] > ($data['end_date'] - $data['start_date'])) {
-            $this->response($this->_result, 'json', 400, '时间间隔不能大于起始时间差');
-        }
+        //if ($data['interval'] > ($data['end_date'] - $data['start_date'])) {
+        //    $this->response($this->_result, 'json', 400, '时间间隔不能大于起始时间差');
+        //}
 
         filter_array_element($data);
         $update['$set'] = $data;
         $admin_trotting = $this->mongo_db->admin_trotting;
+        if($data['top']) {//将其他公告置为非置顶
+            $admin_trotting->update(array('top' => 1),array('$set'=>array('top' => 0)));
+        }
         if ($admin_trotting->update($search,$update)) {
             $this->response($this->_result, 'json', 201, '保存成功');
         } else {

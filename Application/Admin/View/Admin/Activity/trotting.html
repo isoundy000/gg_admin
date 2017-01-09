@@ -43,8 +43,9 @@
                                     <th>创建时间</th>
                                     <th>开始时间</th>
                                     <th>结束时间</th>
-                                    <th>间隔秒数</th>
+                                    <!--<th>间隔秒数</th>-->
                                     <th>消息内容</th>
+                                    <th>是否置顶</th>
                                     <th>状态</th>
                                     <th>操作</th>
                                 </tr>
@@ -54,8 +55,15 @@
                                         <td>{$item.date}</td>
                                         <td>{$item.start_date}</td>
                                         <td>{$item.end_date}</td>
-                                        <td>{$item.interval}</td>
+                                        <!--<td>{$item.interval}</td>-->
                                         <td>{$item.content}</td>
+                                        <td>
+                                            <if condition="$item.top eq 0">
+                                                <label class="label bg-orange-active">未置顶</label>
+                                                <else/>
+                                                <label class="label bg-green-active">已置顶</label>
+                                            </if>
+                                        </td>
                                         <td>
                                             <switch name="item.expire">
                                                 <case value="0">
@@ -93,16 +101,26 @@
                                 <input class="form-control pull-right" id="date_range" type="text">
                             </div>
                         </div>
-                        <div class="form-group">
+                        <!--<div class="form-group">
                             <label for="interval" class="col-sm-2 control-label">时间间隔</label>
                             <div class="col-sm-4">
                                 <input class="form-control" id="interval" placeholder="时间间隔(秒)" min="5" type="number">
                             </div>
-                        </div>
+                        </div>-->
                         <div class="form-group">
                             <label for="content" class="col-sm-2 control-label">消息内容</label>
                             <div class="col-sm-4">
                                 <textarea class="form-control" id="content" rows="3" placeholder="消息内容"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="top" class="col-sm-2 control-label">置顶</label>
+                            <div class="col-sm-4">
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" id="top">是否置顶
+                                    </label>
+                                </div>
                             </div>
                         </div>
                         <div class="form-group">
@@ -132,9 +150,10 @@
 
     //加载编辑器
     function trottingClear() {
-        $("#interval").val("");
+        //$("#interval").val("");
         $("#content").val("");
         $("#_id").val("");
+        $("#top").attr("checked", false);
         $("#trotting_submit").html("添加");
     }
 
@@ -144,9 +163,14 @@
                 $("#trotting_submit").html("保存");
                 $('#gg-tab a[href="#tab_2"]').tab('show'); 
                 $("#date_range").val(result.data.trotting.date_range);
-                $("#interval").val(result.data.trotting.interval);
+                //$("#interval").val(result.data.trotting.interval);
                 $("#content").val(result.data.trotting.content);
                 $("#_id").val(result.data.trotting._id.$id);
+                if (result.data.trotting.top) {
+                    $("#top").attr("checked", true);
+                } else {
+                    $("#top").attr("checked", false);
+                }
             }
         })
     }
@@ -171,14 +195,16 @@
     function trottingSave(_url) {
         var method = $("#_id").val() ? "PUT" : "POST";
         var date_range = $("#date_range").val();
-        var interval = $("#interval").val();
+        //var interval = $("#interval").val();
         var content = $("#content").val();
         var _id = $("#_id").val();
+        var top = $("#top").is(':checked') ? 1 : 0;
 
         var source = {
             date_range:date_range,
-            interval: interval,
+            //interval: interval,
             content: content,
+            top: top,
             _id:_id
         };
         ajaxRequest(_url, source, method, 'json', function(result) {
