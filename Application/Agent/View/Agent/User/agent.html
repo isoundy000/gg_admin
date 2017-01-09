@@ -96,8 +96,11 @@
                             <div class="col-sm-2">
                                 <input class="form-control" id="cellphone" placeholder="手机号码" type="text" required>
                             </div>
-                            <div class="col-sm-2">
-                                <button class="btn btn-primary">发送</button>
+                            <div class="col-sm-1">
+                                <button class="btn btn-primary pull-right" onclick="verifyCode('__MODULE__/User/verifyCode')">发送</button>
+                            </div>
+                            <div class="col-sm-1" style="margin-top:4px;">
+                                <label id="cellphone_tip"></label>
                             </div>
                         </div>
                         <div class="form-group">
@@ -144,6 +147,19 @@
 </section>
 <!-- /.content -->
 <script>
+    function verifyCode(_url) {
+        var cellphone = $("#cellphone").val();
+        var source = {
+            cellphone: cellphone,
+        };
+        ajaxRequest(_url, source, 'GET', 'json', function(result) {
+            if(result.code == 200) {
+                $("#cellphone_tip").attr("class", "bg-success label");
+                $("#cellphone_tip").html(result.msg);
+            }
+        });
+    }
+
     function agentSave(_url) {
         var method = "POST";
         var password = $("#password").val();
@@ -151,6 +167,7 @@
         var name = $("#name").val();
         var wechat = $("#wechat").val();
         var cellphone = $("#cellphone").val();
+        var verify_code = $("#verify_code").val();
         var _id = $("#_id").val();
 
         var source = {
@@ -158,6 +175,7 @@
             repeat_password:repeat_password,
             wechat: wechat,
             cellphone: cellphone,
+            verify_code: verify_code,
             name: name,
             _id:_id
         };

@@ -192,7 +192,7 @@ class UserController extends BaseController
         $data['password'] = I('post.password', null, check_empty_string);
         $data['repeat_password'] = I('post.repeat_password', null, check_empty_string);
         $data['type'] = intval(I('post.type'));
-        //$data['level'] = 1;
+        $data['verify_code'] = I('post.verify_code', null, check_empty_string);
         $data['status'] = 1;
         $data['pid'] = $_SESSION[MODULE_NAME.'_admin']['_id']->__toString();
         $data['role_id'] = $_SESSION[MODULE_NAME.'_admin']['role_id'];
@@ -200,6 +200,7 @@ class UserController extends BaseController
         merge_params_error($data['cellphone'], 'cellphone', '手机号码不能为空', $this->_result['error']);
         merge_params_error($data['wechat'], 'wechat', '微信号不能为空', $this->_result['error']);
         merge_params_error($data['name'], 'name', '昵称不能为空', $this->_result['error']);
+        merge_params_error($data['verify_code'], 'verify_code', '验证码不能为空', $this->_result['error']);
         merge_params_error($data['password'], 'password', '密码不能为空', $this->_result['error']);
         merge_params_error($data['repeat_password'], 'repeat_password', '密码不能为空', $this->_result['error']);
 
@@ -226,10 +227,15 @@ class UserController extends BaseController
             $this->response($this->_result, 'json', 400, '用户名已经存在');
         }
 
+        if (session($data['cellphone']) != $data['verify_code']) {
+            $this->response($this->_result, 'json', 400, '验证码不正确');
+        }
+
         filter_array_element($data);
 
         $data['password'] = md5($data['password']);
         unset($data['repeat_password']);
+        unset($data['verify_code']);
 
         if ($admin_agent->insert($data)) {
             $this->_result['data']['url'] = U(MODULE_NAME.'/user/agents');
@@ -244,6 +250,7 @@ class UserController extends BaseController
         if (!check_cellphone_format($cellphone)) {
             $this->response($this->_result, 'json', 400, '手机号码格式错误');
         }
+        $random_code = buildRandomCode();
         require 'ThinkPHP/Library/Think/Dayu/TopSdk.php';
         $c = new \TopClient();
         $c->appkey = C('DAYU.APP_ID');
@@ -252,14 +259,17 @@ class UserController extends BaseController
         $req->setExtend("ggmj");
         $req->setSmsType("normal");
         $req->setSmsFreeSignName(C('DAYU.SIGN_NAME'));
-        $req->setSmsParam("{verify_code:'131420'}");
+        $param = "{\"verify_code\":\"{$random_code}\"}";
+        $req->setSmsParam($param);
         $req->setRecNum($cellphone);
-        $req->setSmsTemplateCode("DAYU.TEMPLATE_CODE");
+        $req->setSmsTemplateCode(C("DAYU.TEMPLATE_CODE"));
         $resp = $c->execute($req);
-        if ($resp->result->err_code == 0) {
+        if ($resp->result && $resp->result->err_code == "0") {
+            //设置$_SESSION
+            session($cellphone, $random_code);
             $this->response($this->_result, 'json', 200, '发送成功');
         } else {
-            $this->response($this->_result, 'json', 400, $resp->result->sub_msg);
+            $this->response($this->_result, 'json', 400, '发送失败，请稍后重试');
         }
     }
 }

@@ -23,6 +23,7 @@ class CardController extends BaseController
             $option = array();
             $query = $admin_card->findOne($search, $option);
             $query['date'] = date("Y-m-d H:i:s", $query['date']);
+            $query['config'] = array_values($query['config']);
             $this->_result['data']['cards'] = $query;
         } else {
             $search = array();
@@ -78,14 +79,13 @@ class CardController extends BaseController
         }
 
         //检查房卡配置
-        $stock_type = C('SYSTEM.STOCK_TYPE');
         $data['config'] = array();
+        $config = I('put.config');
         $count = 0;
-        foreach ($stock_type as $key => $value) {
-            $num = intval(I("put.config_{$key}", 0));
+        foreach ($config as $key => $value) {
+            $num = intval($value);
             $count += $num;
-            $config = array($key => $num);
-            array_push($data['config'], $config);
+            $data['config'][$key] = $num;
         }
         if ($count <= 0) {
             $this->response($this->_result, 'json', 400, '配置数量必须大于0');
@@ -126,14 +126,13 @@ class CardController extends BaseController
         }
 
         //检查房卡配置
-        $stock_type = C('SYSTEM.STOCK_TYPE');
         $data['config'] = array();
+        $config = I('post.config');
         $count = 0;
-        foreach ($stock_type as $key => $value) {
-            $num = intval(I("post.config_{$key}", 0));
+        foreach ($config as $key => $value) {
+            $num = intval($value);
             $count += $num;
-            $config = array($key => $num);
-            array_push($data['config'], $config);
+            $data['config'][$key] = $num;
         }
         if ($count <= 0) {
             $this->response($this->_result, 'json', 400, '配置数量必须大于0');

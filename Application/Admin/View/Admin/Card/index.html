@@ -87,7 +87,7 @@
                             <label class="col-sm-2 control-label">套餐配置</label>
                             <foreach name="stock_type" key="k" item="item">
                                 <div class="col-sm-2">
-                                    <input type="number" min="0" class="form-control" id="config_{$k}" placeholder="{$item}房卡（张）">
+                                    <input type="number" name="config" min="0" class="form-control" id="config_{$k}" placeholder="{$item}房卡（张）">
                                 </div>
                             </foreach>
                         </div>
@@ -148,8 +148,10 @@
                 $("#name").val(result.data.cards.name);
                 $("#desc").val(result.data.cards.desc);
                 $("#price").val(result.data.cards.price);
-                $("#config_1").val(result.data.cards.config[0][1]);
-                $("#config_2").val(result.data.cards.config[1][2]);
+                for(var i in result.data.cards.config) {
+                    var id = "#config_" + (parseInt(i)+1);
+                    $(id).val(result.data.cards.config[i]);
+                }
                 $("#_id").val(result.data.cards._id.$id);
                 if (result.data.cards.status) {
                     $("#status").attr("checked", true);
@@ -181,18 +183,18 @@
         var method = $("#_id").val() ? "PUT" : "POST";
         var price = $("#price").val();
         var name = $("#name").val();
-        var config_1 = $("#config_1").val();
-        var config_2 = $("#config_2").val();
+        var config = {};
+        $("input[name='config']").each(function(key, item) {
+            config[parseInt(key)+1] = item.value;
+        });
         var desc = $("#desc").val();
         var _id = $("#_id").val();
         var status = $("#status").is(':checked') ? 1 : 0;
-
         var source = {
             price:price,
             name: name,
             desc: desc,
-            config_1: config_1,
-            config_2: config_2,
+            config: config,
             status: status,
             _id:_id
         };

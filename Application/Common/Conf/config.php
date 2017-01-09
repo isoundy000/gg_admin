@@ -24,6 +24,14 @@ return array(
     'PAGE_NUM' => 10,
     'PAGE_CALLBACK' => 'menuClick',
 
+    //阿里大于，手机短信配置
+    'DAYU' => array(
+        'APP_ID' => '23576696', //应用ID
+        'APP_SECRET' => 'afa62f19770ce40055b49e9837fb759f', //应用secret
+        'SIGN_NAME' => '杠杠麻将', //签名 一般为公司名称
+        'TEMPLATE_CODE' => 'SMS_39220245', //模板ID，模板可配置变量
+    ),
+
     //业务配置
     'SYSTEM' => array(
         'AGENT_TYPE' => array(//代理类型
