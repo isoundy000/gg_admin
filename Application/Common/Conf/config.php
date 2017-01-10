@@ -29,7 +29,7 @@ return array(
         'APP_ID' => '23576696', //应用ID
         'APP_SECRET' => 'afa62f19770ce40055b49e9837fb759f', //应用secret
         'SIGN_NAME' => '杠杠麻将', //签名 一般为公司名称
-        'TEMPLATE_CODE' => 'SMS_39220245', //模板ID，模板可配置变量
+        'TEMPLATE_CODE' => 'SMS_39220246', //模板ID，模板可配置变量
     ),
 
     //业务配置
