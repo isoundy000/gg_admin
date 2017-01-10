@@ -37,8 +37,29 @@ class BaseController extends RestController {
             return;
         }
 
+        //用户表
+        switch(MODULE_NAME) {
+            case 'Admin':
+                $session_user = $this->mongo_db->admin_user;
+                break;
+            case 'Agent':
+                $session_user = $this->mongo_db->admin_agent;
+                break;
+        }
+
         //检查用户是否登录
         if ($_SESSION[MODULE_NAME.'_token']) {
+            //更新用户$_SESSION
+            $user = $session_user->findOne(array("_id" => $_SESSION[MODULE_NAME.'_admin']['_id']),array("password" => 0));
+            if($user['stock_amount']) {
+                $amount = 0;
+                foreach($user['stock_amount'] as $key => $value) {
+                    $amount += $value;
+                }
+                $user['card_amount'] = $amount;
+            }
+            $_SESSION[MODULE_NAME.'_admin'] = $user;
+
             //判断用户是否有权限请求此接口
             $menu_id = $_GET['menu_id'];
             if (!$menu_id) {

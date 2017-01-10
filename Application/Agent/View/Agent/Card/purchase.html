@@ -1,0 +1,78 @@
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <div class="row">
+        <div class="col-md-3 col-sm-6 col-xs-12">
+            <div class="info-box">
+                <span class="info-box-icon bg-aqua"><i class="fa fa-dollar"></i></span>
+
+                <div class="info-box-content">
+                    <span class="info-box-text">房卡数量</span>
+                    <span class="info-box-number">{$Think.session.Agent_admin.card_amount}</span>
+                </div>
+                <!-- /.info-box-content -->
+            </div>
+            <!-- /.info-box -->
+        </div>
+    </div>
+    <h1>
+        购买房卡
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="__MODULE__/index/index"><i class="fa fa-dashboard"></i>首页</a></li>
+        <foreach name="breadcrumb" item="item">
+            <li><a <if condition="$item.active eq 1">class="active"</if> href="javascript:void(0)" onclick="menuClick('{$item.action}')">{$item.name}</a></li>
+        </foreach>
+    </ol>
+    <hr>
+    <div class="row">
+        <div class="box box-success">
+            <div class="box-header">
+                <div class="box-title">
+                    房卡套餐
+                </div>
+            </div>
+            <div class="box-body">
+                <foreach name="cards" item="item">
+                    <div class="col-md-3 col-sm-6 col-xs-12">
+                        <div class="info-box bg-green" style="cursor:pointer;">
+                            <span class="info-box-icon"><i class="fa fa-ticket"></i></span>
+                            <div class="info-box-content">
+                                <span class="info-box-text">&nbsp;</span>
+                                <span class="info-box-number">{$item.name}</span>
+
+                                <div class="progress">
+                                    <div class="progress-bar" style="width: 100%"></div>
+                                </div>
+                                <span class="progress-description">
+                        {$item.desc}
+                      </span>
+                            </div>
+                            <!-- /.info-box-content -->
+                        </div>
+                    </div>
+                </foreach>
+            </div>
+            <div class="box-footer">
+            </div>
+        </div>
+        <div class="box box-warning">
+            <div class="box-header">
+                <div class="box-title">
+                    支付方式
+                </div>
+            </div>
+            <div class="box-body">
+            </div>
+            <div class="box-footer">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Main content -->
+<section class="content">
+    <div class="row">
+
+    </div>
+</section>
+<!-- /.content -->
