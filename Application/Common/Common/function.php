@@ -7,8 +7,26 @@ use Think\Verify;
 
 /*---------------------手机6位验证码------------------------*/
 
-function rand_number() {
+/**
+ * @param $time 时间化为秒
+ * @return int
+ */
+function convertToSeconds($time) {
+    $data = explode(":", $time);
+    $seconds = $data[0]*3600 + $data[1] * 60 + $data[2];
+    return $seconds;
+}
 
+/**
+ * @param $seconds 秒化为时间
+ * @return string
+ */
+function convertToTime($seconds) {
+    $hour = intval($seconds/3600);
+    $seconds -= $hour*3600;
+    $minute = intval($seconds / 60);
+    $seconds -= $minute*60;
+    return $hour.":"."$minute".":"."$seconds";
 }
 
 

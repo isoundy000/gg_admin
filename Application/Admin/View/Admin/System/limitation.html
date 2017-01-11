@@ -43,8 +43,18 @@
                         </div>
                     </div>
                     <div class="form-group">
+                        <label for="status" class="col-sm-2 control-label">状态</label>
+                        <div class="col-sm-4">
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" id="status">是否显示
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
                         <div class="col-sm-offset-2 col-sm-4">
-                            <button id="limitation_submit" type="submit" class="btn btn-primary" onclick="limitationSave('__MODULE__/activity/limitation')">添加</button>
+                            <button id="limitation_submit" type="submit" class="btn btn-primary" onclick="limitationSave('__MODULE__/system/limitation')">添加</button>
                             <button type="submit" class="btn btn-warning" onclick="limitationClear()">清空</button>
                             <input type="hidden" id="_id">
                         </div>
@@ -76,11 +86,10 @@
                     <tbody>
                     <tr>
                         <th>创建时间</th>
+                        <th>开始日期</th>
+                        <th>结束日期</th>
                         <th>开始时间</th>
                         <th>结束时间</th>
-                        <!--<th>间隔秒数</th>-->
-                        <th>消息内容</th>
-                        <th>是否置顶</th>
                         <th>状态</th>
                         <th>操作</th>
                     </tr>
@@ -90,32 +99,19 @@
                             <td>{$item.date}</td>
                             <td>{$item.start_date}</td>
                             <td>{$item.end_date}</td>
-                            <!--<td>{$item.interval}</td>-->
-                            <td>{$item.content}</td>
+                            <td>{$item.start_time}</td>
+                            <td>{$item.end_time}</td>
                             <td>
-                                <if condition="$item.top eq 0">
-                                    <label class="label bg-orange-active">未置顶</label>
+                                <if condition="$item.status eq 0">
+                                    <label class="label bg-orange-active">未启用</label>
                                     <else/>
-                                    <label class="label bg-green-active">已置顶</label>
+                                    <label class="label bg-green-active">已启用</label>
                                 </if>
                             </td>
-                            <td>
-                                <switch name="item.expire">
-                                    <case value="0">
-                                        <label class="label bg-orange-active">未开始</label>
-                                    </case>
-                                    <case value="1">
-                                        <label class="label bg-green-active">播放中</label>
-                                    </case>
-                                    <case value="2">
-                                        <label class="label bg-red-active">已过期</label>
-                                    </case>
-                                </switch>
-                            </td>
                             <td><a href="Javascript:void(0)"
-                                   onclick="limitationEdit('__MODULE__/activity/limitation/_id/{$item._id}')">编辑</a> |
+                                   onclick="limitationEdit('__MODULE__/system/limitation/_id/{$item._id}')">编辑</a> |
                                 <a href="Javascript:void(0)"
-                                   onclick="limitationConfirmDelete('__MODULE__/activity/limitation', '{$item._id}')">删除</a>
+                                   onclick="limitationConfirmDelete('__MODULE__/system/limitation', '{$item._id}')">删除</a>
                             </td>
                         </tr>
                     </foreach>
@@ -161,10 +157,10 @@
 
     //加载编辑器
     function limitationClear() {
-        //$("#interval").val("");
-        $("#content").val("");
+        $("#start_time").val("");
+        $("#end_time").val("");
         $("#_id").val("");
-        $("#top").attr("checked", false);
+        $("#date_range").attr("checked", false);
         $("#limitation_submit").html("添加");
     }
 
@@ -174,13 +170,13 @@
                 $("#limitation_submit").html("保存");
                 $('#gg-tab a[href="#tab_2"]').tab('show');
                 $("#date_range").val(result.data.limitation.date_range);
-                //$("#interval").val(result.data.limitation.interval);
-                $("#content").val(result.data.limitation.content);
+                $("#start_time").val(result.data.limitation.start_time);
+                $("#end_time").val(result.data.limitation.end_time);
                 $("#_id").val(result.data.limitation._id.$id);
-                if (result.data.limitation.top) {
-                    $("#top").attr("checked", true);
+                if (result.data.limitation.status) {
+                    $("#status").attr("checked", true);
                 } else {
-                    $("#top").attr("checked", false);
+                    $("#status").attr("checked", false);
                 }
             }
         })
@@ -198,7 +194,7 @@
             if (!result) {
                 warningDialog('none');
                 successDialog('block', '删除', '删除成功!');
-                menuClick('__MODULE__/activity/limitation');
+                menuClick('__MODULE__/system/limitation');
             }
         })
     }
@@ -206,22 +202,22 @@
     function limitationSave(_url) {
         var method = $("#_id").val() ? "PUT" : "POST";
         var date_range = $("#date_range").val();
-        //var interval = $("#interval").val();
-        var content = $("#content").val();
+        var start_time = $("#start_time").val();
+        var end_time = $("#end_time").val();
+        var status = $("#status").is(':checked') ? 1 : 0;
         var _id = $("#_id").val();
-        var top = $("#top").is(':checked') ? 1 : 0;
 
         var source = {
             date_range: date_range,
-            //interval: interval,
-            content: content,
-            top: top,
+            start_time: start_time,
+            status: status,
+            end_time: end_time,
             _id: _id
         };
         ajaxRequest(_url, source, method, 'json', function (result) {
             if (result.code == 201) {
                 successDialog('block', '保存或新建', result.msg);
-                menuClick('__MODULE__/activity/limitation');
+                menuClick('__MODULE__/system/limitation');
 
             } else {
                 errorDialog('block', '保存或新建', result.msg);
