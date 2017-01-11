@@ -231,6 +231,10 @@ class UserController extends BaseController
             $this->response($this->_result, 'json', 400, '验证码不正确');
         }
 
+        if (findRecord('cellphone', $data['cellphone'], $admin_agent)) {
+            $this->response($this->_result, 'json', 400, '手机号码已经存在');
+        }
+
         filter_array_element($data);
 
         $data['password'] = md5($data['password']);
