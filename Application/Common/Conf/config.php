@@ -31,6 +31,13 @@ return array(
     'PAGE_NUM' => 10,
     'PAGE_CALLBACK' => 'menuClick',
 
+    //微信公众号配置
+    'WEIXIN' => array(
+        'APP_ID' => 'wx4437df34cce0da84',
+        'APP_SECRET' => '777c789ebef9977348aa1d78ec2bf29c',
+        'TOKEN' => 'ggmj',
+    ),
+
     //阿里大于，手机短信配置
     'DAYU' => array(
         'APP_ID' => '23576696', //应用ID

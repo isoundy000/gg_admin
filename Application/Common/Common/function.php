@@ -26,7 +26,7 @@ function convertToTime($seconds) {
     $seconds -= $hour*3600;
     $minute = intval($seconds / 60);
     $seconds -= $minute*60;
-    return $hour.":"."$minute".":"."$seconds";
+    return str_pad($hour, 2, "0") . ":" . str_pad($minute, 2, "0") . ":" . str_pad($seconds, 2, "0");
 }
 
 

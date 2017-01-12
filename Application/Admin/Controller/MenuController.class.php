@@ -39,7 +39,7 @@ class MenuController extends BaseController {
             }
 
             //查找parent menu
-            $parent_query = $admin_menu->find(array("pid"=>'0'));
+            $parent_query = $admin_menu->find(array("pid"=>'0', 'visible' => 1));
             $parent_result = iterator_to_array($parent_query);
 
             $count = $admin_menu->count($search);
