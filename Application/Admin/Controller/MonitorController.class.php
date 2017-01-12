@@ -18,6 +18,7 @@ class MonitorController extends RestController {
         $key = C('APP_KEY');
         if(I('get.key') != md5($key)) {
             echo "app_key is wrong\n";
+            return;
         }
         $mongo_client = new \MongoClient(C('MONGO_SERVER'));
         $db_name = C('MONGO_DB');
