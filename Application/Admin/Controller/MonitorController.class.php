@@ -15,7 +15,8 @@ class MonitorController extends RestController {
      */
     public function buildIndexGet() {
         //校验KEY
-        if(I('get.key') != C('APP_KEY')) {
+        $key = C('APP_KEY');
+        if(I('get.key') != md5($key)) {
             echo "app_key is wrong\n";
         }
         $mongo_client = new \MongoClient(C('MONGO_SERVER'));
