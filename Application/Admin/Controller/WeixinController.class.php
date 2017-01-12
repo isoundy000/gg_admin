@@ -17,6 +17,10 @@ class WeixinController extends RestController {
         $wechatObj->valid();
     }
 
+    public function cardGet() {
+        echo "领取房卡";
+    }
+
     //获取TOKEN
     private function tokenGet() {
         $api = C('WEIXIN.WX_ACCESS_TOKEN_URL') . '&' .
