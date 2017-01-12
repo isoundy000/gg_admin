@@ -36,6 +36,7 @@ return array(
         'APP_ID' => 'wx4437df34cce0da84',
         'APP_SECRET' => '777c789ebef9977348aa1d78ec2bf29c',
         'TOKEN' => 'ggmj',
+        'WX_ACCESS_TOKEN_URL' => 'https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential',
     ),
 
     //阿里大于，手机短信配置
