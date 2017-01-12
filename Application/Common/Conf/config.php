@@ -20,6 +20,13 @@ return array(
     'LAYOUT_ON' => true,
     'LAYOUT_NAME' => 'layout',
 
+    //相关计划任务KEY
+    //配置后到Monitor目录将每个shell脚本中的key参数值替换成该配置中的值
+    //shell脚本中的域名地址也应换成对应的服务器域名
+    //例如:curl http://www.example.com/index.php/Admin/Monitor/buildIndex/key/3fa283d936cc83a698bfa14e94eced9b >> /home/bash.log;
+    //应将www.example.com替换成真实域名，key的值替换成APP_KEY的值
+    'APP_KEY' => '3fa283d936cc83a698bfa14e94eced9b',
+
     //分页
     'PAGE_NUM' => 10,
     'PAGE_CALLBACK' => 'menuClick',

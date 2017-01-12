@@ -14,6 +14,10 @@ class MonitorController extends RestController {
      * 建立索引
      */
     public function buildIndexGet() {
+        //校验KEY
+        if(I('get.key') != C('APP_KEY')) {
+            echo "app_key is wrong\n";
+        }
         $mongo_client = new \MongoClient(C('MONGO_SERVER'));
         $db_name = C('MONGO_DB');
         $db = $mongo_client->$db_name;
@@ -110,7 +114,7 @@ class MonitorController extends RestController {
         $c->createIndex(array('to_user' => 1), array());
         $c->createIndex(array('date' => 1), array());
 
-        echo "create mongodb index at" . date("Y-m-d H:i:s", time()) . "\n";
+        echo "create mongodb index at " . date("Y-m-d H:i:s", time()) . "\n";
     }
 
 }
