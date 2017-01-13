@@ -50,7 +50,7 @@ class PlayerController extends BaseController {
             $cursor = $admin_client->find($search)->limit($limit)->skip($skip);
             $result = array();
             foreach ($cursor as $item) {
-                $item['match_count'] = $item['totalWinCi'] + $item['totalWinCi'] + $item['totalWinCi'];
+                $item['match_count'] = $item['totalWinCi'] + $item['totalLoseCi'] + $item['totalPingCi'];
                 array_push($result, $item);
             }
 

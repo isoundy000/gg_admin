@@ -35,6 +35,7 @@
                         <th>昵称</th>
                         <th>房卡剩余</th>
                         <th>累计局数</th>
+                        <th>赢分</th>
                         <!--<th>操作</th>-->
                     </tr>
                     <foreach name="clients" item="item">
@@ -47,6 +48,7 @@
                                 </foreach>
                             </td>
                             <th>{$item.match_count}</th>
+                            <th>{$item.totalWinFen}</th>
                             <!--<td>
                                 <a href="Javascript:void(0)" onclick="menuClick('__MODULE__/client/clients/tab/card/_id/{$item._id}')">充卡</a>
                             </td>-->

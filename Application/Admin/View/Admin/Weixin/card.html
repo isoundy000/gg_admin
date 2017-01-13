@@ -33,7 +33,7 @@
 <div class="js_dialog" id="androidDialog" style="display: none;">
     <div class="weui-mask"></div>
     <div class="weui-dialog">
-        <div class="weui-dialog__bd">弹窗内容，告知当前状态、信息和解决方法，描述文字尽量控制在三行内</div>
+        <div class="weui-dialog__bd"></div>
         <div class="weui-dialog__ft">
             <a href="javascript:;" class="weui-dialog__btn weui-dialog__btn_primary">知道了</a>
         </div>
@@ -46,7 +46,7 @@
         androidDialog.fadeOut(200);
     });
     function cardSave(url, code) {
-        var xmlHttpRequest;
+        /*var xmlHttpRequest;
         if(window.XMLHttpRequest) {
             xmlHttpRequest = new XMLHttpRequest();
         } else {
@@ -67,23 +67,25 @@
            }
         };
         xmlHttpRequest.open("GET", url + "?code=" + code, true);
-        xmlHttpRequest.send(null);
-        /*$.ajax({
-            url: url,
+        xmlHttpRequest.send(null);*/
+        //禁用button
+        $("#dialog").attr("disabled", true);
+        $.ajax({
+            url: url + "?code=" + code,
             type: 'GET',
-            data: {"code": code},
+            data: null,
             dataType: 'json',
             success: function (res) {
-                if (res.data.code == 201) {
-                        $('.weui-dialog__bd').html("你已经成功领取今日的奖励!");
-                        androidDialog.fadeIn(200);
-                }
+                $("#dialog").removeAttr("disabled");
+                $('.weui-dialog__bd').html("你已经成功领取今日的奖励!");
+                androidDialog.fadeIn(200);
             },
             error : function(XMLHttpRequest, textStatus, errorThrown) {
+                $("#dialog").removeAttr("disabled");
                 $('.weui-dialog__bd').html("今日领取已达上限，请明天再来!");
                 androidDialog.fadeIn(200);
             }
-        });*/
+        });
     }
 </script>
 </html>
