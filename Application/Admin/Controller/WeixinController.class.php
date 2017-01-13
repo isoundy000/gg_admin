@@ -74,6 +74,7 @@ class WeixinController extends RestController {
                 $role = $role_info->findOne(array("openid" => $result['openid']));
                 if ($role) {
                     $info['roleid'] = $role['roleid'];
+                    $info['nickname'] = $role['nickname'];
                     $info['date'] = time();
                     $info['start_time'] = $period['start_time'];
                     $info['end_time'] = $period['end_time'];

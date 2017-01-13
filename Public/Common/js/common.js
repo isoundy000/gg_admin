@@ -2,7 +2,19 @@
  * Created by Cherish on 2016/12/22.
  */
 
+function searchClick(_url) {
+    $("#table_search").onkeyup(function (event) {
+        if (event.keyCode == 13) {
+            menuClick(_url);
+        }
+    });
+}
+
 function menuClick(_url) {
+    var fields = $('#table_search').val();
+    if (fields) {
+        _url += "?fields=" + fields;
+    }
     ajaxRequest(_url, null, 'get', 'json', function(result) {
         if(result.code == 200) {
             $("#content-wrapper").html(result.data.html);

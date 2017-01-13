@@ -123,4 +123,67 @@ class OperationController extends BaseController
             $this->response($this->_result, 'json', 400, '删除失败');
         }
     }
+
+    /**
+     * @desc 领取记录
+     */
+    public function recordGet() {
+        $search['roleid'] = I('get.fields', null);
+        $admin_card_receive_daily = $this->mongo_db->admin_card_receive_daily;
+        $limit = intval(I('get.limit', C('PAGE_NUM')));
+        $skip = (intval(I('get.p', 1)) - 1) * $limit;
+        $search['roleid'] && $search['roleid'] = intval($search['roleid']);
+        filter_array_element($search);
+        $cursor = $admin_card_receive_daily->find($search)->limit($limit)->skip($skip)->sort(array("date" => -1));
+        $result = array();
+        foreach ($cursor as $item) {
+            $item['date'] = date("Y-m-d H:i:s", $item['date']);
+            array_push($result, $item);
+        }
+
+        $count = $admin_card_receive_daily->count($search);
+        $page = new Page($count, C('PAGE_NUM'));
+        $page = $page->show();
+
+        $this->assign("page", $page);
+        $this->assign("record", $result);
+        $this->_result['data']['html'] = $this->fetch("Operation:record");
+
+        $this->_result['data']['count'] = $count;
+        $this->_result['data']['page'] = $page;
+        $this->_result['data']['record'] = $result;
+        $this->response($this->_result, 'json', 200);
+    }
+
+    /**
+     * @desc 牌型分数记录
+     */
+    public function scoreGet() {
+        $search = array();
+        //$search['roleid'] = I('get.fields', null);
+        $admin_card_receive_daily = $this->mongo_db->admin_card_receive_daily;
+        $limit = intval(I('get.limit', C('PAGE_NUM')));
+        $skip = (intval(I('get.p', 1)) - 1) * $limit;
+        //$search['roleid'] && $search['roleid'] = intval($search['roleid']);
+        filter_array_element($search);
+        $cursor = $admin_card_receive_daily->find($search)->limit($limit)->skip($skip)->sort(array("date" => -1));
+        $result = array();
+        foreach ($cursor as $item) {
+            $item['date'] = date("Y-m-d H:i:s", $item['date']);
+            array_push($result, $item);
+        }
+
+        $count = $admin_card_receive_daily->count($search);
+        $page = new Page($count, C('PAGE_NUM'));
+        $page = $page->show();
+
+        $this->assign("page", $page);
+        $this->assign("record", $result);
+        $this->_result['data']['html'] = $this->fetch("Operation:record");
+
+        $this->_result['data']['count'] = $count;
+        $this->_result['data']['page'] = $page;
+        $this->_result['data']['record'] = $result;
+        $this->response($this->_result, 'json', 200);
+    }
 }

@@ -172,6 +172,60 @@ class UserController extends BaseController
         }
     }
 
+    public function passwordGet() {
+        $this->_result['data']['html'] = $this->fetch('User:password');
+        $this->response($this->_result, 'json', 200);
+    }
+
+    public function passwordPut() {
+        $search['_id'] = $_SESSION[MODULE_NAME.'_admin']['_id'];
+        $admin_user = $this->mongo_db->admin_user;
+        $data['password'] = I('put.password', null);
+        $data['repeat_password'] = I('put.repeat_password', null);
+        $data['old_password'] = I('put.old_password', null);
+        //检查参数
+        if ($this->_result['error']) {
+            $error = array_shift($this->_result['error']);
+            $error = array_values($error);
+            $this->response($this->_result, 'json', 400, $error[0]);
+        }
+
+        if ($data['old_password']) {
+            $user = $admin_user->findOne(array("username" => $_SESSION[MODULE_NAME . '_admin']['username']));
+            if (!$user || $user['password'] != md5($data['old_password'])) {
+                $this->response($this->_result, 'json', 400, '旧密码错误');
+            }
+        }
+
+        if ($data['password'] && $data['repeat_password']) {
+            if ($data['password'] != $data['repeat_password']) {
+                $this->response($this->_result, 'json', 400, '两次输入的密码不一致');
+            }
+
+            if (checkTextLength6($data['password']) || checkTextLength6($data['repeat_password'])) {
+                $this->response($this->_result, 'json', 400, '密码至少6个字符');
+            }
+            unset($data['repeat_password']);
+            $data['password'] = md5($data['password']);
+        }
+        if (isset($data['password']) && !$data['password']) {
+            unset($data['password']);
+        }
+        if (isset($data['repeat_password']) && !$data['repeat_password']) {
+            unset($data['repeat_password']);
+        }
+        if (isset($data['old_password']) && !$data['old_password']) {
+            unset($data['old_password']);
+        }
+        filter_array_element($data);
+        $update['$set'] = $data;
+        if ($admin_user->update($search, $update)) {
+            $this->response($this->_result, 'json', 201, '保存成功');
+        } else {
+            $this->response($this->_result, 'json', 400, '保存失败');
+        }
+    }
+
     //用户登录
     public function tokenGet()
     {
