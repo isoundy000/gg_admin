@@ -42,8 +42,8 @@ class WeixinController extends RestController {
     }
 
     //获取房卡
-    public function cardPost() {
-        $data['code'] = I('post.code');
+    public function receiveGet() {
+        $data['code'] = I('get.code');
         $data['appid'] = C('WEIXIN.APP_ID');
         $data['secret'] = C('WEIXIN.APP_SECRET');
         $data['grant_type'] = 'authorization_code';
@@ -71,7 +71,7 @@ class WeixinController extends RestController {
                 $info['amount'] = $period['amount'];
                 //查询roleid是否存在
                 $role_info = $db->role_info;
-                $role = $role_info->findOne(array("openid" => intval($result['openid'])));
+                $role = $role_info->findOne(array("openid" => $result['openid']));
                 if ($role) {
                     $info['roleid'] = $role['roleid'];
                     $info['date'] = time();
@@ -79,19 +79,25 @@ class WeixinController extends RestController {
                     $info['end_time'] = $period['end_time'];
 
                     //查询是否已经领取该时段的奖励
-                    $admin_card_receive_daily = $db->admin_receive_card_daily;
+                    $admin_card_receive_daily = $db->admin_card_receive_daily;
                     $award = $admin_card_receive_daily->findOne(array(
                         'roleid' => $info['roleid'],
                         'start_time' => $info['start_time'],
                         'end_time' => $info['end_time']
                     ));
-                    if (!$award) {
+                    //如果有记录，判断这条记录是不是今天的
+                    $today = date("Y-m-d", time());
+                    $day = "";
+                    if ($award) {
+                        $day = date("Y-m-d", $award['date']);
+                    }
+                    if (!$award && $today!=$day) {
                         $admin_card_receive_daily->insert($info);
-                        $admin_card_receive_daily_mmo = $db->admin_receive_card_daily_mmo;
+                        $admin_card_receive_daily_mmo = $db->admin_card_receive_daily_mmo;
                         $admin_card_receive_daily_mmo->insert($info);
+                        $this->response($this->_result, 'json', 201, '操作成功');
                     }
                 }
-                $this->response($this->_result, 'json', 201, '操作成功');
             }
         }
         $this->response($this->_result, 'json', 400, '操作失败');

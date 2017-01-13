@@ -178,6 +178,7 @@ class RestController extends Controller {
         );
         if(isset($_status[$code])) {
             header('HTTP/1.1 '.$code.' '.($msg?$msg:$_status[$code]));
+            header("Access-Control-Allow-Origin", "*");
             // 确保FastCGI模式下正常
             header('Status:'.$code.' '.($msg?$msg:$_status[$code]));
         }
