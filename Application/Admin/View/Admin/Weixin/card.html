@@ -170,7 +170,7 @@
 </head>
 <body><h2>杠杠麻将-领取奖励</h2>
 <hr>
-<if condition="period neq null">
+<if condition="$amount neq null">
 <p>欢迎关注公众号，您可以领取{$amount}张房卡啦！</p>
 <div style="margin:0px auto;">
     <button onclick="cardSave('__MODULE__/weixin/card', '{$code}');">领取</button>
