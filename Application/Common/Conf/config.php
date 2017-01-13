@@ -38,6 +38,7 @@ return array(
         'TOKEN' => 'ggmj',
         'WX_ACCESS_TOKEN_URL' => 'https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential', //获取TOKEN
         'WX_OPENID_TOKEN_URL' => 'https://api.weixin.qq.com/sns/oauth2/access_token', //获取openId的URL
+        'WX_UNION_ID_URL' => 'https://api.weixin.qq.com/sns/userinfo', //获取union id
     ),
 
     //阿里大于，手机短信配置

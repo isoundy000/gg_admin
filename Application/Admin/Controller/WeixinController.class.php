@@ -51,52 +51,62 @@ class WeixinController extends RestController {
         $api = C('WEIXIN.WX_OPENID_TOKEN_URL') . "?" . http_build_query($data);
         $result = file_get_contents($api);
         $result = json_decode($result, true);
-        if ($result['openid']) {
-            //时段是否可以领取房卡
-            $mongo_client = new \MongoClient(C('MONGO_SERVER'));
-            $db_name = C('MONGO_DB');
-            $db = $mongo_client->$db_name;
-            $admin_card_daily = $db->admin_card_daily;
-            $time = time() - strtotime(date("Y-m-d 00:00:00", time()));
-            $cursor = $admin_card_daily->find();
-            $period = "";
-            foreach ($cursor as $item) {
-                if ($item['start_time'] <= $time && $item['end_time'] >= $time) {
-                    $period = $item;
-                    break;
-                }
-            }
-            if ($period) {
-                //完成领取
-                $info['amount'] = $period['amount'];
-                //查询roleid是否存在
-                $role_info = $db->role_info;
-                $role = $role_info->findOne(array("openid" => $result['openid']));
-                if ($role) {
-                    $info['roleid'] = $role['roleid'];
-                    $info['nickname'] = $role['nickname'];
-                    $info['date'] = time();
-                    $info['start_time'] = $period['start_time'];
-                    $info['end_time'] = $period['end_time'];
-
-                    //查询是否已经领取该时段的奖励
-                    $admin_card_receive_daily = $db->admin_card_receive_daily;
-                    $award = $admin_card_receive_daily->findOne(array(
-                        'roleid' => $info['roleid'],
-                        'start_time' => $info['start_time'],
-                        'end_time' => $info['end_time']
-                    ));
-                    //如果有记录，判断这条记录是不是今天的
-                    $today = date("Y-m-d", time());
-                    $day = "";
-                    if ($award) {
-                        $day = date("Y-m-d", $award['date']);
+        if ($result['access_token']) {
+            $union_data['access_token'] = $result['access_token'];
+            $union_data['openid'] = $result['openid'];
+            $union_data['lang'] = 'zh_CN';
+            $union_api = C('WEIXIN.WX_UNION_ID_URL') . "?" . http_build_query($union_data);
+            $union_result = file_get_contents($union_api);
+            $union_result = json_decode($union_result, true);
+            if ($union_result['unionid']) {
+                //用union id 表示openid
+                $result['openid'] = $union_result['unionid'];
+                //时段是否可以领取房卡
+                $mongo_client = new \MongoClient(C('MONGO_SERVER'));
+                $db_name = C('MONGO_DB');
+                $db = $mongo_client->$db_name;
+                $admin_card_daily = $db->admin_card_daily;
+                $time = time() - strtotime(date("Y-m-d 00:00:00", time()));
+                $cursor = $admin_card_daily->find();
+                $period = "";
+                foreach ($cursor as $item) {
+                    if ($item['start_time'] <= $time && $item['end_time'] >= $time) {
+                        $period = $item;
+                        break;
                     }
-                    if (!$award && $today!=$day) {
-                        $admin_card_receive_daily->insert($info);
-                        $admin_card_receive_daily_mmo = $db->admin_card_receive_daily_mmo;
-                        $admin_card_receive_daily_mmo->insert($info);
-                        $this->response($this->_result, 'json', 201, '操作成功');
+                }
+                if ($period) {
+                    //完成领取
+                    $info['amount'] = $period['amount'];
+                    //查询roleid是否存在
+                    $role_info = $db->role_info;
+                    $role = $role_info->findOne(array("openid" => $result['openid']));
+                    if ($role) {
+                        $info['roleid'] = $role['roleid'];
+                        $info['nickname'] = $role['nickname'];
+                        $info['date'] = time();
+                        $info['start_time'] = $period['start_time'];
+                        $info['end_time'] = $period['end_time'];
+
+                        //查询是否已经领取该时段的奖励
+                        $admin_card_receive_daily = $db->admin_card_receive_daily;
+                        $award = $admin_card_receive_daily->findOne(array(
+                            'roleid' => $info['roleid'],
+                            'start_time' => $info['start_time'],
+                            'end_time' => $info['end_time']
+                        ));
+                        //如果有记录，判断这条记录是不是今天的
+                        $today = date("Y-m-d", time());
+                        $day = "";
+                        if ($award) {
+                            $day = date("Y-m-d", $award['date']);
+                        }
+                        if (!$award && $today!=$day) {
+                            $admin_card_receive_daily->insert($info);
+                            $admin_card_receive_daily_mmo = $db->admin_card_receive_daily_mmo;
+                            $admin_card_receive_daily_mmo->insert($info);
+                            $this->response($this->_result, 'json', 201, '操作成功');
+                        }
                     }
                 }
             }
