@@ -18,6 +18,7 @@
     <div class="row">
         <div class="box">
             <div class="box-header">
+                <form class="form-horizontal" onsubmit="return false;">
                 <div class="form-group col-sm-2">
                     <input class="form-control" id="search_date" placeholder="时间段">
                 </div>
@@ -30,6 +31,7 @@
                 <div class="form-group col-sm-1">
                     <button onclick="onSearch('__MODULE__/operation/record')" type="submit" class="btn btn-primary">查询</button>
                 </div>
+                </form>
             </div>
             <!-- /.box-header -->
             <div class="box-body table-responsive no-padding">

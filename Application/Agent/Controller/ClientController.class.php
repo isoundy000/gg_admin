@@ -49,6 +49,7 @@ class ClientController extends BaseController
             $skip = (intval(I('get.p', 1)) - 1) * $limit;
             filter_array_element($search);
             filter_array_element($option);
+            $search['roleid'] && $search['roleid'] = intval($search['roleid']);
             $search['nickname'] && $search['nickname'] = new \MongoRegex("/{$search['nickname']}/");
             if ($search['roleid'] || $search['nickname']) {//一定要查询才能出现列表
                 $cursor = $admin_client->find($search)->limit($limit)->skip($skip);

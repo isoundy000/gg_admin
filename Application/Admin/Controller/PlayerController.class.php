@@ -43,6 +43,7 @@ class PlayerController extends BaseController {
             }
         } else {
             $search['roleid'] && $search['roleid'] = intval($search['roleid']);
+            $search['nickname'] && $search['nickname'] = new \MongoRegex("/{$search['nickname']}/");
             $limit = intval(I('get.limit', C('PAGE_NUM')));
             $skip = (intval(I('get.p', 1)) - 1) * $limit;
             filter_array_element($search);

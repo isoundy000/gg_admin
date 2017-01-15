@@ -27,12 +27,14 @@
                 <div class="tab-pane active" id="tab_1">
                     <div class="box">
                         <div class="box-header">
+                            <form class="form-horizontal" onsubmit="return false;">
                             <div class="form-group col-sm-1">
                                 <input name="table_search" id="search_title" class="form-control pull-right" placeholder="邮件标题" type="text">
                             </div>
                             <div class="form-group col-sm-1">
                                 <button onclick="onSearch('__MODULE__/activity/mail')" type="submit" class="btn btn-primary">查询</button>
                             </div>
+                            </form>
                         </div>
                         <!-- /.box-header -->
                         <div class="box-body table-responsive no-padding">
