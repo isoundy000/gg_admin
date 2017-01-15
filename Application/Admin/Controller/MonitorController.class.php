@@ -140,5 +140,26 @@ class MonitorController extends RestController {
         $mongo_client = new \MongoClient(C('MONGO_SERVER'));
         $db_name = C('MONGO_DB');
         $db = $mongo_client->$db_name;
+        $ticket_use_record = $db->ticket_use_record;
+
+        $cursor = $ticket_use_record->group(
+            array('roleid' => 1),
+            array('usedCnt' => 0),
+            "function (obj, prev) {
+                 prev.usedCnt += obj.usedCnt;
+             }",
+            array(
+                'condition' => array(
+                    'usedTime' => array(
+                        '$gte' => $start_date,
+                        '$lt' => $end_date,
+                    )
+                )
+            )
+        );
+        $result = array();
+        foreach($cursor['retval'] as $item) {
+            var_dump($item);
+        }
     }
 }
