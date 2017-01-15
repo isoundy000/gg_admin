@@ -101,7 +101,13 @@ class WeixinController extends RestController {
                         if ($award) {
                             $day = date("Y-m-d", $award['date']);
                         }
-                        if (!$award && $today!=$day) {
+                        if (!$award) {//如果不存在记录
+                            $admin_card_receive_daily->insert($info);
+                            $admin_card_receive_daily_mmo = $db->admin_card_receive_daily_mmo;
+                            $admin_card_receive_daily_mmo->insert($info);
+                            $this->_result['data']['info'] = $info;
+                            $this->response($this->_result, 'json', 201, '操作成功');
+                        } else if ($today!=$day) {//如果已存在但不是今天
                             $admin_card_receive_daily->insert($info);
                             $admin_card_receive_daily_mmo = $db->admin_card_receive_daily_mmo;
                             $admin_card_receive_daily_mmo->insert($info);
