@@ -136,7 +136,6 @@ class MonitorController extends RestController {
         $type = I('get.type');
         $end_date = strtotime(date("Y-m-d 00:00:00", time()));
         $start_date = $end_date - 86400;
-        var_dump($end_date, $start_date);
         $mongo_client = new \MongoClient(C('MONGO_SERVER'));
         $db_name = C('MONGO_DB');
         $db = $mongo_client->$db_name;
