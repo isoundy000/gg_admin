@@ -119,4 +119,26 @@ class MonitorController extends RestController {
         echo "create mongodb index at " . date("Y-m-d H:i:s", time()) . "\n";
     }
 
+
+    /**
+     * @desc 游戏日，月消耗
+     */
+    public function streamGet() {
+        //校验KEY
+        $key = C('APP_KEY');
+        if(I('get.key') != md5($key)) {
+            echo "app_key is wrong\n";
+            return;
+        }
+
+        // day 日
+        // month 月
+        $type = I('get.type');
+        $end_date = strtotime(date("Y-m-d 00:00:00", time()));
+        $start_date = $end_date - 86400;
+        var_dump($end_date, $start_date);
+        $mongo_client = new \MongoClient(C('MONGO_SERVER'));
+        $db_name = C('MONGO_DB');
+        $db = $mongo_client->$db_name;
+    }
 }
