@@ -43,17 +43,28 @@ class ClientController extends BaseController
             }
         } else {
             $search = array();
+            $search['roleid'] = I('get.roleid', null);
+            $search['nickname'] = I('get.nickname', null);
             $limit = intval(I('get.limit', C('PAGE_NUM')));
             $skip = (intval(I('get.p', 1)) - 1) * $limit;
             filter_array_element($search);
             filter_array_element($option);
-
-            $cursor = $admin_client->find($search)->limit($limit)->skip($skip);
-            $result = iterator_to_array($cursor);
-
-            $count = $admin_client->count($search);
-            $page = new Page($count, C('PAGE_NUM'));
-            $page = $page->show();
+            $search['nickname'] && $search['nickname'] = new \MongoRegex("/{$search['nickname']}/");
+            if ($search['roleid'] || $search['nickname']) {//一定要查询才能出现列表
+                $cursor = $admin_client->find($search)->limit($limit)->skip($skip);
+                $count = $admin_client->count($search);
+                $page = new Page($count, C('PAGE_NUM'));
+                $page = $page->show();
+            } else {
+                $cursor = array();
+                $count = 0;
+                $page = "";
+            }
+            $result = array();
+            foreach ($cursor as $item) {
+                $item['match_count'] = $item['totalWinCi'] + $item['totalLoseCi'] + $item['totalPingCi'];
+                array_push($result, $item);
+            }
 
             $this->assign("page", $page);
             $this->assign("clients", $result);
@@ -130,13 +141,18 @@ class ClientController extends BaseController
         $stock_type = C('SYSTEM.STOCK_TYPE');
         $agent_stock_grant_record = $this->mongo_db->agent_stock_grant_record;
         $search['from_user'] = $_SESSION[MODULE_NAME . '_admin']['username'];
+        $search['to_user'] = I('get.to_user', null);
+        $search['nickname'] = I('get.nickname', null);
         $limit = intval(I('get.limit', C('PAGE_NUM')));
         $skip = (intval(I('get.p', 1)) - 1) * $limit;
         $option = array();
+        filter_array_element($search);
+        $search['nickname'] && $search['nickname'] = new \MongoRegex("/{$search['nickname']}/");
+        $search['to_user'] && $search['to_user'] = intval($search['to_user']);
         $cursor = $agent_stock_grant_record->find($search, $option)->sort(array('date' => 1))->skip($skip)->limit($limit);
         $result = array();
         foreach ($cursor as $item) {
-            $item['date'] = date("Y-m-d H:i:s");
+            $item['date'] = date("Y-m-d H:i:s", $item['date']);
             $item['type_name'] = $stock_type[$item['type']];
             array_push($result, $item);
         }

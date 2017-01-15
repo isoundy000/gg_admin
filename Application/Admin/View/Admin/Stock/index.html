@@ -18,43 +18,48 @@
         <div class="col-md-12">
             <div class="box">
                 <div class="box-header">
-                    <h3 class="box-title"></h3>
+                    <div class="form-group col-sm-2">
+                        <input class="form-control" id="search_date" placeholder="时间段">
+                    </div>
+                    <div class="form-group col-sm-1">
+                        <input name="table_search" id="search_apply_user" class="form-control pull-right" placeholder="申请人" type="text">
+                    </div>
+                    <div class="form-group col-sm-1">
+                        <button <if condition="$query eq verify">
+                        onclick="onSearch('__MODULE__/stock/stocks/tab/verify')"
+                        <else/>
+                        onclick="onSearch('__MODULE__/stock/stocks/tab/status')"
+                    </if>
 
-                    <div class="box-tools">
-                        <div class="input-group input-group-sm" style="width: 150px;">
-                            <input name="table_search" class="form-control pull-right" placeholder="搜索..." type="text">
-
-                            <div class="input-group-btn">
-                                <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
-                            </div>
-                        </div>
+                                type="submit" class="btn btn-primary">查询</button>
                     </div>
                 </div>
                 <!-- /.box-header -->
                 <div class="box-body table-responsive no-padding">
-                    <table class="table table-hover">
-                        <tbody>
+                    <table class="table table-hover table-bordered">
+                        <thead>
                         <tr>
                             <th>申请时间</th>
                             <th>类型</th>
                             <th>数量</th>
                             <th>备注</th>
+                            <th>申请人</th>
                             <if condition="$query eq verify">
-                                <th>申请人</th>
                                 <th>操作</th>
                             <else/>
                                 <th>审核结果</th>
                             </if>
-
                         </tr>
+                        </thead>
+                        <tbody>
                         <foreach name="stocks" item="item">
                             <tr>
                                 <td>{$item.date}</td>
                                 <td>{$item.type}</td>
                                 <td>{$item.amount}</td>
                                 <td>{$item.remark}</td>
+                                <td>{$item.apply_user}</td>
                                 <if condition="$query eq verify">
-                                    <td>{$item.apply_user}</td>
                                     <td>
                                         <button class="btn btn-success btn-sm" onclick="stockSave('__MODULE__/stock/stocks', '{$item._id}', 1)">通过</button>
                                         <button class="btn btn-primary btn-sm" onclick="stockSave('__MODULE__/stock/stocks', '{$item._id}', 0)">拒绝</button>
@@ -86,6 +91,32 @@
 </section>
 <!-- /.content -->
 <script>
+    $('#search_date').daterangepicker({
+        timePicker: true,
+        timePicker24Hour: true,
+        timePickerIncrement: 30,
+        format: 'YYYY/MM/DD HH:mm:ss',
+        locale: moment.locale('zh-cn'),
+        autoUpdateInput: false,
+    });
+    $('#search_date').on('apply.daterangepicker', function(ev, picker) {
+        $(this).val(picker.startDate.format('YYYY/MM/DD HH:mm:ss') + ' - ' + picker.endDate.format('YYYY/MM/DD HH:mm:ss'));
+    });
+
+    $('#search_date').on('cancel.daterangepicker', function(ev, picker) {
+        $(this).val('');
+    });
+    //$("#search_date").val("");
+    function onSearch(_url) {
+        var search_date = $("#search_date").val();
+        var search_apply_user = $("#search_apply_user").val();
+        var source = {
+            date: search_date,
+            apply_user: search_apply_user,
+        };
+        menuClick(_url, source);
+    }
+
     function stockSave(_url, _id, status) {
         var method = 'PUT';
         var query = $("#query").val();

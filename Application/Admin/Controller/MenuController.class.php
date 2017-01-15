@@ -20,6 +20,7 @@ class MenuController extends BaseController {
             $this->_result['data']['menus'] = $query;
         } else {
             $search = array();
+            $search['name'] = I('get.name', null);
             $limit = intval(I('get.limit', C('PAGE_NUM')));
             $skip = (intval(I('get.p', 1)) - 1) * $limit;
             filter_array_element($search);

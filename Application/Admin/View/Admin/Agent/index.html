@@ -23,22 +23,20 @@
                 <div class="tab-pane active" id="tab_1">
                     <div class="box">
                         <div class="box-header">
-                            <h3 class="box-title"></h3>
-
-                            <div class="box-tools">
-                                <div class="input-group input-group-sm" style="width: 150px;">
-                                    <input name="table_search" class="form-control pull-right" placeholder="搜索..." type="text">
-
-                                    <div class="input-group-btn">
-                                        <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
-                                    </div>
-                                </div>
+                            <div class="form-group col-sm-1">
+                                <input name="table_search" id="search_username" class="form-control pull-right" placeholder="用户名" type="text">
+                            </div>
+                            <div class="form-group col-sm-1">
+                                <input name="table_search" id="search_name" class="form-control pull-right" placeholder="名字" type="text">
+                            </div>
+                            <div class="form-group col-sm-1">
+                                <button onclick="onSearch('__MODULE__/agent/agents')" type="submit" class="btn btn-primary">查询</button>
                             </div>
                         </div>
                         <!-- /.box-header -->
                         <div class="box-body table-responsive no-padding">
-                            <table class="table table-hover">
-                                <tbody>
+                            <table class="table table-hover table-bordered">
+                                <thead>
                                 <tr>
                                     <th>注册时间</th>
                                     <th>用户名</th>
@@ -48,6 +46,8 @@
                                     <th>房卡剩余</th>
                                     <th>操作</th>
                                 </tr>
+                                </thead>
+                                <tbody>
                                 <foreach name="agents" item="item">
                                     <tr>
                                         <td>{$item.date}</td>
@@ -159,6 +159,16 @@
 </section>
 <!-- /.content -->
 <script>
+    function onSearch(_url) {
+        var search_username = $("#search_username").val();
+        var search_name = $("#search_name").val();
+        var source = {
+            username: search_username,
+            name: search_name,
+        };
+        menuClick(_url, source);
+    }
+    
     function agentClear() {
         $("#username").val("");
         $("#name").val("");

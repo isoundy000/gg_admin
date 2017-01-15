@@ -46,6 +46,8 @@ class AgentController extends BaseController
             }
         } else {
             $search = array();
+            $search['username'] = I('get.username', null);
+            $search['name'] = I('get.name', null);
             $limit = intval(I('get.limit', C('PAGE_NUM')));
             $skip = (intval(I('get.p', 1)) - 1) * $limit;
             filter_array_element($search);
@@ -236,12 +238,16 @@ class AgentController extends BaseController
 
     //给代理发放房卡记录
     public function recordGet() {
+        $search = array();
+        $search['to_user'] = I('get.to_user', null);
         $stock_type = C('SYSTEM.STOCK_TYPE');
         $admin_stock_grant_record = $this->mongo_db->admin_stock_grant_record;
-        $search['from_user'] = $_SESSION[MODULE_NAME.'_admin']['username'];
+        //$search['from_user'] = $_SESSION[MODULE_NAME.'_admin']['username'];
         $limit = intval(I('get.limit', C('PAGE_NUM')));
         $skip = (intval(I('get.p', 1)) - 1) * $limit;
         $option = array();
+        filter_array_element($search);
+        filter_array_element($option);
         $cursor = $admin_stock_grant_record->find($search, $option)->sort(array('date' => 1))->skip($skip)->limit($limit);
         $result = array();
         foreach ($cursor as $item) {

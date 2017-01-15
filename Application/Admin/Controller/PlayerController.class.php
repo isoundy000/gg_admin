@@ -12,6 +12,9 @@ use Think\Page;
 class PlayerController extends BaseController {
     public function playersGet() {
         $search = array();
+        $search['roleid'] = I('get.roleid', null);
+        $search['nickname'] = I('get.nickname', null);
+
         $admin_client = $this->mongo_db->role_info;
         $stock_type = C('SYSTEM.STOCK_TYPE');
         $this->assign("stock_type", $stock_type);
@@ -39,9 +42,7 @@ class PlayerController extends BaseController {
                 $this->response($this->_result);
             }
         } else {
-            if (I('get.fields')) {
-                $search['roleid'] = intval(I('get.fields'));
-            }
+            $search['roleid'] && $search['roleid'] = intval($search['roleid']);
             $limit = intval(I('get.limit', C('PAGE_NUM')));
             $skip = (intval(I('get.p', 1)) - 1) * $limit;
             filter_array_element($search);

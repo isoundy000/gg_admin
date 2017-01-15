@@ -29,9 +29,9 @@
                 </div>
             </div>
             <!-- /.box-header -->
-            <div class="box-body table-responsive no-padding table-bordered">
-                <table class="table table-hover">
-                    <tbody>
+            <div class="box-body table-responsive no-padding">
+                <table class="table table-hover table-bordered">
+                    <thead>
                     <tr>
                         <th>时间</th>
                         <th>房号</th>
@@ -40,6 +40,8 @@
                         <th>ID/昵称3</th>
                         <th>ID/昵称4</th>
                     </tr>
+                    </thead>
+                    <tbody>
                     <foreach name="score" item="item">
                         <tr class="expand_score_{$item.serialNo}" onclick="t_expand('{$item.serialNo}')">
                             <td>{$item.date}</td>

@@ -48,12 +48,15 @@ class StockController extends BaseController
                 $search['verify'] = 1;
                 break;
         }
-
+        $search['date'] = rangeDate(I('get.date'));
+        $search['apply_user'] = I('get.apply_user', null);
         $admin_stock = $this->mongo_db->admin_stock;
         $limit = intval(I('get.limit', C('PAGE_NUM')));
         $skip = (intval(I('get.p', 1)) - 1) * $limit;
         filter_array_element($search);
-
+        if ($search['date']) {
+            $search['date'] = array('$gte' => $search['date'][0], '$lte' => $search['date'][1]);
+        }
         $cursor = $admin_stock->find($search)->limit($limit)->skip($skip)->sort(array("date" => -1));
         $result = array();
         foreach ($cursor as $item) {

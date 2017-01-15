@@ -163,10 +163,11 @@ class ActivityController extends BaseController {
             $query = $admin_mail->findOne($search);
             $this->_result['data']['mail'] = $query;
         } else {
+            $search['title'] = I('get.title', null);
             $limit = intval(I('get.limit', C('PAGE_NUM')));
             $skip = (intval(I('get.p', 1)) - 1) * $limit;
             filter_array_element($search);
-
+            $search['title'] && $search['title'] = new \MongoRegex("/{$search['title']}/");
             $cursor = $admin_mail->find($search)->limit($limit)->skip($skip)->sort(array("date" => -1));
             $result = array();
             foreach ($cursor as $item) {
@@ -239,10 +240,11 @@ class ActivityController extends BaseController {
             $query['date'] = date("Y/m/d H:i:s", $query['date']);
             $this->_result['data']['notice'] = $query;
         } else {
+            $search['title'] = I('get.title', null);
             $limit = intval(I('get.limit', C('PAGE_NUM')));
             $skip = (intval(I('get.p', 1)) - 1) * $limit;
             filter_array_element($search);
-
+            $search['title'] && $search['title'] = new \MongoRegex("/{$search['title']}/");
             $cursor = $admin_notice->find($search)->limit($limit)->skip($skip)->sort(array("date" => -1));
             $result = array();
             foreach ($cursor as $item) {

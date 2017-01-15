@@ -152,6 +152,7 @@ class UserController extends BaseController
 
 
         $search = array();
+        $search['username'] = I('get.username', null);
         $search['pid'] = $_SESSION[MODULE_NAME.'_admin']['_id']->__toString();
         $limit = intval(I('get.limit', C('PAGE_NUM')));
         $skip = (intval(I('get.p', 1)) - 1) * $limit;

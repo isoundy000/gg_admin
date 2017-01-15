@@ -43,11 +43,14 @@ function datetimeFormat($date) {
  * @return array
  */
 function rangeDate($date) {
-    $date = explode('-', $date);
-    foreach ($date as $key=>$value) {
-        $date[$key] = strtotime($value);
+    if ($date) {
+        $date = explode('-', $date);
+        foreach ($date as $key => $value) {
+            $date[$key] = strtotime($value);
+        }
+        return $date;
     }
-    return $date;
+    return null;
 }
 
 /*---------------------手机6位验证码------------------------*/

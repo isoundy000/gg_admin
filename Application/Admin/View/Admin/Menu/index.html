@@ -23,22 +23,17 @@
                 <div class="tab-pane active" id="tab_1">
                         <div class="box">
                             <div class="box-header">
-                                <h3 class="box-title"></h3>
-
-                                <div class="box-tools">
-                                    <div class="input-group input-group-sm" style="width: 150px;">
-                                        <input name="table_search" class="form-control pull-right" placeholder="搜索..." type="text">
-
-                                        <div class="input-group-btn">
-                                            <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
-                                        </div>
-                                    </div>
+                                <div class="form-group col-sm-1">
+                                    <input name="table_search" id="search_name" class="form-control pull-right" placeholder="菜单名称" type="text">
+                                </div>
+                                <div class="form-group col-sm-1">
+                                    <button onclick="onSearch('__MODULE__/menu/menus')" type="submit" class="btn btn-primary">查询</button>
                                 </div>
                             </div>
                             <!-- /.box-header -->
                             <div class="box-body table-responsive no-padding">
-                                <table class="table table-hover">
-                                    <tbody>
+                                <table class="table table-hover table-bordered">
+                                    <thead>
                                     <tr>
                                         <th>排序</th>
                                         <th>名称</th>
@@ -50,7 +45,8 @@
                                         <th>是否可见</th>
                                         <th>操作</th>
                                     </tr>
-
+                                    </thead>
+                                    <tbody>
                                     <foreach name="menus" item="item">
                                         <tr>
                                             <td>{$item.sort}</td>
@@ -161,6 +157,14 @@
 </section>
 <!-- /.content -->
 <script>
+    function onSearch(_url) {
+        var search_name = $("#search_name").val();
+        var source = {
+            name: search_name,
+        };
+        menuClick(_url, source);
+    }
+
     function menuClear() {
         $("#sort").val("");
         $("#name").val("");
