@@ -105,9 +105,16 @@ class WeixinController extends RestController {
                             $admin_card_receive_daily->insert($info);
                             $admin_card_receive_daily_mmo = $db->admin_card_receive_daily_mmo;
                             $admin_card_receive_daily_mmo->insert($info);
+                            $this->_result['data']['info'] = $info;
                             $this->response($this->_result, 'json', 201, '操作成功');
                         }
+                    } else {
+                        $this->_result['data']['info'] = 0;
+                        $this->response($this->_result, 'json', 201, '用户未注册');
                     }
+                } else {
+                    $this->_result['data']['info'] = 1;
+                    $this->response($this->_result, 'json', 201, '已过期');
                 }
             }
         }

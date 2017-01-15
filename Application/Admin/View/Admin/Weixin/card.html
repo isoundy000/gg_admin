@@ -77,12 +77,24 @@
             dataType: 'json',
             success: function (res) {
                 $("#dialog").removeAttr("disabled");
-                $('.weui-dialog__bd').html("你已经成功领取今日的奖励!");
+                //已成功领取X房卡，赶紧畅玩吧
+                if ($res.info == 0) {
+                    $('.weui-dialog__bd').html("下载游戏并登录成功后即可领取");
+                    androidDialog.fadeIn(200);
+                    return;
+                }
+                if ($res.info == 1) {
+                    $('.weui-dialog__bd').html("日奖励已领取，请明日再来哦");
+                    androidDialog.fadeIn(200);
+                    return;
+                }
+                $('.weui-dialog__bd').html("已成功领取" + res.info.amount + "张房卡，赶紧畅玩吧");
                 androidDialog.fadeIn(200);
             },
             error : function(XMLHttpRequest, textStatus, errorThrown) {
                 $("#dialog").removeAttr("disabled");
-                $('.weui-dialog__bd').html("今日领取已达上限，请明天再来!");
+                //今日奖励已领取，请明日再来哦
+                $('.weui-dialog__bd').html("日奖励已领取，请明日再来哦");
                 androidDialog.fadeIn(200);
             }
         });
