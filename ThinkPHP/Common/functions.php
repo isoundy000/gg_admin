@@ -404,6 +404,8 @@ function I($name,$default='',$filter=null,$datas=null) {
         $data       =    isset($default)?$default:null;
     }
     is_array($data) && array_walk_recursive($data,'think_filter');
+	//查询时把空字符，空数组过滤
+	if (($data===""||$data===array()) && $method=='get') return null;
     return $data;
 }
 

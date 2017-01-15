@@ -18,3 +18,7 @@
 .no-list-style {
     list-style:none;
 }
+
+.no-display {
+    display: none;
+}

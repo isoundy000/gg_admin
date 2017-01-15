@@ -5,6 +5,51 @@ use Think\Verify;
  * @author JSS
  */
 
+/**
+ * @desc 170113 => 17:13:49
+ * @param $time
+ * @return string
+ */
+function timeFormat($time) {
+    $time = str_split($time, 2);
+    if ($time) {
+        return implode(":", $time);
+    }
+    return null;
+}
+
+/**
+ * @desc 170113171349 => 17-01-13 17:13:49
+ * @param $date
+ * @return string
+ */
+function datetimeFormat($date) {
+    $date = str_split($date, 6);
+    if ($date) {
+        $d = str_split($date[0], 2);
+        $d = implode('-', $d);
+        $t = str_split($date[1], 2);
+        $t = implode(':', $t);
+        return $d . ' ' . $t;
+    } else {
+        return null;
+    }
+}
+
+/**
+ * @desc 将时间段分解成数组timestamp返回
+ * Y/m/d H:i:s - Y/m/d H:i:s => array(timestamp1, timestamp2)
+ * @param $date
+ * @return array
+ */
+function rangeDate($date) {
+    $date = explode('-', $date);
+    foreach ($date as $key=>$value) {
+        $date[$key] = strtotime($value);
+    }
+    return $date;
+}
+
 /*---------------------手机6位验证码------------------------*/
 
 /**

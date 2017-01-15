@@ -10,18 +10,13 @@ function searchClick(_url) {
     });
 }
 
-function menuClick(_url) {
-    var fields = $('#table_search').val();
-    if (fields) {
-        _url += "?fields=" + fields;
-    }
-    ajaxRequest(_url, null, 'get', 'json', function(result) {
+function menuClick(_url, source) {
+    ajaxRequest(_url, source, 'get', 'json', function(result) {
         if(result.code == 200) {
             $("#content-wrapper").html(result.data.html);
         }
     });
 }
-
 function ajaxRequest(url, data, type, dataType, success) {
     $.ajax( {
         url : url,

@@ -47,7 +47,7 @@ class PlayerController extends BaseController {
             filter_array_element($search);
             filter_array_element($option);
 
-            $cursor = $admin_client->find($search)->limit($limit)->skip($skip);
+            $cursor = $admin_client->find($search)->sort(array("roleid" => -1))->limit($limit)->skip($skip);
             $result = array();
             foreach ($cursor as $item) {
                 $item['match_count'] = $item['totalWinCi'] + $item['totalLoseCi'] + $item['totalPingCi'];

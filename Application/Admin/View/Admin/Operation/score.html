@@ -1,0 +1,103 @@
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <h1>
+        战绩查询
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="__MODULE__/index/index"><i class="fa fa-dashboard"></i>首页</a></li>
+        <foreach name="breadcrumb" item="item">
+            <li><a
+                <if condition="$item.active eq 1">class="active"</if>
+                href="javascript:void(0)" onclick="menuClick('{$item.action}')">{$item.name}</a></li>
+        </foreach>
+    </ol>
+</section>
+
+<!-- Main content -->
+<section class="content">
+    <div class="row">
+        <div class="box">
+            <div class="box-header">
+                <!--<div class="form-group col-sm-2">
+                    <input class="form-control" id="search_date" placeholder="时间段">
+                </div>-->
+                <div class="form-group col-sm-1">
+                    <input name="table_search" id="search_roleid" class="form-control pull-right" placeholder="玩家ID" type="text">
+                </div>
+                <div class="form-group col-sm-1">
+                    <button onclick="onSearch('__MODULE__/operation/score')" type="submit" class="btn btn-primary">查询</button>
+                </div>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body table-responsive no-padding table-bordered">
+                <table class="table table-hover">
+                    <tbody>
+                    <tr>
+                        <th>时间</th>
+                        <th>房号</th>
+                        <th>ID/昵称1</th>
+                        <th>ID/昵称2</th>
+                        <th>ID/昵称3</th>
+                        <th>ID/昵称4</th>
+                    </tr>
+                    <foreach name="score" item="item">
+                        <tr class="expand_score_{$item.serialNo}" onclick="t_expand('{$item.serialNo}')">
+                            <td>{$item.date}</td>
+                            <td>{$item.roomNo}</td>
+                            <foreach name="item.headInfo" item="info">
+                                <td>{$info.roleid}/{$info.niCheng}</td>
+                            </foreach>
+                        </tr>
+                        <tr class="no-display collapse_score_{$item.serialNo} bg-green">
+                            <td>局数</td>
+                            <td>结束时间</td>
+                            <td>得分</td>
+                            <td>得分</td>
+                            <td>得分</td>
+                            <td>得分</td>
+                        </tr>
+                        <foreach name="item.fenRecords" key="k" item="match">
+                            <tr class="no-display collapse_score_{$item.serialNo}">
+                                <td>第{$k+1}局</td>
+                                <td>{$match[0]}</td>
+                                <td>{$match[1]}</td>
+                                <td>{$match[2]}</td>
+                                <td>{$match[3]}</td>
+                                <td>{$match[4]}</td>
+                            </tr>
+                        </foreach>
+                    </foreach>
+                    </tbody>
+                </table>
+            </div>
+            <!-- /.box-body -->
+            <div class="box-footer clearfix">
+            </div>
+            <!-- /.box-footer -->
+        </div>
+
+    </div>
+</section>
+<script>
+    function onSearch(_url) {
+        //var search_date = $("#search_date").val();
+        var search_roleid = $("#search_roleid").val();
+        //var search_nickname = $("#search_nickname").val();
+        var source = {
+            //date: search_date,
+            roleid: search_roleid,
+            //nickname: search_nickname,
+        };
+        menuClick(_url, source);
+    }
+
+    function t_expand(serialNo) {
+        var cls = ".collapse_score_" + serialNo;
+        if ($(cls).hasClass("no-display")) {
+            $(cls).removeClass("no-display");
+        } else {
+            $(cls).addClass("no-display");
+        }
+    }
+</script>
+<!-- /.content -->
