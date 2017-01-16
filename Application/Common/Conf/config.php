@@ -50,10 +50,10 @@ return array(
     ),
 
     //业务配置
-    'SYSTEM' => array(
-        'GAME_TYPE' => array(
-            1 => '潮汕麻将',
-            2 => '做牌推倒胡',
+    'SYSTEM' => array(//业务字段可自定义配置
+        'GAME' => array(
+            1 => '杠杠麻将',
+            2 => '新游戏',
         ),
         'TABLE_TYPE' => array(
             4 => '4局',

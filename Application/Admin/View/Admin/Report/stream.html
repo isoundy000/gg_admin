@@ -1,7 +1,7 @@
 <!-- Content Header (Page header) -->
 <section class="content-header">
     <h1>
-        领卡记录
+        流水记录
     </h1>
     <ol class="breadcrumb">
         <li><a href="__MODULE__/index/index"><i class="fa fa-dashboard"></i>首页</a></li>
@@ -19,38 +19,36 @@
         <div class="box">
             <div class="box-header">
                 <form class="form-horizontal" onsubmit="return false;">
-                <div class="form-group col-sm-2">
-                    <input class="form-control" id="search_date" placeholder="时间段">
-                </div>
-                <div class="form-group col-sm-1">
-                    <input name="table_search" id="search_roleid" class="form-control pull-right" placeholder="玩家ID" type="text">
-                </div>
-                <div class="form-group col-sm-1">
-                    <input name="table_search" id="search_nickname" class="form-control pull-right" placeholder="玩家昵称" type="text">
-                </div>
-                <div class="form-group col-sm-1">
-                    <button onclick="onSearch('__MODULE__/operation/record')" type="submit" class="btn btn-primary">查询</button>
-                </div>
+                    <div class="form-group col-sm-2">
+                        <input class="form-control" id="search_date" placeholder="时间段">
+                    </div>
+                    <div class="form-group col-sm-1">
+                        <button onclick="onSearch('__MODULE__/report/stream/type/day')" type="submit" class="btn btn-primary">查询</button>
+                    </div>
                 </form>
             </div>
             <!-- /.box-header -->
             <div class="box-body table-responsive no-padding">
-                <table id="data-table" class="table text-center table-hover table-bordered">
+                <table id="data-table" class="table text-center text-center table-hover table-bordered">
                     <thead>
                     <tr>
-                        <th>领取日期</th>
-                        <th>玩家ID</th>
-                        <th>昵称</th>
-                        <th>领取数量</th>
+                        <th>日期</th>
+                        <th>游戏</th>
+                        <th colspan="2">购卡量</th>
+                        <th>日消耗</th>
+                        <th>日流水</th>
                     </tr>
                     </thead>
                     <tbody>
-                    <foreach name="record" item="item">
+                    <foreach name="stream" item="item">
                         <tr>
                             <td>{$item.date}</td>
-                            <td>{$item.roleid}</td>
-                            <td>{$item.nickname}</td>
-                            <td>{$item.amount}</td>
+                            <td>{$item.game}</td>
+                            <foreach name="item.buy_card" item="card">
+                                <td>{$card.name}: {$card.amount}</td>
+                            </foreach>
+                            <td>{$item.expense}</td>
+                            <td>{$item.stream}</td>
                         </tr>
                     </foreach>
                     </tbody>
@@ -85,12 +83,8 @@
     //$("#search_date").val("");
     function onSearch(_url) {
         var search_date = $("#search_date").val();
-        var search_roleid = $("#search_roleid").val();
-        var search_nickname = $("#search_nickname").val();
         var source = {
             date: search_date,
-            roleid: search_roleid,
-            nickname: search_nickname,
         };
         menuClick(_url, source);
     }

@@ -64,7 +64,7 @@ class BaseController extends RestController {
             $menu_id = $_GET['menu_id'];
             if (!$menu_id) {
                 $admin_action = $this->mongo_db->admin_menu->findOne(
-                    array("action" => $action_name, "http_method" => new \MongoRegex("/$http_method/"), "module_name" => MODULE_NAME)
+                    array("action" => new \MongoRegex("/$action_name/"), "http_method" => new \MongoRegex("/$http_method/"), "module_name" => MODULE_NAME)
                 );
 
                 //404 not found
