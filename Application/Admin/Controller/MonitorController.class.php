@@ -133,15 +133,24 @@ class MonitorController extends RestController {
 
         // day 日
         // month 月
-        $type = I('get.type');
-        $end_date = strtotime(date("Y-m-d 00:00:00", time()));
-        $start_date = $end_date - 86400;
+        $type = I('get.type', 'day');
+        switch ($type) {
+            case "day":
+                $end_date = strtotime(date("Y-m-d 00:00:00", time()));
+                $start_date = $end_date - 86400;
+                break;
+            case "month":
+                $end_date = strtotime(date("Y-m-t", (strtotime("-1 month"))));
+                $start_date = strtotime(date("Y-m-01", (strtotime("-1 month"))));
+                break;
+        }
+
         $mongo_client = new \MongoClient(C('MONGO_SERVER'));
         $db_name = C('MONGO_DB');
         $db = $mongo_client->$db_name;
         $ticket_use_record = $db->ticket_use_record;
 
-        $cursor = $ticket_use_record->group(
+        /*$cursor = $ticket_use_record->group(
             array('roleid' => 1),
             array('usedCnt' => 0),
             "function (obj, prev) {
@@ -155,10 +164,47 @@ class MonitorController extends RestController {
                     )
                 )
             )
-        );
-        $result = array();
-        foreach($cursor['retval'] as $item) {
-            var_dump($item);
+        );*/
+        $cursor = $ticket_use_record->find(array('usedTime' => array('$gte' => $start_date, '$lt' => $end_date)));
+        $count = 0;
+        foreach($cursor as $item) {
+            $count += $item['usedCnt'];
         }
+        //写入admin_report_stream_retail 零售表
+        $retail_data['date'] = $start_date;
+        $retail_data['game'] = 1;
+        $retail_data['buy_card'] = 0; //TODO
+        $retail_data['stream'] = $count;
+
+        $admin_report_stream_retail = $db->admin_report_stream_retail;
+        $admin_report_stream_retail->update(array("date"=>$start_date), $retail_data, array('upsert' => true));
+        echo "零售统计完成\n";
+
+        //统计代理流水
+        $agent_stock_grant_record = $db->agent_stock_grant_record;
+        $cursor = $agent_stock_grant_record->find(array('date' => array('$gte' => $start_date, '$lt' => $end_date)));
+        $count = 0;
+        foreach ($cursor as $item) {
+            $count += $item['amount'];//给玩家充卡，消耗量
+        }
+        $agent_data['date'] = $start_date;
+        $agent_data['game'] = 1;
+        $agent_type = C('SYSTEM.AGENT_TYPE');
+        foreach ($agent_type as $key => $value) {
+            $agent_data['buy_card'][$key] = 0; //TODO
+        }
+        $agent_data['expense'] = $count;
+        $agent_data['stream'] = $count;
+        $admin_report_stream_day = $db->admin_report_stream_day;
+        $admin_report_stream_day->update(array("date" => $start_date), $agent_data, array('upsert' => true));
+        echo "统计代理完成\n";
     }
+
+    /**
+     * @desc 代理流水
+     */
+    public function agentStreamGet() {
+
+    }
+
 }

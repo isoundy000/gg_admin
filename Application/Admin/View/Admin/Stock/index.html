@@ -42,10 +42,13 @@
                         <thead>
                         <tr>
                             <th>申请时间</th>
+                            <if condition="$query neq verify">
+                                <th>审核时间</th>
+                            </if>
+                            <th>申请人</th>
                             <th>类型</th>
                             <th>数量</th>
                             <th>备注</th>
-                            <th>申请人</th>
                             <if condition="$query eq verify">
                                 <th>操作</th>
                             <else/>
@@ -57,10 +60,13 @@
                         <foreach name="stocks" item="item">
                             <tr>
                                 <td>{$item.date}</td>
+                                <if condition="$query neq verify">
+                                    <td>{$item.audit_time}</td>
+                                </if>
+                                <td>{$item.apply_user}</td>
                                 <td>{$item.type}</td>
                                 <td>{$item.amount}</td>
                                 <td>{$item.remark}</td>
-                                <td>{$item.apply_user}</td>
                                 <if condition="$query eq verify">
                                     <td>
                                         <button class="btn btn-success btn-sm" onclick="stockSave('__MODULE__/stock/stocks', '{$item._id}', 1)">通过</button>

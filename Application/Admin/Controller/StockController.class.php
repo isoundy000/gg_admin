@@ -62,6 +62,7 @@ class StockController extends BaseController
         foreach ($cursor as $item) {
             $item['type'] = $stock_type[$item['type']];
             $item['date'] = date("Y-m-d H:i:s", $item['date']);
+            $item['audit_time'] && $item['audit_time'] = date("Y-m-d H:i:s", $item['audit_time']);
             array_push($result, $item);
         }
 

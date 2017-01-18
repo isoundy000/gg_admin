@@ -1,14 +1,16 @@
 <!-- Content Header (Page header) -->
 <section class="content-header">
     <h1>
-        流水记录
+        代理月报表
     </h1>
     <ol class="breadcrumb">
         <li><a href="__MODULE__/index/index"><i class="fa fa-dashboard"></i>首页</a></li>
         <foreach name="breadcrumb" item="item">
             <li><a
                 <if condition="$item.active eq 1">class="active"</if>
-                href="javascript:void(0)" onclick="menuClick('{$item.action}')">{$item.name}</a></li>
+                href="javascript:void(0)" onclick="menuClick('{$item.action}')">{$item.name}
+                </a>
+            </li>
         </foreach>
     </ol>
 </section>
@@ -23,7 +25,15 @@
                         <input class="form-control" id="search_date" placeholder="时间段">
                     </div>
                     <div class="form-group col-sm-1">
-                        <button onclick="onSearch('__MODULE__/report/stream/type/{$type}')" type="submit" class="btn btn-primary">查询</button>
+                        <select class="form-control" id="search_type">
+                            <option value="">请选择</option>
+                            <foreach name="agent_type" key="k" item="item">
+                                <option value="{$k}">{$item}</option>
+                            </foreach>
+                        </select>
+                    </div>
+                    <div class="form-group col-sm-1">
+                        <button onclick="onSearch('__MODULE__/report/agentStream/type/month')" type="submit" class="btn btn-primary">查询</button>
                     </div>
                 </form>
             </div>
@@ -32,54 +42,36 @@
                 <table id="data-table" class="table text-center text-center table-hover table-bordered">
                     <thead>
                     <tr>
-                        <th>日期</th>
-                        <th>游戏</th>
-                        <if condition="$type neq retail">
-                            <th colspan="2">购卡量</th>
-                            <th>日消耗</th>
-                            <th>日流水</th>
-                        <else/>
-                            <th>购卡量</th>
-                            <th>流水</th>
-                        </if>
-
+                        <th>时间</th>
+                        <th>账号</th>
+                        <th>微信</th>
+                        <th>级别</th>
+                        <th>返还</th>
+                        <th>购买</th>
+                        <th>消耗</th>
                     </tr>
                     </thead>
                     <tbody>
                     <foreach name="stream" item="item">
                         <tr>
                             <td>{$item.date}</td>
-                            <td>{$item.game}</td>
-                            <if condition="$type neq retail">
-                                <foreach name="item.buy_card" item="card">
-                                    <td>{$card.name}: {$card.amount}</td>
-                                </foreach>
-                                <td>{$item.expense}</td>
-                                <td>{$item.stream}</td>
-                            <else/>
-                                <td>{$item.buy_card}</td>
-                                <td>{$item.stream}</td>
-                            </if>
-
+                            <td>{$item.username}</td>
+                            <td>{$item.wechat}</td>
+                            <td>{$item.type}</td>
+                            <td>{$item.pay_back}</td>
+                            <td>{$item.purchase}</td>
+                            <td>{$item.expense}</td>
                         </tr>
                     </foreach>
                     </tbody>
                     <tfoot class="bg-aqua">
                     <if condition="$total neq null">
-                        <tr>
-                            <if condition="$type neq retail">
-                                <td colspan="2"><b>合计</b></td>
-                                <foreach name="total.buy_card" item="total_card">
-                                    <td><b>{$total_card.name}: {$total_card.amount}</b></td>
-                                </foreach>
-                                <td><b>{$total.expense}</b></td>
-                                <td><b>{$total.stream}</b></td>
-                            <else/>
-                                <td colspan="2"><b>合计</b></td>
-                                <td><b>{$total.card}</b></td>
-                                <td><b>{$total.stream}</b></td>
-                            </if>
-                        </tr>
+                    <tr>
+                        <td colspan="4"><b>合计</b></td>
+                        <td><b>{$total.pay_back}</b></td>
+                        <td><b>{$total.purchase}</b></td>
+                        <td><b>{$total.expense}</b></td>
+                    </tr>
                     </if>
                     </tfoot>
                 </table>
@@ -113,8 +105,10 @@
     //$("#search_date").val("");
     function onSearch(_url) {
         var search_date = $("#search_date").val();
+        var search_type = $("#search_type").val();
         var source = {
             date: search_date,
+            agent_type: search_type,
         };
         menuClick(_url, source);
     }
