@@ -188,12 +188,12 @@
     }
 
     function limitationDelete(_url, _id) {
+        warningDialog('none');
         var source = {
             _id: _id
         }
         ajaxRequest(_url, source, 'DELETE', 'json', function (result) {
             if (!result) {
-                warningDialog('none');
                 successDialog('block', '删除', '删除成功!');
                 menuClick('__MODULE__/system/limitation');
             }

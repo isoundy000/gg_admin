@@ -192,11 +192,18 @@ class UserController extends BaseController
         $data['name'] = I('post.name', null, check_empty_string);
         $data['password'] = I('post.password', null, check_empty_string);
         $data['repeat_password'] = I('post.repeat_password', null, check_empty_string);
-        $data['type'] = intval(I('post.type'));
+        $data['type'] = 2; //只能添加金牌代理
         $data['verify_code'] = I('post.verify_code', null, check_empty_string);
         $data['status'] = 1;
         $data['pid'] = $_SESSION[MODULE_NAME.'_admin']['_id']->__toString();
-        $data['role_id'] = $_SESSION[MODULE_NAME.'_admin']['role_id'];
+        //$data['role_id'] = $_SESSION[MODULE_NAME.'_admin']['role_id'];
+        //金牌代理组权限
+        $admin_role = $this->mongo_db->admin_role;
+        $role = $admin_role->findOne(array(
+            '_id' => array('$ne' => $_SESSION[MODULE_NAME.'_admin']['role_id']),
+            'module_name' => 'Agent',
+        ));
+        $data['role_id'] = $role['_id'];
         $data['date'] = time();
         merge_params_error($data['cellphone'], 'cellphone', '手机号码不能为空', $this->_result['error']);
         merge_params_error($data['wechat'], 'wechat', '微信号不能为空', $this->_result['error']);

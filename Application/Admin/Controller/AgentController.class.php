@@ -242,6 +242,8 @@ class AgentController extends BaseController
         $search['to_user'] = I('get.to_user', null);
         $stock_type = C('SYSTEM.STOCK_TYPE');
         $admin_stock_grant_record = $this->mongo_db->admin_stock_grant_record;
+        $admin_agent = $this->mongo_db->admin_agent;
+
         //$search['from_user'] = $_SESSION[MODULE_NAME.'_admin']['username'];
         $limit = intval(I('get.limit', C('PAGE_NUM')));
         $skip = (intval(I('get.p', 1)) - 1) * $limit;
@@ -250,9 +252,14 @@ class AgentController extends BaseController
         filter_array_element($option);
         $cursor = $admin_stock_grant_record->find($search, $option)->sort(array('date' => 1))->skip($skip)->limit($limit);
         $result = array();
+        $agent_type = C('SYSTEM.AGENT_TYPE');
         foreach ($cursor as $item) {
             $item['date'] = date("Y-m-d H:i:s");
             $item['type_name'] = $stock_type[$item['type']];
+            $agent = $admin_agent->findOne(array('username' => $item['to_user']));
+            $item['name'] = $agent['name'];
+            $item['agent_type'] = $agent_type[$item['type']];
+            $item['wechat'] = $agent['wechat'];
             array_push($result, $item);
         }
 

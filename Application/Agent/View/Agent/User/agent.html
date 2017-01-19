@@ -100,11 +100,12 @@
                         <div class="form-group">
                             <label for="agent_type" class="col-sm-2 control-label">会员类型</label>
                             <div class="col-sm-2">
-                                <select class="form-control" id="agent_type">
+                                <!--<select class="form-control" id="agent_type">
                                     <foreach name="agent_type" key="k" item="item">
                                         <option value="{$k}">{$item}</option>
                                     </foreach>
-                                </select>
+                                </select>-->
+                                <div class="form-control no-border"><b>金牌</b></div>
                             </div>
                         </div>
                         <div class="form-group">
@@ -194,7 +195,7 @@
         var password = $("#password").val();
         var repeat_password = $("#repeat_password").val();
         var name = $("#name").val();
-        var agent_type = $("#agent_type").val();
+        //var agent_type = $("#agent_type").val();
         var wechat = $("#wechat").val();
         var cellphone = $("#cellphone").val();
         var verify_code = $("#verify_code").val();
@@ -207,7 +208,7 @@
             cellphone: cellphone,
             verify_code: verify_code,
             name: name,
-            agent_type: agent_type,
+            //agent_type: agent_type,
             _id:_id
         };
         ajaxRequest(_url, source, method, 'json', function(result) {

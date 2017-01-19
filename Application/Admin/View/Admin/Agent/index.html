@@ -14,6 +14,20 @@
 <!-- Main content -->
 <section class="content">
     <div class="row">
+        <div class="col-md-3 col-sm-6 col-xs-12">
+            <div class="info-box">
+                <span class="info-box-icon bg-aqua"><i class="fa fa-dollar"></i></span>
+
+                <div class="info-box-content">
+                    <span class="info-box-text">房卡库存数量</span>
+                    <span class="info-box-number">{$Think.session.Admin_admin.card_amount}</span>
+                </div>
+                <!-- /.info-box-content -->
+            </div>
+            <!-- /.info-box -->
+        </div>
+    </div>
+    <div class="row">
         <div class="nav-tabs-custom">
             <ul class="nav nav-tabs" id="gg-tab">
                 <li class="active"><a href="#tab_1" data-toggle="tab" aria-expanded="true"><b class="text-light-blue">代理列表</b></a></li>
@@ -207,12 +221,13 @@
     }
 
     function agentDelete(_url, _id) {
+        warningDialog('none');
         var source = {
             _id: _id
         }
         ajaxRequest(_url, source, 'DELETE', 'json', function(result) {
             if (!result) {
-                warningDialog('none');
+
                 successDialog('block', '删除', '删除成功!');
                 menuClick('__MODULE__/agent/agents');
             }

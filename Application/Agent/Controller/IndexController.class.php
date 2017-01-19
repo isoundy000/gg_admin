@@ -13,7 +13,17 @@ class IndexController extends BaseController {
     }
 
     public function homeGet() {
+        //取后台公告
+        $admin_notice = $this->mongo_db->admin_notice;
+        $notice = $admin_notice->find(array('type'=>1))->sort(array('date'=>-1))->limit(1);
+        $result = array();
+        foreach($notice as $item) {
+            $result = $item;
+        }
+        //var_dump($result);
+        $this->assign("notice", $result);
         $html = $this->fetch("Index:index");
+        $this->_result['date']['notice'] = $result;
         $this->_result['data']['html'] = $html;
         $this->response($this->_result);
     }
