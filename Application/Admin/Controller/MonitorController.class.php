@@ -150,21 +150,6 @@ class MonitorController extends RestController {
         $db = $mongo_client->$db_name;
         $ticket_use_record = $db->ticket_use_record;
 
-        /*$cursor = $ticket_use_record->group(
-            array('roleid' => 1),
-            array('usedCnt' => 0),
-            "function (obj, prev) {
-                 prev.usedCnt += obj.usedCnt;
-             }",
-            array(
-                'condition' => array(
-                    'usedTime' => array(
-                        '$gte' => $start_date,
-                        '$lt' => $end_date,
-                    )
-                )
-            )
-        );*/
         $cursor = $ticket_use_record->find(array('usedTime' => array('$gte' => $start_date, '$lt' => $end_date)));
         $count = 0;
         foreach($cursor as $item) {
@@ -177,7 +162,7 @@ class MonitorController extends RestController {
         $retail_data['stream'] = $count;
 
         $admin_report_stream_retail = $db->admin_report_stream_retail;
-        $admin_report_stream_retail->update(array("date"=>$start_date), $retail_data, array('upsert' => true));
+        $admin_report_stream_retail->update(array("date"=>$start_date), array('$set' => $retail_data), array('upsert' => true));
         echo "零售统计完成\n";
 
         //统计代理流水
@@ -196,15 +181,78 @@ class MonitorController extends RestController {
         $agent_data['expense'] = $count;
         $agent_data['stream'] = $count;
         $admin_report_stream_day = $db->admin_report_stream_day;
-        $admin_report_stream_day->update(array("date" => $start_date), $agent_data, array('upsert' => true));
+        $admin_report_stream_day->update(array("date" => $start_date), array('$set' => $agent_data), array('upsert' => true));
         echo "统计代理完成\n";
     }
 
     /**
-     * @desc 代理流水
+     * @desc 代理月流水
      */
     public function agentStreamGet() {
+        //校验KEY
+        $key = C('APP_KEY');
+        if(I('get.key') != md5($key)) {
+            echo "app_key is wrong\n";
+            return;
+        }
 
+        // day 日
+        // month 月
+        $type = I('get.type', 'day');
+        switch ($type) {
+            case "day":
+                $end_date = strtotime(date("Y-m-d 00:00:00", time()));
+                $start_date = $end_date - 86400;
+                break;
+            case "month":
+                $end_date = strtotime(date("Y-m-t", (strtotime("-1 month"))));
+                $start_date = strtotime(date("Y-m-01", (strtotime("-1 month"))));
+                break;
+        }
+
+        $mongo_client = new \MongoClient(C('MONGO_SERVER'));
+        $db_name = C('MONGO_DB');
+        $db = $mongo_client->$db_name;
+
+        //agent_stock_grant_record
+        $agent_stock_grant_record = $db->agent_stock_grant_record;
+        $cursor = $agent_stock_grant_record->group(
+            array('from_user' => 1),
+            array('count' => 0),
+            "function (obj, prev) {
+                 prev.count += obj.amount;
+             }",
+            array(
+                'condition' => array(
+                    'date' => array(
+                        '$gte' => $start_date,
+                        '$lt' => $end_date,
+                    )
+                )
+            )
+        );
+        $admin_agent = $db->admin_agent;
+        $admin_report_agent_stream_month = $db->admin_report_agent_stream_month;
+        foreach($cursor['retval'] as $item) {
+            //根据用户名查找用户信息
+            $agent = $admin_agent->findOne(array("username" => $item['from_user']));
+            if ($agent) {
+                $data = array(
+                    'date' => $start_date,
+                    'game' => 1,
+                    'username' => $agent['username'],
+                    'name' => $agent['name'] ? $agent['name'] : "",
+                    'wechat' => $agent['wechat'] ? $agent['wechat'] : "",
+                    'type' => $agent['type'],
+                    'pay_back' => 0, //TODO
+                    'purchase' => 0, //TODO
+                    'expense' => intval($item['count']),
+                );
+                $admin_report_agent_stream_month->update(array('date'=>$start_date,
+                    'username' => $item['from_user']), array('$set' => $data), array('upsert' => true));
+            }
+        }
+        echo "代理月报表执行完成\n";
     }
 
 }
