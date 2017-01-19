@@ -180,8 +180,9 @@ class MonitorController extends RestController {
         }
         $agent_data['expense'] = $count;
         $agent_data['stream'] = $count;
-        $admin_report_stream_day = $db->admin_report_stream_day;
-        $admin_report_stream_day->update(array("date" => $start_date), array('$set' => $agent_data), array('upsert' => true));
+        $table_name = "admin_report_stream_" . $type;
+        $table_name = $db->$table_name;
+        $table_name->update(array("date" => $start_date), array('$set' => $agent_data), array('upsert' => true));
         echo "统计代理完成\n";
     }
 
