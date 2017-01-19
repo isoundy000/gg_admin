@@ -246,13 +246,50 @@ class MonitorController extends RestController {
                     'wechat' => $agent['wechat'] ? $agent['wechat'] : "",
                     'type' => $agent['type'],
                     'pay_back' => 0, //TODO
-                    'purchase' => 0, //TODO
+                    'purchase' => 0, //TODO 暂时以管理员给代理充卡的数量统计
                     'expense' => intval($item['count']),
                 );
                 $admin_report_agent_stream_month->update(array('date'=>$start_date,
                     'username' => $item['from_user']), array('$set' => $data), array('upsert' => true));
             }
         }
+
+        //TODO 查找充卡记录，更新purchase字段
+        $admin_stock_grant_record = $db->admin_stock_grant_record;
+        $cursor = $admin_stock_grant_record->group(
+            array('to_user' => 1),
+            array('count' => 0),
+            "function (obj, prev) {
+                 prev.count += obj.amount;
+             }",
+            array(
+                'condition' => array(
+                    'date' => array(
+                        '$gte' => $start_date,
+                        '$lt' => $end_date,
+                    )
+                )
+            )
+        );
+        foreach($cursor['retval'] as $item) {
+            //根据用户名查找用户信息
+            $agent = $admin_agent->findOne(array("username" => $item['to_user']));
+            if ($agent) {
+                $data = array(
+                    'date' => $start_date,
+                    'game' => 1,
+                    'username' => $agent['username'],
+                    'name' => $agent['name'] ? $agent['name'] : "",
+                    'wechat' => $agent['wechat'] ? $agent['wechat'] : "",
+                    'type' => $agent['type'],
+                );
+                $admin_report_agent_stream_month->update(array('date'=>$start_date,
+                    'username' => $item['to_user']),
+                    array('$set' => $data, '$inc' => array('purchase'=>intval($item['count']))),
+                    array('upsert' => true));
+            }
+        }
+
         echo "代理月报表执行完成\n";
     }
 

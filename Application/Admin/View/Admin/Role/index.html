@@ -98,60 +98,6 @@
                                 </select>
                             </div>
                         </div>
-                        <!--<div class="form-group">
-                            <label class="col-sm-2 control-label">权限列表</label>
-                            <div class="col-sm-6">
-                                <ul class="no-padding-left no-list-style">
-                                    <foreach name="permission" item="item">
-                                        <li class="margin-bottom10">
-                                            <i class="fa {$item.icon}"></i> <span>{$item.name}</span>
-                                            <foreach name="item.http_method" item="method">
-                                                <switch name="method">
-                                                    <case value="GET">
-                                                        <span><input type="checkbox" class="permission_id" value="{$item._id}"><label class="label bg-blue-active">{$method}</label></span>
-                                                    </case>
-                                                    <case value="PUT">
-                                                        <span><input type="checkbox" class="permission_id" value="{$item._id}"><label class="label bg-orange-active">{$method}</label></span>
-                                                    </case>
-                                                    <case value="POST">
-                                                        <span><input type="checkbox" class="permission_id" value="{$item._id}"><label class="label bg-green-active">{$method}</label></span>
-                                                    </case>
-                                                    <case value="DELETE">
-                                                        <span><input type="checkbox" class="permission_id" value="{$item._id}"><label class="label bg-red-active">{$method}</label></span>
-                                                    </case>
-                                                </switch>
-                                            </foreach>
-                                            <if condition="$item.child neq null">
-                                                <ul class="no-list-style">
-                                                    <foreach name="item.child" item="child">
-                                                        <li class="margin-bottom10">
-                                                            <i class="fa {$child.icon}"></i> {$child.name}
-                                                            <foreach name="child.http_method" item="child_method">
-                                                                <switch name="child_method">
-                                                                    <case value="GET">
-                                                                        <input type="checkbox" class="permission_id" value="{$item._id}"><label class="label bg-blue-active">{$child_method}</label>
-                                                                    </case>
-                                                                    <case value="PUT">
-                                                                        <input type="checkbox" class="permission_id" value="{$item._id}"><label class="label bg-orange-active">{$child_method}</label>
-                                                                    </case>
-                                                                    <case value="POST">
-                                                                        <input type="checkbox" class="permission_id" value="{$item._id}"><label class="label bg-green-active">{$child_method}</label>
-                                                                    </case>
-                                                                    <case value="DELETE">
-                                                                        <input type="checkbox" class="permission_id" value="{$item._id}"><label class="label bg-red-active">{$child_method}</label>
-                                                                    </case>
-                                                                </switch>
-                                                            </foreach>
-                                                        </li>
-
-                                                    </foreach>
-                                                </ul>
-                                            </if>
-                                        </li>
-                                    </foreach>
-                                </ul>
-                            </div>
-                        </div>-->
                         <div class="form-group">
                             <label for="permission" class="col-sm-2 control-label">权限列表</label>
                             <div class="col-sm-2">
@@ -185,7 +131,7 @@
         var _id = $("#_id").val();
         console.log(_id);
         if (_id) {
-            roleEdit('__MODULE__/role/roles/_id/'+_id+'/module_name/'+module_name);
+            roleEdit('__MODULE__/role/roles/_id/'+_id+'/module_name/'+module_name, module_name);
         } else {
             permission(null, module_name);
         }
@@ -294,7 +240,7 @@
         $("#role_submit").html("添加");
     }
 
-    function roleEdit(_url) {
+    function roleEdit(_url, select_name) {
         ajaxRequest(_url, null, 'get', 'json', function(result) {
             if (result.code == 200) {
                 $("#role_submit").html("保存");
@@ -305,7 +251,11 @@
                 } else {
                     $("#status").attr("checked", false);
                 }
-                $("#module_name").val(result.data.roles.module_name);
+                if (select_name) {
+                    $("#module_name").val(select_name);
+                } else {
+                    $("#module_name").val(result.data.roles.module_name);
+                }
                 $("#_id").val(result.data.roles._id.$id);
                 permission(result.data.roles.permission);
             }

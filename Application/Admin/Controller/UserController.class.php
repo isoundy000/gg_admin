@@ -135,7 +135,7 @@ class UserController extends BaseController
         }
 
         if (checkTextLength6($data['username'])) {
-            $this->response($this->_result, 'json', 400, 'username length less 6');
+            $this->response($this->_result, 'json', 400, '用户名至少6个字符');
         }
 
         if ($data['password'] != $data['repeat_password']) {
