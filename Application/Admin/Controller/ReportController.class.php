@@ -130,4 +130,36 @@ class ReportController extends BaseController {
         $this->response($this->_result);
     }
 
+    public function rechargeGet() {
+        $agent_type = C('SYSTEM.AGENT_TYPE');
+        $this->assign("agent_type", $agent_type);
+        $game_type = C('SYSTEM.GAME');
+        $this->assign("game_type", $game_type);
+
+        $table_name = "agent_recharge_order";
+        $table = $this->mongo_db->$table_name;
+
+        $search = array();
+        $limit = intval(I('get.limit', C('PAGE_NUM')));
+        $skip = (intval(I('get.p', 1)) - 1) * $limit;
+        $search['date'] = I('get.date', null);
+        $search['username'] = I('get.username', null);
+        $search['status'] = 1; //支付已成功
+        if ($search['date']) {
+            $search['date'] = rangeDate($search['date']);
+            $search['date'] = array('$gte' => $search['date'][0], '$lte' => $search['date'][1]);
+        }
+        filter_array_element($search);
+        $cursor = $table->find($search)->limit($limit)->skip($skip)->sort(array("date" => -1));
+        $result = array();
+        foreach ($cursor as $item) {
+            $item['date'] = date("Y-m-d H:i:s", $item['date']);
+            $item['type'] = $agent_type[$item['type']];
+            array_push($result, $item);
+        }
+        $this->assign("recharge", $result);
+        $this->_result['data']['html'] = $this->fetch("Report:recharge");
+        $this->_result['data']['recharge'] = $result;
+        $this->response($this->_result);
+    }
 }

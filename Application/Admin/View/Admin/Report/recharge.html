@@ -1,0 +1,101 @@
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <h1>
+        代理月报表
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="__MODULE__/index/index"><i class="fa fa-dashboard"></i>首页</a></li>
+        <foreach name="breadcrumb" item="item">
+            <li><a
+                <if condition="$item.active eq 1">class="active"</if>
+                href="javascript:void(0)" onclick="menuClick('{$item.action}')">{$item.name}
+                </a>
+            </li>
+        </foreach>
+    </ol>
+</section>
+
+<!-- Main content -->
+<section class="content">
+    <div class="row">
+        <div class="box">
+            <div class="box-header">
+                <form class="form-horizontal" onsubmit="return false;">
+                    <div class="form-group col-sm-2">
+                        <input class="form-control" id="search_date" placeholder="时间段">
+                    </div>
+                    <div class="form-group col-sm-1">
+                        <input class="form-control" id="search_username" placeholder="账号">
+                    </div>
+                    <div class="form-group col-sm-1">
+                        <button onclick="onSearch('__MODULE__/report/recharge')" type="submit" class="btn btn-primary">查询</button>
+                    </div>
+                </form>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body table-responsive no-padding">
+                <table id="data-table" class="table text-center text-center table-hover table-bordered">
+                    <thead>
+                    <tr>
+                        <th>充值时间</th>
+                        <th>订单号</th>
+                        <th>账号</th>
+                        <th>微信</th>
+                        <th>级别</th>
+                        <th>购买数量</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <foreach name="recharge" item="item">
+                        <tr>
+                            <td>{$item.date}</td>
+                            <td>{$item.sys_order_id}</td>
+                            <td>{$item.username}</td>
+                            <td>{$item.wechat}</td>
+                            <td>{$item.type}</td>
+                            <td>{$item.card_amount}</td>
+                        </tr>
+                    </foreach>
+                    </tbody>
+                    <tfoot class="bg-aqua">
+                    </tfoot>
+                </table>
+            </div>
+            <!-- /.box-body -->
+            <div class="box-footer clearfix">
+                {$page}
+            </div>
+
+            <!-- /.box-footer -->
+        </div>
+
+    </div>
+</section>
+<script>
+    $('#search_date').daterangepicker({
+        timePicker: true,
+        timePicker24Hour: true,
+        timePickerIncrement: 30,
+        format: 'YYYY/MM/DD HH:mm:ss',
+        locale: moment.locale('zh-cn'),
+        autoUpdateInput: false,
+    });
+    $('#search_date').on('apply.daterangepicker', function(ev, picker) {
+        $(this).val(picker.startDate.format('YYYY/MM/DD HH:mm:ss') + ' - ' + picker.endDate.format('YYYY/MM/DD HH:mm:ss'));
+    });
+
+    $('#search_date').on('cancel.daterangepicker', function(ev, picker) {
+        $(this).val('');
+    });
+    //$("#search_date").val("");
+    function onSearch(_url) {
+        var search_date = $("#search_date").val();
+        var search_username = $("#search_username").val();
+        var source = {
+            date: search_date,
+            username: search_username,
+        };
+        menuClick(_url, source);
+    }
+</script>
+<!-- /.content -->
