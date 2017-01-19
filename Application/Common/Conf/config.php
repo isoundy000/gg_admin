@@ -1,5 +1,17 @@
 <?php
 return array(
+    //计划任务的配置
+    //在crontab里配置每日，每月等计划任务
+    //示例:
+    //#每天计划任务（0点）
+    //5 0 * * * /bin/bash /var/www/html/ggmj/Monitor/crontab_per_day.sh
+    //$每月计划任务每月第一天
+    //30 0 1 * * /bin/bash /var/www/html/ggmj/Monitor/crontab_per_month.sh
+    //
+    //你需要
+    //1. 配置正确的shell执行路径，即当前服务器shell的绝对路径
+    //2. Monitor目录下把shell脚本里的域名配置成当前服务器的域名
+
     //基本配置
     'MODULE_ALLOW_LIST' => array('Admin','Agent'),
     'DEFAULT_MODULE' => 'Admin', //默认模块
