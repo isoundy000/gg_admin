@@ -87,7 +87,7 @@ class ClientController extends BaseController
 
         $search['_id'] = new \MongoId(I('put._id'));
         $search['roleid'] = intval(I('put.roleid'));
-        $stock_type = intval(I('put.stock_type'));
+        $stock_type = 2; //intval(I('put.stock_type'));优化发放活动房卡
         //充卡
         $amount = intval(I('put.amount'));
         if (!check_positive_integer($amount)) {
@@ -96,7 +96,13 @@ class ClientController extends BaseController
             //库存是否充足
             $user = $admin_agent->findOne(array("_id" => $_SESSION[MODULE_NAME . '_admin']['_id']));
             if ($user['stock_amount'][$stock_type] < $amount) {
-                $this->response($this->_result, 'json', 400, '房卡库存不足，请前往"库存管理"申请足量房卡');
+                $stock_type = 1;//选择普通房卡
+                if ($user['stock_amount'][$stock_type] < $amount) {
+                    //$total_amount = $user['stock_amount'][1] + $user['stock_amount'][2];
+                    //if ($total_amount < $amount) {
+                    $this->response($this->_result, 'json', 400, '房卡库存不足');
+                    //}
+                }
             }
             //$update['$inc'] = array("stock_amount.{$stock_type}" => $amount);
         }

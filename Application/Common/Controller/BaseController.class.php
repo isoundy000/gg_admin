@@ -14,6 +14,8 @@ class BaseController extends RestController {
     protected $mongo_db; //mongoDB
 
     public function _initialize() {
+        //unset($_SESSION[MODULE_NAME.'_admin']);
+        //unset($_SESSION[MODULE_NAME.'_token']);
         //连接数据库
         if (!$this->mongo_client) {
             $this->mongo_client = new \MongoClient(C('MONGO_SERVER'));
