@@ -6,6 +6,15 @@ use Think\Verify;
 class IndexController extends BaseController {
     public function indexGet(){
         if($_SESSION[MODULE_NAME.'_token']) {//已登陆
+            //取后台公告
+            $admin_notice = $this->mongo_db->admin_notice;
+            $notice = $admin_notice->find(array('type'=>1))->sort(array('date'=>-1))->limit(1);
+            $result = array();
+            foreach($notice as $item) {
+                $result = $item;
+            }
+            //var_dump($result);
+            $this->assign("notice", $result);
             $this->display("Index:index");
         } else {//未登陆
             $this->redirect(MODULE_NAME."/Index/login");
