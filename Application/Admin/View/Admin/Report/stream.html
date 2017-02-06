@@ -36,8 +36,14 @@
                         <th>游戏</th>
                         <if condition="$type neq retail">
                             <th colspan="2">购卡量</th>
-                            <th>日消耗</th>
-                            <th>日流水</th>
+                            <if condition="$type eq month">
+                                <th>月消耗</th>
+                                <th>月流水</th>
+                            <else/>
+                                <th>日消耗</th>
+                                <th>日流水</th>
+                            </if>
+
                         <else/>
                             <th>购卡量</th>
                             <th>流水</th>
