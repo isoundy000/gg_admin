@@ -17,6 +17,7 @@ class UserController extends BaseController
         $agent_type = C('SYSTEM.AGENT_TYPE');
         $user['type_name'] = $agent_type[$user['type']];
         $user['date'] = date("Y-m-d H:i:s", $user['date']);
+
         $this->assign("user", $user);
         $html = $this->fetch("User:index");
         $this->_result['data']['html'] = $html;

@@ -17,6 +17,11 @@ class AgentController extends BaseController
         $search = array();
         $cursor = $admin_card->find($search);
         $result = iterator_to_array($cursor);
+        $count = $admin_card->count($search);
+        $page = new Page($count, C('PAGE_NUM'));
+        $page = $page->show();
+
+        $this->assign("page", $page);
         $this->assign("cards", $result);
         $this->_result['data']['html'] = $this->fetch("Card:purchase");
         $this->_result['data']['cards'] = $result;

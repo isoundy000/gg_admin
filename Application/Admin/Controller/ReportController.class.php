@@ -9,6 +9,7 @@
 namespace Admin\Controller;
 
 use Common\Controller\BaseController;
+use Think\Page;
 
 class ReportController extends BaseController {
 
@@ -68,11 +69,19 @@ class ReportController extends BaseController {
             $total['stream'] += $item['stream'];
             array_push($result, $item);
         }
+
+        $count = $table->count($search);
+        $page = new Page($count, C('PAGE_NUM'));
+        $page = $page->show();
+
+        $this->assign("page", $page);
+
         $this->assign("stream", $result);
         $this->assign("total", $total);
         $this->assign("type", $type);
         $this->_result['data']['html'] = $this->fetch("Report:stream");
         $this->_result['data']['total'] = $total;
+        $this->_result['data']['page'] = $page;
         $this->_result['data']['stream'] = $result;
         $this->response($this->_result);
     }
@@ -121,12 +130,20 @@ class ReportController extends BaseController {
             $total['purchase'] += $item['purchase'];
             array_push($result, $item);
         }
+
+        $count = $table->count($search);
+        $page = new Page($count, C('PAGE_NUM'));
+        $page = $page->show();
+
+        $this->assign("page", $page);
+
         $this->assign("stream", $result);
         $this->assign("total", $total);
         $this->assign("type", $type);
         $this->_result['data']['html'] = $this->fetch("Report:agent_stream");
         $this->_result['data']['total'] = $total;
         $this->_result['data']['stream'] = $result;
+        $this->_result['data']['page'] = $page;
         $this->response($this->_result);
     }
 
@@ -157,9 +174,17 @@ class ReportController extends BaseController {
             $item['type'] = $agent_type[$item['type']];
             array_push($result, $item);
         }
+
+        $count = $table->count($search);
+        $page = new Page($count, C('PAGE_NUM'));
+        $page = $page->show();
+
+        $this->assign("page", $page);
+
         $this->assign("recharge", $result);
         $this->_result['data']['html'] = $this->fetch("Report:recharge");
         $this->_result['data']['recharge'] = $result;
+        $this->_result['data']['page'] = $page;
         $this->response($this->_result);
     }
 }

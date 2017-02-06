@@ -168,7 +168,11 @@ class ClientController extends BaseController
             $item['type_name'] = $stock_type[$item['type']];
             array_push($result, $item);
         }
+        $count = $agent_stock_grant_record->count($search);
+        $page = new Page($count, C('PAGE_NUM'));
+        $page = $page->show();
 
+        $this->assign("page", $page);
         $this->assign("record", $result);
         $html = $this->fetch("Client:record");
         $this->_result['data']['html'] = $html;

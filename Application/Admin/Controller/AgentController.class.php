@@ -263,6 +263,11 @@ class AgentController extends BaseController
             array_push($result, $item);
         }
 
+        $count = $admin_stock_grant_record->count($search);
+        $page = new Page($count, C('PAGE_NUM'));
+        $page = $page->show();
+
+        $this->assign("page", $page);
         $this->assign("record", $result);
         $html = $this->fetch("Agent:record");
         $this->_result['data']['html'] = $html;
