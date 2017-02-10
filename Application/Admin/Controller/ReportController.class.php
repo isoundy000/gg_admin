@@ -129,6 +129,7 @@ class ReportController extends BaseController {
             $total['pay_back'] += $item['pay_back'];
             $total['expense'] += $item['expense'];
             $total['purchase'] += $item['purchase'];
+            $item['type_name'] = $agent_type[$item['type']];
             array_push($result, $item);
         }
 

@@ -155,6 +155,12 @@ class UserController extends BaseController
         $search = array();
         $search['username'] = I('get.username', null);
         $search['pid'] = $_SESSION[MODULE_NAME.'_admin']['_id']->__toString();
+        $search['date'] = I('get.date', null);
+        if ($search['date']) {
+            $search['date'] = rangeDate($search['date']);
+            $search['date'] = array('$gte' => $search['date'][0], '$lte' => $search['date'][1]);
+        }
+
         $limit = intval(I('get.limit', C('PAGE_NUM')));
         $skip = (intval(I('get.p', 1)) - 1) * $limit;
         filter_array_element($search);

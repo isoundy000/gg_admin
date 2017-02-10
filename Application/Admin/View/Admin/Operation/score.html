@@ -60,9 +60,15 @@
                             <td>得分</td>
                             <td>得分</td>
                         </tr>
+                        <tr class="no-display collapse_score_{$item.serialNo} bg-orange-active">
+                            <td colspan="2" class="bg-orange-active"><b>总分数</b></td>
+                            <foreach name="item.headInfo" item="info">
+                                <td>{$info.totalFen}</td>
+                            </foreach>
+                        </tr>
                         <foreach name="item.fenRecords" key="k" item="match">
                             <tr class="no-display collapse_score_{$item.serialNo}">
-                                <td>第{$k+1}局</td>
+                                <td><b>第{$k+1}局</b></td>
                                 <td>{$match[0]}</td>
                                 <td>{$match[1]}</td>
                                 <td>{$match[2]}</td>

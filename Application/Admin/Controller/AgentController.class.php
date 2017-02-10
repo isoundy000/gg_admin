@@ -129,17 +129,19 @@ class AgentController extends BaseController
         }
 
         //充卡
-        $amount = intval(I('put.amount'));
-
-        if (!check_positive_integer($amount)) {
-            $this->response($this->_result, 'json', 400, '房卡数量必须为正整数');
-        } else {
-            //库存是否充足
-            $user = $admin_user->findOne(array("_id" => $_SESSION[MODULE_NAME.'_admin']['_id']));
-            if($user['stock_amount'][$data['type']] < $amount) {
-                $this->response($this->_result, 'json', 400, '房卡库存不足，请前往"库存管理"申请足量房卡');
+        $amount = I('put.amount');
+        if ($amount!=="") {
+            $amount = intval($amount);
+            if (!check_positive_integer($amount)) {
+                $this->response($this->_result, 'json', 400, '房卡数量必须为正整数');
+            } else {
+                //库存是否充足
+                $user = $admin_user->findOne(array("_id" => $_SESSION[MODULE_NAME.'_admin']['_id']));
+                if($user['stock_amount'][$data['type']] < $amount) {
+                    $this->response($this->_result, 'json', 400, '房卡库存不足，请前往"库存管理"申请足量房卡');
+                }
+                $update['$inc'] = array("stock_amount.{$data['type']}" => $amount);
             }
-            $update['$inc'] = array("stock_amount.{$data['type']}" => $amount);
         }
 
         if ($data['role_id']) {
@@ -254,7 +256,7 @@ class AgentController extends BaseController
         $result = array();
         $agent_type = C('SYSTEM.AGENT_TYPE');
         foreach ($cursor as $item) {
-            $item['date'] = date("Y-m-d H:i:s");
+            $item['date'] = date("Y-m-d H:i:s", $item['date']);
             $item['type_name'] = $stock_type[$item['type']];
             $agent = $admin_agent->findOne(array('username' => $item['to_user']));
             $item['name'] = $agent['name'];
