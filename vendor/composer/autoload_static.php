@@ -6,9 +6,20 @@ namespace Composer\Autoload;
 
 class ComposerStaticInit05dbf2c7a750c8a60fad7b9cda4cd528
 {
+    public static $prefixesPsr0 = array (
+        'P' => 
+        array (
+            'PHPExcel' => 
+            array (
+                0 => __DIR__ . '/..' . '/phpoffice/phpexcel/Classes',
+            ),
+        ),
+    );
+
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
+            $loader->prefixesPsr0 = ComposerStaticInit05dbf2c7a750c8a60fad7b9cda4cd528::$prefixesPsr0;
 
         }, null, ClassLoader::class);
     }

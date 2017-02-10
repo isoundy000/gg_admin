@@ -478,8 +478,7 @@ function buildRandomCode($len=6, $type='NUMBER') {
  * @param $options
  */
 function excelExport($options = array()) {
-	import("Org.Util.PHPExcel");
-	$objExcel = new \PHPExcel();
+	$objExcel = new PHPExcel();
 
 	//设置EXCEL属性
 	$objExcel->getProperties()->setCreated($options['author'])
