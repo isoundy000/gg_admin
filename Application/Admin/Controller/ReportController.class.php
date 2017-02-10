@@ -52,7 +52,8 @@ class ReportController extends BaseController {
             );
         }
         foreach ($cursor as $item) {
-            $item['date'] = date("Y-m-d", $item['date']);
+            $match = $type=='day' ? 'Y-m-d' : 'Y-m';
+            $item['date'] = date($match, $item['date']);
             $item['game'] = $game_type[$item['game']];
             foreach ($item['buy_card'] as $k => $v) {
                 $item['buy_card'][$k] = array(
