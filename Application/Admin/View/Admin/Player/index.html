@@ -34,6 +34,7 @@
                     <thead>
                     <tr>
                         <th>玩家ID</th>
+                        <th>注册时间</th>
                         <th>昵称</th>
                         <th>房卡剩余</th>
                         <th>累计局数</th>
@@ -45,6 +46,7 @@
                     <foreach name="clients" item="item">
                         <tr>
                             <td>{$item.roleid}</td>
+                            <td>{$item.date}</td>
                             <td>{$item.nickname}</td>
                             <td>
                                 <foreach name="item.stock_amount" key="k" item="stock_amount">

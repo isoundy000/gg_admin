@@ -104,8 +104,8 @@ class ReportController extends BaseController {
         $table = $this->mongo_db->$table_name;
 
         $search = array();
-        $limit = intval(I('get.limit', C('PAGE_NUM')));
-        $skip = (intval(I('get.p', 1)) - 1) * $limit;
+        //$limit = intval(I('get.limit', C('PAGE_NUM')));
+        //$skip = (intval(I('get.p', 1)) - 1) * $limit;
         $search['date'] = I('get.date', null);
 
         if ($search['date']) {
@@ -113,7 +113,7 @@ class ReportController extends BaseController {
             $search['date'] = array('$gte' => $search['date'][0], '$lte' => $search['date'][1]);
         }
         filter_array_element($search);
-        $cursor = $table->find($search)->limit($limit)->skip($skip)->sort(array("date"=>-1));
+        $cursor = $table->find($search)->sort(array("date"=>-1));
         //$result = array();
         $total = array(
             'expense' => 0,
@@ -130,54 +130,34 @@ class ReportController extends BaseController {
 
         $option['filename'] = "流水{$filename}报表" . date("Y-m-d") . ".xls";
         $option['author'] = '杠杠麻将';
-        /*$option['title'] = "{$ad_type}效果数据展示数据报表";
-        $option['subject'] = "{$ad_type}效果数据展示数据报表";
-        $option['desc'] = "{$ad_type}效果数据展示数据报表";
-        $option['keyword'] = "{$ad_type}效果数据展示数据";
-        $option['category'] = "{$ad_type}效果数据展示数据";*/
 
-        $option['header'] = array('日期', '游戏', '购卡量', '流水');
+        $option['header'] = array('日期', '游戏', '购卡量', '', '流水');
+        $option['merge'] = array('C1:D1');
         $option['data'] = array();
 
         foreach ($cursor as $item) {
             $match = $type=='day' ? 'Y-m-d' : 'Y-m';
             $item['date'] = date($match, $item['date']);
             $item['game'] = $game_type[$item['game']];
-            foreach ($item['buy_card'] as $k => $v) {
+           /* foreach ($item['buy_card'] as $k => $v) {
                 $item['buy_card'][$k] = array(
                     'name' => $agent_type[$k],
                     'amount' => $v
                 );
 
                 $total['buy_card'][$k]['amount'] += $v;
-            }
+            }*/
             if ($type == 'retail') {
                 $total['card'] += $item['buy_card'];
             }
             $total['expense'] += $item['expense'];
             $total['stream'] += $item['stream'];
             /*array_push($result, $item);*/
-            $current = array($item['date'], $item['game'], $item['buy_card'], $item['stream']);
+            $current = array($item['date'], $item['game'], $item['buy_card'][1], $item['buy_card'][2], $item['stream']);
             array_push($option['data'], $current);
         }
 
-
         excelExport($option);
-
-        /*$count = $table->count($search);
-        $page = new Page($count, C('PAGE_NUM'));
-        $page = $page->show();
-
-        $this->assign("page", $page);
-
-        $this->assign("stream", $result);
-        $this->assign("total", $total);
-        $this->assign("type", $type);
-        $this->_result['data']['html'] = $this->fetch("Report:stream");
-        $this->_result['data']['total'] = $total;
-        $this->_result['data']['page'] = $page;
-        $this->_result['data']['stream'] = $result;
-        $this->response($this->_result);*/
     }
 
     public function agentStreamGet() {

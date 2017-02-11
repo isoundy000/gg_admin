@@ -494,7 +494,10 @@ function excelExport($options = array()) {
 	foreach ($options['header'] as $key => $value) {
 		$objExcel->setActiveSheetIndex(0)->setCellValue(chr($start+$key)."1", $value);
 	}
-	
+    //合并单元格
+    foreach ($options['merge'] as $value) {
+        $objExcel->getActiveSheet()->mergeCells($value);
+    }
 	
 	//设置数据
 	foreach ($options['data'] as $key => $value) {

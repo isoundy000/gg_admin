@@ -118,7 +118,7 @@ class UserController extends BaseController
             $this->response($this->_result, 'json', 400, '用户不存在或者密码错误');
         }
         if (!$query['status']) {
-            $this->response($this->_result, 'json', 400, '该账户已被禁用');
+            $this->response($this->_result, 'json', 400, '你的账号未认证或者已被禁用，请联系管理员开通');
         }
         //附加字段说明
         $type_list = C('SYSTEM.AGENT_TYPE');
@@ -201,7 +201,7 @@ class UserController extends BaseController
         $data['repeat_password'] = I('post.repeat_password', null, check_empty_string);
         $data['type'] = 2; //只能添加金牌代理
         $data['verify_code'] = I('post.verify_code', null, check_empty_string);
-        $data['status'] = 1;
+        $data['status'] = 0; //二级代理需要认证
         $data['pid'] = $_SESSION[MODULE_NAME.'_admin']['_id']->__toString();
         //$data['role_id'] = $_SESSION[MODULE_NAME.'_admin']['role_id'];
         //金牌代理组权限
@@ -240,6 +240,10 @@ class UserController extends BaseController
 
         if (findRecord('username', $data['username'], $admin_agent)) {
             $this->response($this->_result, 'json', 400, '用户名已经存在');
+        }
+
+        if (!session($data['cellphone'])) {
+            $this->response($this->_result, 'json', 400, '验证码已过期');
         }
 
         if (session($data['cellphone']) != $data['verify_code']) {
