@@ -180,6 +180,7 @@ class ReportController extends BaseController {
         $limit = intval(I('get.limit', C('PAGE_NUM')));
         $skip = (intval(I('get.p', 1)) - 1) * $limit;
         $search['date'] = I('get.date', null);
+        $search['username'] = I('get.username', null);
         $search['type'] = I('get.agent_type', null);
         if ($search['date']) {
             $search['date'] = rangeDate($search['date']);
@@ -189,6 +190,21 @@ class ReportController extends BaseController {
             $search['date'] = strtotime(date("Y-m-01", strtotime("-1 month")));
         }
         $search['type'] && $search['type'] = intval($search['type']);
+        $show_child = I('get.show_child');//是否显示账号下的子账号
+        if ($show_child) {
+            //父账号_id
+            $parent_user = $this->mongo_db->admin_agent->findOne(['username' => $search['username']]);
+            $parent_user_id = $parent_user['_id']->__toString();
+            $child_list = $this->mongo_db->admin_agent->find(['pid' => $parent_user_id])->field();
+            $child_username_list = array();
+            foreach ($child_list as $item) {
+                array_push($child_username_list, $item['username']);
+            }
+            //TODO
+            if ($child_username_list) {
+                $search['username'] = ['$in', implode(',', $child_list)];
+            }
+        }
         filter_array_element($search);
         $cursor = $table->find($search)->limit($limit)->skip($skip)->sort(array("username" => 1));
         $result = array();

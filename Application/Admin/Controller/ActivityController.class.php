@@ -373,10 +373,11 @@ class ActivityController extends BaseController {
     {
         $data['visible'] = I('post.visible', 0); //0失效 1显示
         $data['image'] = I('post.image', null, check_empty_string);
+        $data['link'] = I('post.link', null, check_empty_string);
         $data['date'] = time();
         $data['admin'] = $_SESSION[MODULE_NAME . '_admin']['username'];
         merge_params_error($data['image'], 'image', '请上传图片', $this->_result['error']);
-
+        //merge_params_error($data['link'], 'link', '请上传图片', $this->_result['error']);
         //检查参数
         if ($this->_result['error']) {
             $error = array_shift($this->_result['error']);
@@ -392,7 +393,10 @@ class ActivityController extends BaseController {
         }
         $data['start_date'] = strtotime(trim($date_range[0]));
         $data['end_date'] = strtotime(trim($date_range[1]));
-        $data['image'] = substr($data['image'], 1);
+        if (strpos($data['image'], '.') === 0) {
+            $data['image'] = substr($data['image'], 1);
+        }
+        //$data['image'] = substr($data['image'], 1);
         filter_array_element($data);
         $admin_popup = $this->mongo_db->admin_popup;
         if ($admin_popup->insert($data)) {
@@ -406,6 +410,7 @@ class ActivityController extends BaseController {
         $search['_id'] = new \MongoId(I('put._id'));
         $data['visible'] = I('put.visible', 0);
         $data['image'] = I('put.image', null, check_empty_string);
+        $data['link'] = I('put.link', null, check_empty_string);
         merge_params_error($data['image'], 'image', '请上传图片', $this->_result['error']);
 
         //检查参数
@@ -423,7 +428,7 @@ class ActivityController extends BaseController {
         $data['start_date'] = strtotime(trim($date_range[0]));
         $data['end_date'] = strtotime(trim($date_range[1]));
         $data['admin'] = $_SESSION[MODULE_NAME.'_admin']['username'];
-        if (strpos($data['image'], '.') == 0) {
+        if (strpos($data['image'], '.') === 0) {
             $data['image'] = substr($data['image'], 1);
         }
         filter_array_element($data);

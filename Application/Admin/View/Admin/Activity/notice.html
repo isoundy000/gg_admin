@@ -94,7 +94,7 @@
                         </div>
                         <div class="form-group">
                             <label for="content" class="col-sm-2 control-label">消息内容</label>
-                            <div class="col-sm-4">
+                            <div class="col-sm-8">
                                 <textarea class="form-control" id="content" rows="3"></textarea>
                             </div>
                         </div>
@@ -124,13 +124,23 @@
     }
     
     function showType(show) {
+        var editor = CKEDITOR.instances['content'];
         if (show == 1) {
-            $("#role_list_group").css("display", "block");
+            if (editor) {
+                editor.destroy();
+            }
+            CKEDITOR.replace('content');
         } else {
-            $("#role_list_group").css("display", "none");
+            if (editor) {
+                editor.destroy();
+            }
         }
     }
     function noticeClear() {
+        var editor = CKEDITOR.instances['content'];
+        if (editor) {
+            editor.setData("");
+        }
         $("#title").val("");
         $("#content").val("");
         $("#_id").val("");
@@ -140,7 +150,20 @@
     function noticeEdit(_url) {
         ajaxRequest(_url, null, 'get', 'json', function(result) {
             if (result.code == 200) {
-                $("input[name='type'][value='" + result.data.notice.type + "']").attr("checked", true);
+                var editor = CKEDITOR.instances['content'];
+                if (result.data.notice.type == 1) {
+                    if (editor) {
+                        editor.destroy();
+                    }
+                    CKEDITOR.replace('content');
+                } else {
+                    if (editor) {
+                        editor.destroy();
+                    }
+                }
+                //var name = 'type' + result.data.notice.type;
+                $("input[name='type']").eq(result.data.notice.type).prop('checked', true);
+                //$("input[name='type'][value='" + result.data.notice.type + "']").attr("checked", true);
                 $("#notice_submit").html("保存");
                 $('#gg-tab a[href="#tab_2"]').tab('show');
                 $("#title").val(result.data.notice.title);
@@ -169,10 +192,16 @@
     }
 
     function noticeSave(_url) {
+        var editor = CKEDITOR.instances['content'];
         var method = $("#_id").val() ? "PUT" : "POST";
         var type = $("input[name='type']:checked").val();
         var title = $("#title").val();
-        var content = $("#content").val();
+        if (editor) {
+            var content = editor.getData();//$("#content").val();
+        } else {
+            var content = $("#content").val();
+        }
+
         var _id = $("#_id").val();
 
         var source = {

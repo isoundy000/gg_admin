@@ -55,6 +55,8 @@
                             <th>购卡量</th>
                             <th>流水</th>
                         </if>
+                        <th>普通</th>
+                        <th>活动</th>
 
                     </tr>
                     </thead>
@@ -73,7 +75,8 @@
                                 <td>{$item.buy_card}</td>
                                 <td>{$item.stream}</td>
                             </if>
-
+                            <td>{$item.card1}</td>
+                            <td>{$item.card2}</td>
                         </tr>
                     </foreach>
                     </tbody>

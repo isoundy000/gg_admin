@@ -33,6 +33,7 @@
                                     <th>开始时间</th>
                                     <th>结束时间</th>
                                     <th>弹窗图片</th>
+                                    <th>链接地址</th>
                                     <th>状态</th>
                                     <th>操作</th>
                                 </tr>
@@ -44,6 +45,7 @@
                                         <td>{$item.start_date}</td>
                                         <td>{$item.end_date}</td>
                                         <td><img height="80" src="{$item.image}"></td>
+                                        <td>{$item.link}</td>
                                         <td>
                                             <if condition="$item.visible eq 0">
                                                 <label class="label bg-red">失效</label>
@@ -81,6 +83,12 @@
                                 <input id="image" name="image" type="file" class="file file-loading" data-allowed-file-extesions='["jpg","png"]'>
                             </div>
                         </div>
+                        <div class="form-group">
+                            <label for="link" class="col-sm-2 control-label">链接</label>
+                            <div class="col-sm-4">
+                                <input id="link" name="link" type="url" class="form-control" placeholder="链接地址">
+                            </div>
+                        </div>
                         <input type="hidden" id="image_preview">
                         <div class="form-group">
                             <label for="visible" class="col-sm-2 control-label">状态</label>
@@ -95,6 +103,7 @@
                         <div class="form-group">
                             <div class="col-sm-offset-2 col-sm-4">
                                 <button id="popup_submit" type="submit" class="btn btn-primary" onclick="popupSave('__MODULE__/activity/popup')">添加</button>
+                                <button type="submit" class="btn btn-warning" onclick="popupClear()">清空</button>
                                 <input type="hidden" id="_id">
                             </div>
                         </div>
@@ -127,6 +136,15 @@
     }).on('fileuploaded', function(event, data) {
         $("#image_preview").val(data.response.data.file_path);
     });
+
+    function popupClear() {
+        //$("#image_preview").val("");
+        $("#date_range").val("");
+        $("#link").val("");
+        $("#_id").val("");
+        $("#popup_submit").html("添加");
+    }
+
     function popupEdit(_url) {
         ajaxRequest(_url, null, 'get', 'json', function(result) {
             if (result.code == 200) {
@@ -134,6 +152,7 @@
                 $('#gg-tab a[href="#tab_2"]').tab('show');
                 $("#date_range").val(result.data.popup.date_range);
                 $("#_id").val(result.data.popup._id.$id);
+                $("#link").val(result.data.popup.link);
                 if (result.data.popup.visible) {
                     $("#visible").attr("checked", true);
                 } else {
@@ -179,10 +198,12 @@
         var _id = $("#_id").val();
         var image = $("#image_preview").val();
         var visible = $("#visible").is(':checked') ? 1 : 0;
+        var link = $("#link").val();
         var source = {
             date_range:date_range,
             image: image,
             visible: visible,
+            link: link,
             _id:_id
         };
         ajaxRequest(_url, source, method, 'json', function(result) {

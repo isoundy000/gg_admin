@@ -276,4 +276,36 @@ class AgentController extends BaseController
         $this->_result['data']['record'] = $result;
         $this->response($this->_result);
     }
+
+    //代理充卡记录
+    public function agentRecordGet() {
+        $stock_type = C('SYSTEM.STOCK_TYPE');
+        $agent_stock_grant_record = $this->mongo_db->agent_stock_grant_record;
+        $search['from_user'] = I('get.from_user', null);
+        $search['to_user'] = I('get.to_user', null);
+        $search['nickname'] = I('get.nickname', null);
+        $limit = intval(I('get.limit', C('PAGE_NUM')));
+        $skip = (intval(I('get.p', 1)) - 1) * $limit;
+        $option = array();
+        filter_array_element($search);
+        $search['nickname'] && $search['nickname'] = new \MongoRegex("/{$search['nickname']}/");
+        $search['to_user'] && $search['to_user'] = intval($search['to_user']);
+        $cursor = $agent_stock_grant_record->find($search, $option)->sort(array('date' => 1))->skip($skip)->limit($limit);
+        $result = array();
+        foreach ($cursor as $item) {
+            $item['date'] = date("Y-m-d H:i:s", $item['date']);
+            $item['type_name'] = $stock_type[$item['type']];
+            array_push($result, $item);
+        }
+        $count = $agent_stock_grant_record->count($search);
+        $page = new Page($count, C('PAGE_NUM'));
+        $page = $page->show();
+
+        $this->assign("page", $page);
+        $this->assign("record", $result);
+        $html = $this->fetch("Agent:agent_record");
+        $this->_result['data']['html'] = $html;
+        $this->_result['data']['record'] = $result;
+        $this->response($this->_result);
+    }
 }

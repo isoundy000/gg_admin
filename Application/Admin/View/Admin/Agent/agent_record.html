@@ -1,0 +1,83 @@
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <h1>
+        代理充卡记录
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="__MODULE__/index/index"><i class="fa fa-dashboard"></i>首页</a></li>
+        <foreach name="breadcrumb" item="item">
+            <li><a <if condition="$item.active eq 1">class="active"</if>
+                href="javascript:void(0)" onclick="menuClick('{$item.action}')">{$item.name}</a></li>
+        </foreach>
+    </ol>
+</section>
+
+<!-- Main content -->
+<section class="content">
+    <div class="row">
+        <div class="box">
+            <div class="box-header">
+                <form class="form-horizontal" onsubmit="return false;">
+                    <div class="form-group col-sm-1">
+                        <input name="table_search" id="search_from_user" class="form-control pull-right" placeholder="代理用户名" type="text">
+                    </div>
+                    <div class="form-group col-sm-1">
+                        <input name="table_search" id="search_to_user" class="form-control pull-right" placeholder="玩家ID" type="text">
+                    </div>
+                    <div class="form-group col-sm-1">
+                        <input name="table_search" id="search_nickname" class="form-control pull-right" placeholder="玩家昵称" type="text">
+                    </div>
+                    <div class="form-group col-sm-1">
+                        <button onclick="onSearch('__MODULE__/agent/agentrecord')" type="submit" class="btn btn-primary">查询</button>
+                    </div>
+                </form>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body table-responsive no-padding">
+                <table class="table text-center table-hover table-bordered">
+                    <thead>
+                    <tr>
+                        <th>充卡时间</th>
+                        <th>代理</th>
+                        <th>玩家ID</th>
+                        <th>玩家昵称</th>
+                        <th>类型</th>
+                        <th>数量</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <foreach name="record" item="item">
+                        <tr>
+                            <td>{$item.date}</td>
+                            <td>{$item.from_user}</td>
+                            <td>{$item.to_user}</td>
+                            <td>{$item.nickname}</td>
+                            <td>{$item.type_name}</td>
+                            <td>{$item.amount}</td>
+                        </tr>
+                    </foreach>
+                    </tbody>
+                </table>
+            </div>
+            <!-- /.box-body -->
+            <div class="box-footer clearfix">
+                {$page}
+            </div>
+
+            <!-- /.box-footer -->
+        </div>
+    </div>
+</section>
+<script>
+    function onSearch(_url) {
+        var search_from_user = $("#search_from_user").val();
+        var search_to_user = $("#search_to_user").val();
+        var search_nickname = $("#search_nickname").val();
+        var source = {
+            from_user: search_from_user,
+            to_user: search_to_user,
+            nickname: search_nickname
+        };
+        menuClick(_url, source);
+    }
+</script>
