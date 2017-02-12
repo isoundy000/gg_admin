@@ -98,7 +98,8 @@ class StockController extends BaseController
                 $admin_user->update(array("username" => $modify['apply_user']),
                     array('$inc' =>
                         array(
-                            "stock_amount.{$modify['type']}" => $modify['amount']
+                            "stock_amount.{$modify['type']}" => $modify['amount'],
+                            //"total_amount.{$modify['type']}" => $modify['amount']
                         )
                     )
                 );

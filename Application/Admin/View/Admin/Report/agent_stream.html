@@ -56,7 +56,7 @@
                     </thead>
                     <tbody>
                     <foreach name="stream" item="item">
-                        <tr>
+                        <tr onclick="showChild(this, '{$item.username}', '__MODULE__/report/agentStream/type/month')">
                             <td>{$item.date}</td>
                             <td>{$item.username}</td>
                             <td>{$item.wechat}</td>
@@ -112,9 +112,35 @@
         var search_type = $("#search_type").val();
         var source = {
             date: search_date,
-            agent_type: search_type,
+            username: search_username,
+            agent_type: search_type
         };
         menuClick(_url, source);
     }
+
+    function showChild(obj, username, _url) {
+        var flag = obj.getAttribute('class');
+        if (!flag) {
+            flag = 1;
+        } else {
+            flag = 0;
+        }
+        if (flag == 1) {
+            var source = {
+                username: username,
+                show_child: flag
+            };
+            ajaxRequest(_url, source, 'GET', 'json', function (response) {
+                var html = response.data.child_html;
+                $(obj).after(html);
+                $(obj).addClass('expand');
+            });
+        } else {
+            var cls = '.child_stream_' + username;
+            $(obj).removeClass('expand');
+            $(cls).remove();
+        }
+    }
+
 </script>
 <!-- /.content -->

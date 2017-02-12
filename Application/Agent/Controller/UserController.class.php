@@ -6,6 +6,7 @@
  * Time: 9:46
  */
 namespace Agent\Controller;
+
 use Common\Controller\BaseController;
 use Think\Page;
 
@@ -81,7 +82,7 @@ class UserController extends BaseController
         if ($agent = $admin_agent->findAndModify($search, $update, null, array('new' => true))) {
             unset($agent['password']);
             $agent['date'] = date("Y-m-d H:i:s", $agent['date']);
-            $_SESSION[MODULE_NAME.'_admin'] = $agent;
+            $_SESSION[MODULE_NAME . '_admin'] = $agent;
             $this->response($this->_result, 'json', 201, '保存成功');
         } else {
             $this->_result['data']['param'] = $data;
@@ -154,7 +155,7 @@ class UserController extends BaseController
 
         $search = array();
         $search['username'] = I('get.username', null);
-        $search['pid'] = $_SESSION[MODULE_NAME.'_admin']['_id']->__toString();
+        $search['pid'] = $_SESSION[MODULE_NAME . '_admin']['_id']->__toString();
         $search['date'] = I('get.date', null);
         if ($search['date']) {
             $search['date'] = rangeDate($search['date']);
@@ -190,6 +191,83 @@ class UserController extends BaseController
         $this->response($this->_result);
     }
 
+    //售卡情况
+    public function sellGet()
+    {
+        //$admin_agent = $this->mongo_db->admin_agent;
+        $agent = $_SESSION[MODULE_NAME . '_admin'];
+        $stock_amount = $agent['card_amount'];
+        $total_amount = 0;
+        $total_sell = 0;
+        $this_month_buy = 0;
+        $this_month_sell = 0;
+        $this_month_back = 0;
+        $last_month_buy = 0;
+        $last_month_sell = 0;
+        $last_month_back = 0;
+        foreach ($agent['total_amount'] as $item) {
+            $total_amount += $item;
+        }
+        foreach ($agent['total_sell'] as $item) {
+            $total_sell += $item;
+        }
+
+        //当月数据
+        $agent_stock_grant_record = $this->mongo_db->agent_stock_grant_record;//花费
+        $start_date = strtotime(date("Y-m-01", time()));
+        $end_date = time();
+        $cursor = $agent_stock_grant_record->find(array(
+                'date' => array(
+                    '$gte' => $start_date,
+                    '$lt' => $end_date,
+                ),
+                'from_user' => $agent['username']
+            )
+        );
+        foreach ($cursor as $item) {
+            $this_month_sell += $item['amount'];
+        }
+
+        $admin_stock_grant_record = $this->mongo_db->admin_stock_grant_record;//购买
+        $cursor = $admin_stock_grant_record->find(
+            array(
+                'date' => array(
+                    '$gte' => $start_date,
+                    '$lt' => $end_date,
+                ),
+                'to_user' => $agent['username']
+            )
+        );
+        foreach ($cursor as $item) {
+            $this_month_buy += $item['amount'];
+        }
+
+        //上月数据
+        $last_month = strtotime(date("Y-m-01", strtotime("-1 month")));
+        $stream = $this->mongo_db->admin_report_agent_stream_month->findOne(['date' => $last_month, 'username' => $agent['username']]);
+        if ($stream) {
+            $last_month_buy = $stream['purchase'];
+            $last_month_back = $stream['pay_back'];
+            $last_month_sell = $stream['expense'];
+        }
+        $data = array(
+            'stock_amount' => $stock_amount,
+            'total_amount' => $total_amount,
+            'total_sell' => $total_sell,
+            'this_month_buy' => $this_month_buy,
+            'this_month_sell' => $this_month_sell,
+            'this_month_back' => $this_month_back,
+            'last_month_buy' => $last_month_buy,
+            'last_month_sell' => $last_month_sell,
+            'last_month_back' => $last_month_back,
+        );
+        $this->_result['data']['sell'] = $data;
+        $this->assign("data", $data);
+        $this->_result['data']['html'] = $this->fetch("User:sell");
+        $this->assign("html", $this->_result['data']['html']);
+        $this->response($this->_result);
+    }
+
     public function agentsPost()
     {
         $admin_agent = $this->mongo_db->admin_agent;
@@ -202,12 +280,12 @@ class UserController extends BaseController
         $data['type'] = 2; //只能添加金牌代理
         $data['verify_code'] = I('post.verify_code', null, check_empty_string);
         $data['status'] = 0; //二级代理需要认证
-        $data['pid'] = $_SESSION[MODULE_NAME.'_admin']['_id']->__toString();
+        $data['pid'] = $_SESSION[MODULE_NAME . '_admin']['_id']->__toString();
         //$data['role_id'] = $_SESSION[MODULE_NAME.'_admin']['role_id'];
         //金牌代理组权限
         $admin_role = $this->mongo_db->admin_role;
         $role = $admin_role->findOne(array(
-            '_id' => array('$ne' => $_SESSION[MODULE_NAME.'_admin']['role_id']),
+            '_id' => array('$ne' => $_SESSION[MODULE_NAME . '_admin']['role_id']),
             'module_name' => 'Agent',
         ));
         $data['role_id'] = $role['_id'];
@@ -234,7 +312,7 @@ class UserController extends BaseController
             $this->response($this->_result, 'json', 400, '两次输入的密码不一致');
         }
 
-        if (checkTextLength6($data['password'])||checkTextLength6($data['repeat_password'])) {
+        if (checkTextLength6($data['password']) || checkTextLength6($data['repeat_password'])) {
             $this->response($this->_result, 'json', 400, '密码至少6个字符');
         }
 
@@ -261,14 +339,15 @@ class UserController extends BaseController
         unset($data['verify_code']);
 
         if ($admin_agent->insert($data)) {
-            $this->_result['data']['url'] = U(MODULE_NAME.'/user/agents');
+            $this->_result['data']['url'] = U(MODULE_NAME . '/user/agents');
             $this->response($this->_result, 'json', 201, '新建成功');
         } else {
             $this->response($this->_result, 'json', 400, '新建失败');
         }
     }
 
-    public function verifyCodeGet() {
+    public function verifyCodeGet()
+    {
         $cellphone = I('get.cellphone');
         if (!check_cellphone_format($cellphone)) {
             $this->response($this->_result, 'json', 400, '手机号码格式错误');

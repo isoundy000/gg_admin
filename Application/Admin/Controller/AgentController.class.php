@@ -140,7 +140,10 @@ class AgentController extends BaseController
                 if($user['stock_amount'][$data['type']] < $amount) {
                     $this->response($this->_result, 'json', 400, '房卡库存不足，请前往"库存管理"申请足量房卡');
                 }
-                $update['$inc'] = array("stock_amount.{$data['type']}" => $amount);
+                $update['$inc'] = array(
+                    "stock_amount.{$data['type']}" => $amount,
+                    "total_amount.{$data['type']}" => $amount
+                );
             }
         }
 

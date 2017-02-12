@@ -195,15 +195,13 @@ class ReportController extends BaseController {
             //父账号_id
             $parent_user = $this->mongo_db->admin_agent->findOne(['username' => $search['username']]);
             $parent_user_id = $parent_user['_id']->__toString();
-            $child_list = $this->mongo_db->admin_agent->find(['pid' => $parent_user_id])->field();
+            $child_list = $this->mongo_db->admin_agent->find(['pid' => $parent_user_id]);
             $child_username_list = array();
             foreach ($child_list as $item) {
                 array_push($child_username_list, $item['username']);
             }
-            //TODO
-            if ($child_username_list) {
-                $search['username'] = ['$in', implode(',', $child_list)];
-            }
+            $child_username_list = array_values($child_username_list);
+            $search['username'] = ['$in' => $child_username_list];
         }
         filter_array_element($search);
         $cursor = $table->find($search)->limit($limit)->skip($skip)->sort(array("username" => 1));
@@ -219,6 +217,7 @@ class ReportController extends BaseController {
             $total['expense'] += $item['expense'];
             $total['purchase'] += $item['purchase'];
             $item['type_name'] = $agent_type[$item['type']];
+            $show_child && $item['parent'] = I('get.username');
             array_push($result, $item);
         }
 
@@ -229,6 +228,10 @@ class ReportController extends BaseController {
         $this->assign("page", $page);
 
         $this->assign("stream", $result);
+        if ($show_child) {
+            $this->assign("child_stream", $result);
+            $this->_result['data']['child_html'] = $this->fetch("Report:agent_child_stream");
+        }
         $this->assign("total", $total);
         $this->assign("type", $type);
         $this->_result['data']['html'] = $this->fetch("Report:agent_stream");

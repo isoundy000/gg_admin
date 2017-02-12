@@ -115,7 +115,8 @@ class ClientController extends BaseController
         if ($client) {
             //给代理充卡后要扣除代理相应的库存卡数量
             $admin_agent->update(array("_id" => $_SESSION[MODULE_NAME . '_admin']['_id']),
-                array('$inc' => array("stock_amount.{$stock_type}" => -$amount))
+                array('$inc' => array("stock_amount.{$stock_type}" => -$amount,
+                    "total_sell.{$stock_type}" => $amount))
             );
             //充卡记录，代理后台使用
             $agent_stock_grant_record->insert(
