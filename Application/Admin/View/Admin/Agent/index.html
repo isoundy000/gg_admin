@@ -38,15 +38,21 @@
                     <div class="box">
                         <div class="box-header">
                             <form class="form-horizontal" onsubmit="return false;">
-                            <div class="form-group col-sm-1">
-                                <input name="table_search" id="search_username" class="form-control pull-right" placeholder="用户名" type="text">
-                            </div>
-                            <div class="form-group col-sm-1">
-                                <input name="table_search" id="search_name" class="form-control pull-right" placeholder="名字" type="text">
-                            </div>
-                            <div class="form-group col-sm-1">
-                                <button onclick="onSearch('__MODULE__/agent/agents')" type="submit" class="btn btn-primary">查询</button>
-                            </div>
+                                <div class="form-group col-sm-1">
+                                    <input name="table_search" id="search_username" class="form-control pull-right" placeholder="用户名" type="text">
+                                </div>
+                                <div class="form-group col-sm-1">
+                                    <input name="table_search" id="search_name" class="form-control pull-right" placeholder="名字" type="text">
+                                </div>
+                                <div class="form-group col-sm-1">
+                                    <button onclick="onSearch('__MODULE__/agent/agents')" type="submit" class="btn btn-primary">查询</button>
+                                </div>
+                                <div class="form-group col-sm-1">
+                                    <button  onclick='onExcel("__MODULE__/agent/agentsExcel")' class="btn btn-primary">
+                                        <i class="fa fa-save"></i>
+                                        导出
+                                    </button>
+                                </div>
                             </form>
                         </div>
                         <!-- /.box-header -->
@@ -264,5 +270,12 @@
                 errorDialog('block', '保存或新建', result.msg);
             }
         });
+    }
+
+    function onExcel(_url) {
+        var search_username = $("#search_username").val();
+        var search_name = $("#search_name").val();
+        _url = _url + "?username=" + search_username + "&name=" + search_name;
+        exportExcel(_url);
     }
 </script>

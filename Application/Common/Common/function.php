@@ -479,7 +479,6 @@ function buildRandomCode($len=6, $type='NUMBER') {
  */
 function excelExport($options = array()) {
 	$objExcel = new PHPExcel();
-
 	//设置EXCEL属性
 	$objExcel->getProperties()->setCreated($options['author'])
 	->setLastModifiedBy($options['author'])
@@ -507,7 +506,7 @@ function excelExport($options = array()) {
 		}
 	}
 
-	header("Content-Type: application/vnd.ms-excel");
+	header("Content-Type: application/vnd.ms-excel;charset=UTF-8");
 	header("Content-Disposition: attachment; filename=\"{$options['filename']}\"");
 	header("Cache-Control: max-age=0");
 	$objWriter = new PHPExcel_Writer_Excel5($objExcel);

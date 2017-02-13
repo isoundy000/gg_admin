@@ -6,11 +6,14 @@
  * Time: 14:19
  */
 namespace Admin\Controller;
+
 use Common\Controller\BaseController;
 use Think\Page;
 
-class PlayerController extends BaseController {
-    public function playersGet() {
+class PlayerController extends BaseController
+{
+    public function playersGet()
+    {
         $search = array();
         $search['roleid'] = I('get.roleid', null);
         $search['nickname'] = I('get.nickname', null);
@@ -71,14 +74,45 @@ class PlayerController extends BaseController {
         $this->response($this->_result);
     }
 
+    public function playersExcelPost()
+    {
+        $search = array();
+        $admin_client = $this->mongo_db->role_info;
+        $search['roleid'] && $search['roleid'] = intval($search['roleid']);
+        $search['nickname'] && $search['nickname'] = new \MongoRegex("/{$search['nickname']}/");
+        $limit = intval(I('get.limit', C('PAGE_NUM')));
+        $skip = $_SESSION['skip'];
+        $skip = ($skip - 1) * $limit;
+        filter_array_element($search);
+        filter_array_element($option);
+
+        $cursor = $admin_client->find($search)->sort(array("roleid" => -1))->limit($limit)->skip($skip);
+        $option['filename'] = "玩家列表报表" . date("Y-m-d") . ".xls";
+        $option['author'] = '杠杠麻将';
+        $option['header'] = array('玩家ID', '注册时间', '昵称', '房卡剩余', '累计局数', '赢分');
+        $option['data'] = array();
+        foreach ($cursor as $item) {
+            $item['date'] = date("Y-m-d H:i:s", $item['date']);
+            $item['match_count'] = $item['totalWinCi'] + $item['totalLoseCi'] + $item['totalPingCi'];
+            $charset = mb_detect_encoding($item['nickname']);
+            $item['nickname'] = iconv($charset, 'utf-8', $item['nickname']);
+            array_push($option['data'], [$item['roleid'], $item['date'],
+                $item['nickname'], intval($item['stock_amount'][1] + $item['stock_amount'][2]),
+                $item['match_count'], $item['totalWinFen']]);
+        }
+        excelExport($option);
+    }
+
     //TODO
-    public function forbiddenGet() {
+    public function forbiddenGet()
+    {
         $this->_result['data']['html'] = $this->fetch("Player:forbidden");
         $this->response($this->_result);
     }
 
     //TODO
-    public function forbiddenPut() {
+    public function forbiddenPut()
+    {
 
     }
 }

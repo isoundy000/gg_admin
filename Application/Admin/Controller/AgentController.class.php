@@ -88,8 +88,7 @@ class AgentController extends BaseController
         $this->response($this->_result);
     }
 
-    public function agentsExcelGet()
-    {
+    public function agentsExcelPost() {
         $admin_agent = $this->mongo_db->admin_agent;
         $admin_role = $this->mongo_db->admin_role;
 
@@ -116,7 +115,7 @@ class AgentController extends BaseController
             $item['date'] = date('Y-m-d H:i:s', $item['date']);
             $status = $item['status'] ? '已启用' : '已禁用';
             array_push($option['data'], [$item['date'], $item['username'],
-                $item['nickname'], $item['type_name'], $status, $item['stock_amount'][1] + $item['stock_amount'][2]]);
+                $item['name'], $item['type_name'], $status, $item['stock_amount'][1] + $item['stock_amount'][2]]);
         }
         excelExport($option);
     }
@@ -319,6 +318,40 @@ class AgentController extends BaseController
         $this->response($this->_result);
     }
 
+    //给代理发放房卡记录
+    public function recordExcelPost()
+    {
+        $search = array();
+        $search['to_user'] = I('get.to_user', null);
+        $stock_type = C('SYSTEM.STOCK_TYPE');
+        $admin_stock_grant_record = $this->mongo_db->admin_stock_grant_record;
+        $admin_agent = $this->mongo_db->admin_agent;
+
+        $limit = intval(I('get.limit', C('PAGE_NUM')));
+        $skip = $_SESSION['skip'];
+        $skip = ($skip - 1) * $limit;
+        $option = array();
+        filter_array_element($search);
+        filter_array_element($option);
+        $cursor = $admin_stock_grant_record->find($search, $option)->sort(array('date' => 1))->skip($skip)->limit($limit);
+        $agent_type = C('SYSTEM.AGENT_TYPE');
+        $option['filename'] = "充卡记录报表" . date("Y-m-d") . ".xls";
+        $option['author'] = '杠杠麻将';
+        $option['header'] = array('时间', '管理员（发放者）', '代理（接收者）', '昵称', '微信', '级别', '类型', '数量');
+        $option['data'] = array();
+        foreach ($cursor as $item) {
+            $item['date'] = date("Y-m-d H:i:s", $item['date']);
+            $item['type_name'] = $stock_type[$item['type']];
+            $agent = $admin_agent->findOne(array('username' => $item['to_user']));
+            $item['name'] = $agent['name'];
+            $item['agent_type'] = $agent_type[$item['type']];
+            $item['wechat'] = $agent['wechat'];
+            array_push($option['data'], [$item['date'], $item['from_user'], $item['to_user'], $item['name'],
+            $item['wechat'], $item['agent_type'], $item['type_name'], $item['amount']]);
+        }
+        excelExport($option);
+    }
+
     //代理充卡记录
     public function agentRecordGet()
     {
@@ -350,5 +383,34 @@ class AgentController extends BaseController
         $this->_result['data']['html'] = $html;
         $this->_result['data']['record'] = $result;
         $this->response($this->_result);
+    }
+
+    //代理充卡记录
+    public function agentRecordExcelPost()
+    {
+        $stock_type = C('SYSTEM.STOCK_TYPE');
+        $agent_stock_grant_record = $this->mongo_db->agent_stock_grant_record;
+        $search['from_user'] = I('get.from_user', null);
+        $search['to_user'] = I('get.to_user', null);
+        $search['nickname'] = I('get.nickname', null);
+        $limit = intval(I('get.limit', C('PAGE_NUM')));
+        $skip = $_SESSION['skip'];
+        $skip = ($skip - 1) * $limit;
+        $option = array();
+        filter_array_element($search);
+        $search['nickname'] && $search['nickname'] = new \MongoRegex("/{$search['nickname']}/");
+        $search['to_user'] && $search['to_user'] = intval($search['to_user']);
+        $cursor = $agent_stock_grant_record->find($search, $option)->sort(array('date' => 1))->skip($skip)->limit($limit);
+        $option['filename'] = "代理充卡记录报表" . date("Y-m-d") . ".xls";
+        $option['author'] = '杠杠麻将';
+        $option['header'] = array('充卡时间', '代理', '玩家ID', '玩家昵称', '类型', '数量');
+        $option['data'] = array();
+        foreach ($cursor as $item) {
+            $item['date'] = date("Y-m-d H:i:s", $item['date']);
+            $item['type_name'] = $stock_type[$item['type']];
+            array_push($option['data'], [$item['date'], $item['from_user'],
+                $item['to_user'], $item['nickname'], $item['type_name'], $item['amount']]);
+        }
+        excelExport($option);
     }
 }

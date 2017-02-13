@@ -17,15 +17,21 @@
         <div class="box">
             <div class="box-header">
                 <form class="form-horizontal" onsubmit="return false;">
-                <div class="form-group col-sm-1">
-                    <input name="table_search" id="search_roleid" class="form-control pull-right" placeholder="玩家ID" type="text">
-                </div>
-                <div class="form-group col-sm-1">
-                    <input name="table_search" id="search_nickname" class="form-control pull-right" placeholder="玩家昵称" type="text">
-                </div>
-                <div class="form-group col-sm-1">
-                    <button onclick="onSearch('__MODULE__/player/players')" type="submit" class="btn btn-primary">查询</button>
-                </div>
+                    <div class="form-group col-sm-1">
+                        <input name="table_search" id="search_roleid" class="form-control pull-right" placeholder="玩家ID" type="text">
+                    </div>
+                    <div class="form-group col-sm-1">
+                        <input name="table_search" id="search_nickname" class="form-control pull-right" placeholder="玩家昵称" type="text">
+                    </div>
+                    <div class="form-group col-sm-1">
+                        <button onclick="onSearch('__MODULE__/player/players')" type="submit" class="btn btn-primary">查询</button>
+                    </div>
+                    <div class="form-group col-sm-1">
+                        <button  onclick='onExcel("__MODULE__/player/playersExcel")' class="btn btn-primary">
+                            <i class="fa fa-save"></i>
+                            导出
+                        </button>
+                    </div>
                 </form>
             </div>
             <!-- /.box-header -->
@@ -82,6 +88,12 @@
             nickname: search_nickname,
         };
         menuClick(_url, source);
+    }
+
+    function onExcel(_url) {
+        var search_nickname = $("#search_nickname").val();
+        _url = _url + '?nickname=' + search_nickname;
+        exportExcel(_url);
     }
 </script>
 <!-- /.content -->
