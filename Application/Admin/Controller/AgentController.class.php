@@ -6,12 +6,14 @@
  * Time: 9:46
  */
 namespace Admin\Controller;
+
 use Common\Controller\BaseController;
 use Think\Page;
 
 class AgentController extends BaseController
 {
-    public function agentsGet() {
+    public function agentsGet()
+    {
 
         $admin_agent = $this->mongo_db->admin_agent;
         $admin_role = $this->mongo_db->admin_role;
@@ -56,7 +58,7 @@ class AgentController extends BaseController
             $cursor = $admin_agent->find($search)->sort(array('date' => -1))->limit($limit)->skip($skip);
             $result = array();
             foreach ($cursor as $item) {
-                $role = $admin_role->findOne(array('_id' => $item['role_id']),array('name'=>1));
+                $role = $admin_role->findOne(array('_id' => $item['role_id']), array('name' => 1));
                 $item['role_name'] = $role['name'];
                 $item['type_name'] = $agent_type[$item['type']];
                 $item['date'] = date('Y-m-d H:i:s', $item['date']);
@@ -69,7 +71,7 @@ class AgentController extends BaseController
 
             //role list
             $module_list = C('SYSTEM.MODULE_LIST');
-            $role_cursor = $admin_role->find(array("module_name"=>$module_list['Agent']));
+            $role_cursor = $admin_role->find(array("module_name" => $module_list['Agent']));
             $roles = iterator_to_array($role_cursor);
 
             $this->assign("page", $page);
@@ -86,7 +88,41 @@ class AgentController extends BaseController
         $this->response($this->_result);
     }
 
-    public function agentsPut() {
+    public function agentsExcelGet()
+    {
+        $admin_agent = $this->mongo_db->admin_agent;
+        $admin_role = $this->mongo_db->admin_role;
+
+        $agent_type = C('SYSTEM.AGENT_TYPE');
+
+        $search = array();
+        $search['username'] = I('get.username', null);
+        $search['name'] = I('get.name', null);
+        $limit = intval(I('get.limit', C('PAGE_NUM')));
+        $skip = $_SESSION['skip'];
+        $skip = ($skip - 1) * $limit;
+        filter_array_element($search);
+
+        $cursor = $admin_agent->find($search)->sort(array('date' => -1))->limit($limit)->skip($skip);
+
+        $option['filename'] = "代理信息报表" . date("Y-m-d") . ".xls";
+        $option['author'] = '杠杠麻将';
+        $option['header'] = array('注册时间', '用户名', '昵称', '类型', '状态', '房卡剩余');
+        $option['data'] = array();
+        foreach ($cursor as $item) {
+            $role = $admin_role->findOne(array('_id' => $item['role_id']), array('name' => 1));
+            $item['role_name'] = $role['name'];
+            $item['type_name'] = $agent_type[$item['type']];
+            $item['date'] = date('Y-m-d H:i:s', $item['date']);
+            $status = $item['status'] ? '已启用' : '已禁用';
+            array_push($option['data'], [$item['date'], $item['username'],
+                $item['nickname'], $item['type_name'], $status, $item['stock_amount'][1] + $item['stock_amount'][2]]);
+        }
+        excelExport($option);
+    }
+
+    public function agentsPut()
+    {
         $admin_agent = $this->mongo_db->admin_agent;
         $admin_user = $this->mongo_db->admin_user;
         $admin_stock_grant_record = $this->mongo_db->admin_stock_grant_record;
@@ -130,14 +166,14 @@ class AgentController extends BaseController
 
         //充卡
         $amount = I('put.amount');
-        if ($amount!=="") {
+        if ($amount !== "") {
             $amount = intval($amount);
             if (!check_positive_integer($amount)) {
                 $this->response($this->_result, 'json', 400, '房卡数量必须为正整数');
             } else {
                 //库存是否充足
-                $user = $admin_user->findOne(array("_id" => $_SESSION[MODULE_NAME.'_admin']['_id']));
-                if($user['stock_amount'][$data['type']] < $amount) {
+                $user = $admin_user->findOne(array("_id" => $_SESSION[MODULE_NAME . '_admin']['_id']));
+                if ($user['stock_amount'][$data['type']] < $amount) {
                     $this->response($this->_result, 'json', 400, '房卡库存不足，请前往"库存管理"申请足量房卡');
                 }
                 $update['$inc'] = array(
@@ -153,15 +189,15 @@ class AgentController extends BaseController
         filter_array_element($data);
 
         $update['$set'] = $data;
-        if ($agent = $admin_agent->findAndModify($search,$update)) {
-            if($update['$inc']) {//给代理充卡后要扣除管理员相应的库存卡数量
-                $admin_user->update(array("_id" => $_SESSION[MODULE_NAME.'_admin']['_id']),
+        if ($agent = $admin_agent->findAndModify($search, $update)) {
+            if ($update['$inc']) {//给代理充卡后要扣除管理员相应的库存卡数量
+                $admin_user->update(array("_id" => $_SESSION[MODULE_NAME . '_admin']['_id']),
                     array('$inc' => array("stock_amount.{$data['type']}" => -$amount))
                 );
                 //充卡记录
                 $admin_stock_grant_record->insert(
                     array(
-                        'from_user' => $_SESSION[MODULE_NAME.'_admin']['username'],
+                        'from_user' => $_SESSION[MODULE_NAME . '_admin']['username'],
                         'to_user' => $agent['username'],
                         'type' => $data['type'],
                         'amount' => $amount,
@@ -177,7 +213,8 @@ class AgentController extends BaseController
 
     }
 
-    public function agentsPost() {
+    public function agentsPost()
+    {
         $admin_agent = $this->mongo_db->admin_agent;
         $data['username'] = I('post.username', null, check_empty_string);
         $data['name'] = I('post.name', null, check_empty_string);
@@ -209,7 +246,7 @@ class AgentController extends BaseController
             $this->response($this->_result, 'json', 400, '两次输入的密码不一致');
         }
 
-        if (checkTextLength6($data['password'])||checkTextLength6($data['repeat_password'])) {
+        if (checkTextLength6($data['password']) || checkTextLength6($data['repeat_password'])) {
             $this->response($this->_result, 'json', 400, '密码至少6个字符');
         }
 
@@ -224,14 +261,15 @@ class AgentController extends BaseController
         unset($data['repeat_password']);
 
         if ($admin_agent->insert($data)) {
-            $this->_result['data']['url'] = U(MODULE_NAME.'/agent/agents');
+            $this->_result['data']['url'] = U(MODULE_NAME . '/agent/agents');
             $this->response($this->_result, 'json', 201, '新建成功');
         } else {
             $this->response($this->_result, 'json', 400, '新建失败');
         }
     }
 
-    public function agentsDelete() {
+    public function agentsDelete()
+    {
         $search['_id'] = new \MongoId(I('delete._id'));
         $admin_agent = $this->mongo_db->admin_agent;
         if ($admin_agent->remove($search)) {
@@ -242,7 +280,8 @@ class AgentController extends BaseController
     }
 
     //给代理发放房卡记录
-    public function recordGet() {
+    public function recordGet()
+    {
         $search = array();
         $search['to_user'] = I('get.to_user', null);
         $stock_type = C('SYSTEM.STOCK_TYPE');
@@ -281,7 +320,8 @@ class AgentController extends BaseController
     }
 
     //代理充卡记录
-    public function agentRecordGet() {
+    public function agentRecordGet()
+    {
         $stock_type = C('SYSTEM.STOCK_TYPE');
         $agent_stock_grant_record = $this->mongo_db->agent_stock_grant_record;
         $search['from_user'] = I('get.from_user', null);

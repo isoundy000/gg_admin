@@ -272,7 +272,8 @@ class ReportController extends BaseController {
 
         $search = array();
         $limit = intval(I('get.limit', C('PAGE_NUM')));
-        $skip = (intval(I('get.p', 1)) - 1) * $limit;
+        $skip = $_SESSION['skip'];
+        $skip = ($skip - 1) * $limit;
         $search['date'] = I('get.date', null);
         $search['username'] = I('get.username', null);
         $search['type'] = I('get.agent_type', null);
