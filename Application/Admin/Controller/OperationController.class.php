@@ -196,4 +196,9 @@ class OperationController extends BaseController
         $this->_result['data']['score'] = $result;
         $this->response($this->_result, 'json', 200);
     }
+
+    public function rankGet() {
+        $this->_result['data']['html'] = $this->fetch("Operation:rank");
+        $this->response($this->_result);
+    }
 }

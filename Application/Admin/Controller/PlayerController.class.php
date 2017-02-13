@@ -70,4 +70,15 @@ class PlayerController extends BaseController {
         }
         $this->response($this->_result);
     }
+
+    //TODO
+    public function forbiddenGet() {
+        $this->_result['data']['html'] = $this->fetch("Player:forbidden");
+        $this->response($this->_result);
+    }
+
+    //TODO
+    public function forbiddenPut() {
+
+    }
 }
