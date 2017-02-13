@@ -160,6 +160,33 @@ class OperationController extends BaseController
         $this->response($this->_result, 'json', 200);
     }
 
+    public function recordExcelPost() {
+        $search['roleid'] = I('get.roleid', null);
+        $search['nickname'] = I('get.nickname', null);
+        $search['date'] = rangeDate(I('get.date'));
+        $admin_card_receive_daily = $this->mongo_db->admin_card_receive_daily;
+        $limit = intval(I('get.limit', C('PAGE_NUM')));
+        $skip = $_SESSION['skip'];
+        $skip = ($skip - 1) * $limit;
+        $search['roleid'] && $search['roleid'] = intval($search['roleid']);
+        if ($search['date']) {
+            $search['date'] = array('$gte' => $search['date'][0], '$lte' => $search['date'][1]);
+            $skip = null;
+            $limit = null;
+        }
+        filter_array_element($search);
+        $cursor = $admin_card_receive_daily->find($search)->limit($limit)->skip($skip)->sort(array("date" => -1));
+        $option['filename'] = "领卡记录报表" . date("Y-m-d") . ".xlsx";
+        $option['author'] = '杠杠麻将';
+        $option['header'] = array('领取日期', '玩家ID', '昵称', '领取数量');
+        $option['data'] = array();
+        foreach ($cursor as $item) {
+            $item['date'] = date("Y-m-d H:i:s", $item['date']);
+            array_push($option['data'], [$item['date'], $item['roleid'], $item['nickname'], $item['amount']]);
+        }
+        excelExport($option, '2007');
+    }
+
     /**
      * @desc 牌型分数记录
      */
@@ -189,12 +216,42 @@ class OperationController extends BaseController
 
         //$this->assign("page", $page);
         $this->assign("score", $result);
+        $this->assign("roleid", $search['roleid']);
         $this->_result['data']['html'] = $this->fetch("Operation:score");
 
         //$this->_result['data']['count'] = $count;
         //$this->_result['data']['page'] = $page;
+
         $this->_result['data']['score'] = $result;
         $this->response($this->_result, 'json', 200);
+    }
+
+    public function scoreExcelPost() {
+        //1005204
+        $search = array();
+        $search['roleid'] = intval(I('get.roleid'));
+        $role_mj_zhanji = $this->mongo_db->role_mj_zhanji;
+        filter_array_element($search);
+        $query = $role_mj_zhanji->findOne($search);//->limit($limit)->skip($skip)->sort(array());
+        $option['filename'] = "牌型分数报表" . date("Y-m-d") . ".xlsx";
+        $option['author'] = '杠杠麻将';
+        $option['header'] = array('时间', '房号', 'ID/昵称1', 'ID/昵称2', 'ID/昵称3', 'ID/昵称4');
+        $option['data'] = array();
+        array_push($option['data'],['玩家ID', $search['roleid'], '', '', '', '']);
+        foreach ($query['zjRecord'] as $value) {
+            $value['date'] = datetimeFormat(substr($value['serialNo'], 0, 12));
+            $value['roomNo'] = substr($value['serialNo'], 12, 6);
+            foreach ($value['fenRecords'] as $key => $fen_item) {
+                $fen_item[0] = timeFormat($fen_item[0]);
+                $value['fenRecords'][$key] = $fen_item;
+            }
+            array_push($option['data'], [$value['date'], $value['roomNo'],
+                $value['headInfo'][0]['roleid'].'/'.$value['headInfo'][0]['niCheng'],
+                $value['headInfo'][1]['roleid'].'/'.$value['headInfo'][1]['niCheng'],
+                $value['headInfo'][2]['roleid'].'/'.$value['headInfo'][2]['niCheng'],
+                $value['headInfo'][3]['roleid'].'/'.$value['headInfo'][3]['niCheng']]);
+        }
+        excelExport($option, '2007');
     }
 
     public function rankGet() {

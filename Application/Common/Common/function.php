@@ -476,8 +476,9 @@ function buildRandomCode($len=6, $type='NUMBER') {
  *		);
  * @author JSS
  * @param $options
+ * @param $version
  */
-function excelExport($options = array()) {
+function excelExport($options = array(), $version = 2003) {
 	$objExcel = new PHPExcel();
 	//设置EXCEL属性
 	$objExcel->getProperties()->setCreated($options['author'])
@@ -509,7 +510,11 @@ function excelExport($options = array()) {
 	header("Content-Type: application/vnd.ms-excel;charset=UTF-8");
 	header("Content-Disposition: attachment; filename=\"{$options['filename']}\"");
 	header("Cache-Control: max-age=0");
-	$objWriter = new PHPExcel_Writer_Excel5($objExcel);
+	if ($version == 2007) {
+        $objWriter = new PHPExcel_Writer_Excel2007($objExcel);
+    } else {
+	    $objWriter = new PHPExcel_Writer_Excel5($objExcel);
+    }
 	$objWriter->save("php://output");
 	exit;
 }

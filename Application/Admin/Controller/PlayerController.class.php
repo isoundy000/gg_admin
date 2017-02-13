@@ -87,20 +87,20 @@ class PlayerController extends BaseController
         filter_array_element($option);
 
         $cursor = $admin_client->find($search)->sort(array("roleid" => -1))->limit($limit)->skip($skip);
-        $option['filename'] = "玩家列表报表" . date("Y-m-d") . ".xls";
+        $option['filename'] = "玩家列表报表" . date("Y-m-d") . ".xlsx";
         $option['author'] = '杠杠麻将';
         $option['header'] = array('玩家ID', '注册时间', '昵称', '房卡剩余', '累计局数', '赢分');
         $option['data'] = array();
         foreach ($cursor as $item) {
             $item['date'] = date("Y-m-d H:i:s", $item['date']);
             $item['match_count'] = $item['totalWinCi'] + $item['totalLoseCi'] + $item['totalPingCi'];
-            $charset = mb_detect_encoding($item['nickname']);
-            $item['nickname'] = iconv($charset, 'utf-8', $item['nickname']);
+            //$charset = mb_detect_encoding($item['nickname']);
+            //$item['nickname'] = iconv($charset, 'utf-8', $item['nickname']);
             array_push($option['data'], [$item['roleid'], $item['date'],
                 $item['nickname'], intval($item['stock_amount'][1] + $item['stock_amount'][2]),
                 $item['match_count'], $item['totalWinFen']]);
         }
-        excelExport($option);
+        excelExport($option, '2007');
     }
 
     //TODO

@@ -28,6 +28,13 @@
                 <div class="form-group col-sm-1">
                     <button onclick="onSearch('__MODULE__/operation/score')" type="submit" class="btn btn-primary">查询</button>
                 </div>
+                    <div class="form-group col-sm-1">
+                        <button  onclick='onExcel("__MODULE__/operation/scoreExcel")' class="btn btn-primary">
+                            <i class="fa fa-save"></i>
+                            导出
+                        </button>
+                    </div>
+                    <input type="hidden" id="hidden_roleid" value="{$roleid}">
                 </form>
             </div>
             <!-- /.box-header -->
@@ -92,13 +99,22 @@
     function onSearch(_url) {
         //var search_date = $("#search_date").val();
         var search_roleid = $("#search_roleid").val();
-        //var search_nickname = $("#search_nickname").val();
         var source = {
             //date: search_date,
             roleid: search_roleid,
             //nickname: search_nickname,
         };
         menuClick(_url, source);
+    }
+
+    function onExcel(_url) {
+        var roleid = $("#hidden_roleid").val();
+        if (roleid == 0) {
+            roleid = $("#search_roleid").val();
+        }
+
+        _url = _url + '?roleid=' + roleid;
+        exportExcel(_url);
     }
 
     function t_expand(serialNo) {
