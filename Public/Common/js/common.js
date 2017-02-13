@@ -2,12 +2,10 @@
  * Created by Cherish on 2016/12/22.
  */
 
-function searchClick(_url) {
-    $("#table_search").onkeyup(function (event) {
-        if (event.keyCode == 13) {
-            menuClick(_url);
-        }
-    });
+function exportExcel(_url) {
+    var form = $('<form method="post" action="' + _url + '" target="hiddenIframe"></form>');
+    $('body', document).append(form);
+    form.submit();
 }
 
 function menuClick(_url, source) {
@@ -27,6 +25,7 @@ function ajaxRequest(url, data, type, dataType, success) {
             success && typeof success=='function' && success.call(null, res);
         },
         error : function(XMLHttpRequest, textStatus, errorThrown) {
+            //console.log(XMLHttpRequest);
             try {
                 var response = JSON.parse(XMLHttpRequest.responseText);
                 var message = response.msg ? response.msg : textStatus + " " + errorThrown;

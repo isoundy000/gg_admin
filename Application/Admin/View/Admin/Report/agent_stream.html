@@ -38,6 +38,12 @@
                     <div class="form-group col-sm-1">
                         <button onclick="onSearch('__MODULE__/report/agentStream/type/month')" type="submit" class="btn btn-primary">查询</button>
                     </div>
+                    <div class="form-group col-sm-1">
+                        <button  onclick='onExcel("__MODULE__/report/agentStreamExcel/type/{$type}")' class="btn btn-primary">
+                            <i class="fa fa-save"></i>
+                            导出
+                        </button>
+                    </div>
                 </form>
             </div>
             <!-- /.box-header -->
@@ -140,6 +146,14 @@
             $(obj).removeClass('expand');
             $(cls).remove();
         }
+    }
+
+    function onExcel(_url) {
+        var search_date = $("#search_date").val();
+        var search_username = $("#search_username").val();
+        var search_type = $("#search_type").val();
+        _url = _url + "?date=" + search_date + "&username=" + search_username + "&agent_type=" + search_type;
+        exportExcel(_url);
     }
 
 </script>

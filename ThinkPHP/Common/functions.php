@@ -281,7 +281,10 @@ function I($name,$default='',$filter=null,$datas=null) {
         $method =   'param';
     }
     switch(strtolower($method)) {
-        case 'get'     :   
+        case 'get'     :
+            if (!isset($_GET['p'])) {
+                $_GET['p'] = 1;
+            }
         	$input =& $_GET;
         	break;
         case 'post'    :   

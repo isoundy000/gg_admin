@@ -248,6 +248,10 @@ class RestController extends Controller {
         if (!$type) {
             $type = $this->defaultType;
         }
+        //重置$_SESSION['skip']
+        if (isset($_GET['p']) && $_GET['p'] == 1) {
+            $_SESSION['skip'] = 1;
+        }
         exit($this->encodeData($data,strtolower($type)));
     }
 }

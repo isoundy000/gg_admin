@@ -30,6 +30,12 @@
                     <div class="form-group col-sm-1">
                         <button onclick="onSearch('__MODULE__/report/recharge')" type="submit" class="btn btn-primary">查询</button>
                     </div>
+                    <div class="form-group col-sm-1">
+                        <button  onclick='onExcel("__MODULE__/report/rechargeExcel")' class="btn btn-primary">
+                            <i class="fa fa-save"></i>
+                            导出
+                        </button>
+                    </div>
                 </form>
             </div>
             <!-- /.box-header -->
@@ -96,6 +102,13 @@
             username: search_username,
         };
         menuClick(_url, source);
+    }
+
+    function onExcel(_url) {
+        var search_date = $("#search_date").val();
+        var search_username = $("#search_username").val();
+        _url = _url + "?date=" + search_date + "&username=" + search_username;
+        exportExcel(_url);
     }
 </script>
 <!-- /.content -->

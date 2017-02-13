@@ -32,7 +32,6 @@
                         </button>
                     </div>
                 </form>
-                <iframe src="about:blank" name="hiddenIframe" class="hide"></iframe>
             </div>
             <!-- /.box-header -->
             <div class="box-body table-responsive no-padding">
@@ -138,11 +137,7 @@
     function onExcel(_url) {
         var search_date = $("#search_date").val();
         _url = _url + "?date=" + search_date;
-        console.log(_url);
-        var form = $('<form action="' + _url + '" target="hiddenIframe"></form>');
-        console.log(form);
-        $('body', document).append(form);
-        form.submit();
+        exportExcel(_url);
     }
 </script>
 <!-- /.content -->

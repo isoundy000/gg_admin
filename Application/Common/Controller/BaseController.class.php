@@ -14,11 +14,23 @@ class BaseController extends RestController {
     protected $mongo_db; //mongoDB
 
     public function _initialize() {
-        //unset($_SESSION[MODULE_NAME.'_admin']);
-        //unset($_SESSION[MODULE_NAME.'_token']);
+        //分页SESSION特殊处理
+        if (isset($_GET['p'])) {
+            $_SESSION['skip'] = intval($_GET['p']);
+        }
         //连接数据库
         if (!$this->mongo_client) {
-            $this->mongo_client = new \MongoClient(C('MONGO_SERVER'));
+            $retry = 3; //重试三次
+            while ($retry--) {
+                try {
+                    $this->mongo_client = new \MongoClient(C('MONGO_SERVER'));
+                } catch (Exception $e) {
+                    if ($retry == 0) {
+                        throw new Exception($e->getMessage());
+                    }
+                }
+            }
+
         }
         $db_name = C('MONGO_DB');
         $this->mongo_db = $this->mongo_client->$db_name;
