@@ -164,10 +164,10 @@ class ReportController extends BaseController {
         }
         //总计
         if ($type == 'retail') {
-            array_push($option['data'], ['总计', '', $total['card'], $total['stream']]);
+            array_push($option['data'], array('总计', '', $total['card'], $total['stream']));
         } else {
-            array_push($option['data'], ['总计', '', $total['buy_card'][1]['amount'],
-                $total['buy_card'][2]['amount'], $total['expense'], $total['stream']]);
+            array_push($option['data'], array('总计', '', $total['buy_card'][1]['amount'],
+                $total['buy_card'][2]['amount'], $total['expense'], $total['stream']));
         }
 
         excelExport($option);
@@ -322,10 +322,10 @@ class ReportController extends BaseController {
             $total['purchase'] += $item['purchase'];
             $item['type_name'] = $agent_type[$item['type']];
             $show_child && $item['parent'] = I('get.username');
-            array_push($option['data'], [$item['date'], $item['username'], $item['wechat'], $item['type_name'],
-            $item['pay_back'], $item['purchase'], $item['expense']]);
+            array_push($option['data'], array($item['date'], $item['username'], $item['wechat'], $item['type_name'],
+            $item['pay_back'], $item['purchase'], $item['expense']));
         }
-        array_push($option['data'], ['总计', '', '', '', $total['pay_back'], $total['purchase'], $total['expense']]);
+        array_push($option['data'], array('总计', '', '', '', $total['pay_back'], $total['purchase'], $total['expense']));
         excelExport($option);
     }
 
@@ -405,7 +405,8 @@ class ReportController extends BaseController {
         foreach ($cursor as $item) {
             $item['date'] = date("Y-m-d H:i:s", $item['date']);
             $item['type'] = $agent_type[$item['type']];
-            array_push($option['data'], [$item['date'], $item['sys_order_id'], $item['username'], $item['wechat'], $item['type'], $item['card_amount']]);
+            array_push($option['data'], array($item['date'], $item['sys_order_id'], $item['username'],
+                $item['wechat'], $item['type'], $item['card_amount']));
         }
         excelExport($option);
     }

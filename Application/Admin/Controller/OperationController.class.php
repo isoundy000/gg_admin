@@ -182,7 +182,7 @@ class OperationController extends BaseController
         $option['data'] = array();
         foreach ($cursor as $item) {
             $item['date'] = date("Y-m-d H:i:s", $item['date']);
-            array_push($option['data'], [$item['date'], $item['roleid'], $item['nickname'], $item['amount']]);
+            array_push($option['data'], array($item['date'], $item['roleid'], $item['nickname'], $item['amount']));
         }
         excelExport($option, '2007');
     }
@@ -237,7 +237,7 @@ class OperationController extends BaseController
         $option['author'] = '杠杠麻将';
         $option['header'] = array('时间', '房号', 'ID/昵称1', 'ID/昵称2', 'ID/昵称3', 'ID/昵称4');
         $option['data'] = array();
-        array_push($option['data'],['玩家ID', $search['roleid'], '', '', '', '']);
+        array_push($option['data'],array('玩家ID', $search['roleid'], '', '', '', ''));
         foreach ($query['zjRecord'] as $value) {
             $value['date'] = datetimeFormat(substr($value['serialNo'], 0, 12));
             $value['roomNo'] = substr($value['serialNo'], 12, 6);
@@ -245,11 +245,11 @@ class OperationController extends BaseController
                 $fen_item[0] = timeFormat($fen_item[0]);
                 $value['fenRecords'][$key] = $fen_item;
             }
-            array_push($option['data'], [$value['date'], $value['roomNo'],
+            array_push($option['data'], array($value['date'], $value['roomNo'],
                 $value['headInfo'][0]['roleid'].'/'.$value['headInfo'][0]['niCheng'],
                 $value['headInfo'][1]['roleid'].'/'.$value['headInfo'][1]['niCheng'],
                 $value['headInfo'][2]['roleid'].'/'.$value['headInfo'][2]['niCheng'],
-                $value['headInfo'][3]['roleid'].'/'.$value['headInfo'][3]['niCheng']]);
+                $value['headInfo'][3]['roleid'].'/'.$value['headInfo'][3]['niCheng']));
         }
         excelExport($option, '2007');
     }

@@ -114,8 +114,8 @@ class AgentController extends BaseController
             $item['type_name'] = $agent_type[$item['type']];
             $item['date'] = date('Y-m-d H:i:s', $item['date']);
             $status = $item['status'] ? '已启用' : '已禁用';
-            array_push($option['data'], [$item['date'], $item['username'],
-                $item['name'], $item['type_name'], $status, $item['stock_amount'][1] + $item['stock_amount'][2]]);
+            array_push($option['data'], array($item['date'], $item['username'],
+                $item['name'], $item['type_name'], $status, $item['stock_amount'][1] + $item['stock_amount'][2]));
         }
         excelExport($option);
     }
@@ -346,8 +346,8 @@ class AgentController extends BaseController
             $item['name'] = $agent['name'];
             $item['agent_type'] = $agent_type[$item['type']];
             $item['wechat'] = $agent['wechat'];
-            array_push($option['data'], [$item['date'], $item['from_user'], $item['to_user'], $item['name'],
-            $item['wechat'], $item['agent_type'], $item['type_name'], $item['amount']]);
+            array_push($option['data'], array($item['date'], $item['from_user'], $item['to_user'], $item['name'],
+            $item['wechat'], $item['agent_type'], $item['type_name'], $item['amount']));
         }
         excelExport($option);
     }
@@ -408,8 +408,8 @@ class AgentController extends BaseController
         foreach ($cursor as $item) {
             $item['date'] = date("Y-m-d H:i:s", $item['date']);
             $item['type_name'] = $stock_type[$item['type']];
-            array_push($option['data'], [$item['date'], $item['from_user'],
-                $item['to_user'], $item['nickname'], $item['type_name'], $item['amount']]);
+            array_push($option['data'], array($item['date'], $item['from_user'],
+                $item['to_user'], $item['nickname'], $item['type_name'], $item['amount']));
         }
         excelExport($option);
     }

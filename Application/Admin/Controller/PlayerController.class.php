@@ -96,9 +96,9 @@ class PlayerController extends BaseController
             $item['match_count'] = $item['totalWinCi'] + $item['totalLoseCi'] + $item['totalPingCi'];
             //$charset = mb_detect_encoding($item['nickname']);
             //$item['nickname'] = iconv($charset, 'utf-8', $item['nickname']);
-            array_push($option['data'], [$item['roleid'], $item['date'],
+            array_push($option['data'], array($item['roleid'], $item['date'],
                 $item['nickname'], intval($item['stock_amount'][1] + $item['stock_amount'][2]),
-                $item['match_count'], $item['totalWinFen']]);
+                $item['match_count'], $item['totalWinFen']));
         }
         excelExport($option, '2007');
     }
