@@ -206,9 +206,9 @@ class ReportController extends BaseController {
         $show_child = I('get.show_child');//是否显示账号下的子账号
         if ($show_child) {
             //父账号_id
-            $parent_user = $this->mongo_db->admin_agent->findOne(['username' => $search['username']]);
+            $parent_user = $this->mongo_db->admin_agent->findOne(array('username' => $search['username']));
             $parent_user_id = $parent_user['_id']->__toString();
-            $child_list = $this->mongo_db->admin_agent->find(['pid' => $parent_user_id]);
+            $child_list = $this->mongo_db->admin_agent->find(array('pid' => $parent_user_id));
             $child_username_list = array();
             foreach ($child_list as $item) {
                 array_push($child_username_list, $item['username']);
@@ -294,9 +294,9 @@ class ReportController extends BaseController {
         $show_child = I('get.show_child');//是否显示账号下的子账号
         if ($show_child) {
             //父账号_id
-            $parent_user = $this->mongo_db->admin_agent->findOne(['username' => $search['username']]);
+            $parent_user = $this->mongo_db->admin_agent->findOne(array('username' => $search['username']));
             $parent_user_id = $parent_user['_id']->__toString();
-            $child_list = $this->mongo_db->admin_agent->find(['pid' => $parent_user_id]);
+            $child_list = $this->mongo_db->admin_agent->find(array('pid' => $parent_user_id));
             $child_username_list = array();
             foreach ($child_list as $item) {
                 array_push($child_username_list, $item['username']);

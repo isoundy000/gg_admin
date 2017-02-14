@@ -244,7 +244,7 @@ class UserController extends BaseController
 
         //上月数据
         $last_month = strtotime(date("Y-m-01", strtotime("-1 month")));
-        $stream = $this->mongo_db->admin_report_agent_stream_month->findOne(['date' => $last_month, 'username' => $agent['username']]);
+        $stream = $this->mongo_db->admin_report_agent_stream_month->findOne(array('date' => $last_month, 'username' => $agent['username']));
         if ($stream) {
             $last_month_buy = $stream['purchase'];
             $last_month_back = $stream['pay_back'];
