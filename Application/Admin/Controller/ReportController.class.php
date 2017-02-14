@@ -214,7 +214,7 @@ class ReportController extends BaseController {
                 array_push($child_username_list, $item['username']);
             }
             $child_username_list = array_values($child_username_list);
-            $search['username'] = ['$in' => $child_username_list];
+            $search['username'] = array('$in' => $child_username_list);
         }
         filter_array_element($search);
         $cursor = $table->find($search)->limit($limit)->skip($skip)->sort(array("username" => 1));
@@ -302,7 +302,7 @@ class ReportController extends BaseController {
                 array_push($child_username_list, $item['username']);
             }
             $child_username_list = array_values($child_username_list);
-            $search['username'] = ['$in' => $child_username_list];
+            $search['username'] = array('$in' => $child_username_list);
         }
         filter_array_element($search);
         $cursor = $table->find($search)->limit($limit)->skip($skip)->sort(array("username" => 1));
