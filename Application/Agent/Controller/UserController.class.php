@@ -320,11 +320,11 @@ class UserController extends BaseController
             $this->response($this->_result, 'json', 400, '用户名已经存在');
         }
 
-        if (!session($data['cellphone'])) {
+        if (!isset($_SESSION['phone'.$data['cellphone']])) {
             $this->response($this->_result, 'json', 400, '验证码已过期');
         }
 
-        if (session($data['cellphone']) != $data['verify_code']) {
+        if ($_SESSION['phone'.$data['cellphone']] != $data['verify_code']) {
             $this->response($this->_result, 'json', 400, '验证码不正确');
         }
 
@@ -340,6 +340,7 @@ class UserController extends BaseController
 
         if ($admin_agent->insert($data)) {
             $this->_result['data']['url'] = U(MODULE_NAME . '/user/agents');
+            unset($_SESSION['phone'.$data['cellphone']]);
             $this->response($this->_result, 'json', 201, '新建成功');
         } else {
             $this->response($this->_result, 'json', 400, '新建失败');
@@ -368,7 +369,8 @@ class UserController extends BaseController
         $resp = $c->execute($req);
         if ($resp->result && $resp->result->err_code == "0") {
             //设置$_SESSION
-            session($cellphone, $random_code);
+            $_SESSION['phone'.$cellphone] = $random_code;
+            //session($cellphone, $random_code);
             $this->response($this->_result, 'json', 200, '发送成功');
         } else {
             $this->response($this->_result, 'json', 400, '发送失败，请稍后重试');
