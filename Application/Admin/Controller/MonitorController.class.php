@@ -254,7 +254,8 @@ class MonitorController extends RestController {
             )
         );
         $admin_agent = $db->admin_agent;
-        $admin_report_agent_stream_month = $db->admin_report_agent_stream_month;
+        $table_name = "admin_report_agent_stream_{$type}";
+        $table = $db->$table_name;
         foreach($cursor['retval'] as $item) {
             //根据用户名查找用户信息
             $agent = $admin_agent->findOne(array("username" => $item['from_user']));
@@ -270,7 +271,7 @@ class MonitorController extends RestController {
                     'purchase' => 0, //TODO 暂时以管理员给代理充卡的数量统计
                     'expense' => intval($item['count']),
                 );
-                $admin_report_agent_stream_month->update(array('date'=>$start_date,
+                $table->update(array('date'=>$start_date,
                     'username' => $item['from_user']), array('$set' => $data), array('upsert' => true));
             }
         }
@@ -304,14 +305,14 @@ class MonitorController extends RestController {
                     'wechat' => $agent['wechat'] ? $agent['wechat'] : "",
                     'type' => $agent['type'],
                 );
-                $admin_report_agent_stream_month->update(array('date'=>$start_date,
+                $table->update(array('date'=>$start_date,
                     'username' => $item['to_user']),
                     array('$set' => $data, '$inc' => array('purchase'=>intval($item['count']))),
                     array('upsert' => true));
             }
         }
 
-        echo "代理月报表执行完成\n";
+        echo "代理报表执行完成\n";
     }
 
 }
