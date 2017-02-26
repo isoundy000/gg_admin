@@ -269,6 +269,11 @@ function T($template='',$layer=''){
  * @return mixed
  */
 function I($name,$default='',$filter=null,$datas=null) {
+    if (isset($_GET['limit'])) {
+        $_SESSION['limit_page'] = $_GET['limit'];
+    } else {
+        $_SESSION['limit_page'] = C('PAGE_NUM');
+    }
 	static $_PUT	=	null;
 	if(strpos($name,'/')){ // 指定修饰符
 		list($name,$type) 	=	explode('/',$name,2);

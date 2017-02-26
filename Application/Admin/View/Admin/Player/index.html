@@ -23,6 +23,9 @@
                     <div class="form-group col-sm-1">
                         <input name="table_search" id="search_nickname" class="form-control pull-right" placeholder="玩家昵称" type="text">
                     </div>
+                    <div class="form-group col-sm-2">
+                        <input class="form-control" id="search_date" placeholder="时间段">
+                    </div>
                     <div class="form-group col-sm-1">
                         <button onclick="onSearch('__MODULE__/player/players')" type="submit" class="btn btn-primary">查询</button>
                     </div>
@@ -42,7 +45,9 @@
                         <th>玩家ID</th>
                         <th>注册时间</th>
                         <th>昵称</th>
-                        <th>房卡剩余</th>
+                        <th>房卡剩余(普通)</th>
+                        <th>房卡剩余(活动)</th>
+                        <th>消耗房卡</th>
                         <th>累计局数</th>
                         <th>赢分</th>
                         <!--<th>操作</th>-->
@@ -54,13 +59,13 @@
                             <td>{$item.roleid}</td>
                             <td>{$item.date}</td>
                             <td>{$item.nickname}</td>
-                            <td>
+
                                 <foreach name="item.stock_amount" key="k" item="stock_amount">
-                                    {$stock_type[$k]}: {$stock_amount}<br>
+                                    <td>{$stock_amount}</td>
                                 </foreach>
-                            </td>
-                            <th>{$item.match_count}</th>
-                            <th>{$item.totalWinFen}</th>
+                            <td></td>
+                            <td>{$item.match_count}</td>
+                            <td>{$item.totalWinFen}</td>
                             <!--<td>
                                 <a href="Javascript:void(0)" onclick="menuClick('__MODULE__/client/clients/tab/card/_id/{$item._id}')">充卡</a>
                             </td>-->
@@ -80,19 +85,38 @@
     </div>
 </section>
 <script>
+    $('#search_date').daterangepicker({
+        timePicker: true,
+        timePicker24Hour: true,
+        timePickerIncrement: 30,
+        format: 'YYYY/MM/DD HH:mm:ss',
+        locale: moment.locale('zh-cn'),
+        autoUpdateInput: false,
+    });
+    $('#search_date').on('apply.daterangepicker', function(ev, picker) {
+        $(this).val(picker.startDate.format('YYYY/MM/DD HH:mm:ss') + ' - ' + picker.endDate.format('YYYY/MM/DD HH:mm:ss'));
+    });
+
+    $('#search_date').on('cancel.daterangepicker', function(ev, picker) {
+        $(this).val('');
+    });
+
     function onSearch(_url) {
         var search_roleid = $("#search_roleid").val();
         var search_nickname = $("#search_nickname").val();
+        var search_date = $("#search_date").val();
         var source = {
             roleid: search_roleid,
             nickname: search_nickname,
+            regTime: search_date
         };
         menuClick(_url, source);
     }
 
     function onExcel(_url) {
         var search_nickname = $("#search_nickname").val();
-        _url = _url + '?nickname=' + search_nickname;
+        var search_date = $("#search_date").val();
+        _url = _url + '?nickname=' + search_nickname + '&regTime=' + search_date;
         exportExcel(_url);
     }
 </script>

@@ -46,7 +46,7 @@ class ActivityController extends BaseController {
             }
 
             $count = $admin_trotting->count($search);
-            $page = new Page($count, C('PAGE_NUM'));
+            $page = new Page($count, $limit);
             $page = $page->show();
 
             $this->assign("page", $page);
@@ -176,7 +176,7 @@ class ActivityController extends BaseController {
             }
 
             $count = $admin_mail->count($search);
-            $page = new Page($count, C('PAGE_NUM'));
+            $page = new Page($count, $limit);
             $page = $page->show();
 
             $this->assign("page", $page);
@@ -254,7 +254,7 @@ class ActivityController extends BaseController {
             }
 
             $count = $admin_notice->count($search);
-            $page = new Page($count, C('PAGE_NUM'));
+            $page = new Page($count, $limit);
             $page = $page->show();
 
             $this->assign("page", $page);
@@ -355,7 +355,7 @@ class ActivityController extends BaseController {
             }
 
             $count = $admin_popup->count($search);
-            $page = new Page($count, C('PAGE_NUM'));
+            $page = new Page($count, $limit);
             $page = $page->show();
 
             $this->assign("page", $page);

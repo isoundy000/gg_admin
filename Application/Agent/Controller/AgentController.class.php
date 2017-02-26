@@ -15,10 +15,11 @@ class AgentController extends BaseController
     public function cardsGet() {
         $admin_card = $this->mongo_db->admin_card;
         $search = array();
+        $limit = I('get.limit', C('PAGE_NUM'));
         $cursor = $admin_card->find($search);
         $result = iterator_to_array($cursor);
         $count = $admin_card->count($search);
-        $page = new Page($count, C('PAGE_NUM'));
+        $page = new Page($count, $limit);
         $page = $page->show();
 
         $this->assign("page", $page);

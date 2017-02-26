@@ -53,6 +53,7 @@
                     <tr>
                         <th>时间</th>
                         <th>账号</th>
+                        <th>昵称</th>
                         <th>微信</th>
                         <th>级别</th>
                         <th>返还</th>
@@ -65,6 +66,7 @@
                         <tr onclick="showChild(this, '{$item.username}', '__MODULE__/report/agentStream/type/month')">
                             <td>{$item.date}</td>
                             <td>{$item.username}</td>
+                            <td>{$item.name}</td>
                             <td>{$item.wechat}</td>
                             <td>{$item.type_name}</td>
                             <td>{$item.pay_back}</td>
@@ -76,7 +78,7 @@
                     <tfoot class="bg-aqua">
                     <if condition="$total neq null">
                     <tr>
-                        <td colspan="4"><b>合计</b></td>
+                        <td colspan="5"><b>合计</b></td>
                         <td><b>{$total.pay_back}</b></td>
                         <td><b>{$total.purchase}</b></td>
                         <td><b>{$total.expense}</b></td>

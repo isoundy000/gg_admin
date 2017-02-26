@@ -59,7 +59,7 @@ class ClientController extends BaseController
             if ($search['roleid'] || $search['nickname']) {//一定要查询才能出现列表
                 $cursor = $admin_client->find($search)->limit($limit)->skip($skip);
                 $count = $admin_client->count($search);
-                $page = new Page($count, C('PAGE_NUM'));
+                $page = new Page($count, $limit);
                 $page = $page->show();
             } else {
                 $cursor = array();
@@ -162,7 +162,7 @@ class ClientController extends BaseController
         filter_array_element($search);
         $search['nickname'] && $search['nickname'] = new \MongoRegex("/{$search['nickname']}/");
         $search['to_user'] && $search['to_user'] = intval($search['to_user']);
-        $cursor = $agent_stock_grant_record->find($search, $option)->sort(array('date' => 1))->skip($skip)->limit($limit);
+        $cursor = $agent_stock_grant_record->find($search, $option)->sort(array('date' => -1))->skip($skip)->limit($limit);
         $result = array();
         foreach ($cursor as $item) {
             $item['date'] = date("Y-m-d H:i:s", $item['date']);
@@ -170,7 +170,7 @@ class ClientController extends BaseController
             array_push($result, $item);
         }
         $count = $agent_stock_grant_record->count($search);
-        $page = new Page($count, C('PAGE_NUM'));
+        $page = new Page($count, $limit);
         $page = $page->show();
 
         $this->assign("page", $page);

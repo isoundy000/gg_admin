@@ -26,12 +26,12 @@ class Page{
 
 	// 分页显示定制
     private $config  = array(
-        'header' => '<span class="rows">共 %TOTAL_ROW% 条记录</span>',
+        'header' => '<li><span class="rows">共 %TOTAL_ROW% 条记录</span></li>',
         'prev'   => '<<',
         'next'   => '>>',
         'first'  => '1...',
         'last'   => '...%TOTAL_PAGE%',
-        'theme'  => '%FIRST% %UP_PAGE% %LINK_PAGE% %DOWN_PAGE% %END%',
+        'theme'  => ' %LIMIT% %FIRST% %UP_PAGE% %LINK_PAGE% %DOWN_PAGE% %END% %HEADER%',
     );
 
     /**
@@ -41,6 +41,7 @@ class Page{
      * @param array $parameter  分页跳转的参数
      */
     public function __construct($totalRows, $listRows=20, $parameter = array()) {
+        /* 生成URL */
         C('VAR_PAGE') && $this->p = C('VAR_PAGE'); //设置分页参数名称
         /* 基础设置 */
         $this->totalRows  = $totalRows; //设置总记录数
@@ -50,6 +51,22 @@ class Page{
         $this->nowPage    = $this->nowPage>0 ? $this->nowPage : 1;
         $this->firstRow   = $this->listRows * ($this->nowPage - 1);
         $this->callback   = C('PAGE_CALLBACK') ? C('PAGE_CALLBACK') : 'menuClick';
+
+        $this->url = U(MODULE_NAME."/".CONTROLLER_NAME."/".ACTION_NAME, $this->parameter);
+        $this->limit = $_SESSION['limit_page'] ? $_SESSION['limit_page'] : 10;
+        $current_page = $_SESSION['skip'] ? $_SESSION['skip'] : 1;
+        $callback = $this->callback . "('" . $this->url($current_page) . "')";
+        $this->selectOption = '<li><span class="rows" style="border:0px;">每页</span></li><li><select onchange="' . $callback . '" class="page-limit form-control pull-left" style="width: 80px;">';
+        $options = array(10, 20, 50, 100);
+        foreach ($options as $item) {
+            if ($item == $this->limit) {
+                $str = '<option selected value="' . $item . '">' . $item . '</option>';
+            } else {
+                $str = '<option value="' . $item . '">' . $item . '</option>';
+            }
+            $this->selectOption .= $str;
+        }
+        $this->selectOption .= '</select></li><li><span class="rows" style="border:0px;margin-right: 10px;">条</span></li>';
     }
 
     /**
@@ -139,8 +156,8 @@ class Page{
 
         //替换分页内容
         $page_str = str_replace(
-            array('%HEADER%', '%NOW_PAGE%', '%UP_PAGE%', '%DOWN_PAGE%', '%FIRST%', '%LINK_PAGE%', '%END%', '%TOTAL_ROW%', '%TOTAL_PAGE%'),
-            array($this->config['header'], $this->nowPage, $up_page, $down_page, $the_first, $link_page, $the_end, $this->totalRows, $this->totalPages),
+            array('%HEADER%', '%NOW_PAGE%', '%UP_PAGE%', '%DOWN_PAGE%', '%FIRST%', '%LINK_PAGE%', '%END%', '%TOTAL_ROW%', '%TOTAL_PAGE%', '%LIMIT%'),
+            array($this->config['header'], $this->nowPage, $up_page, $down_page, $the_first, $link_page, $the_end, $this->totalRows, $this->totalPages, $this->selectOption),
             $this->config['theme']);
         return "<div class=\"dataTables_paginate paging_simple_numbers\"><ul class=\"pagination\">{$page_str}</ul></div>";
     }

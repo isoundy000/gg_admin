@@ -21,6 +21,7 @@ class MenuController extends BaseController {
         } else {
             $search = array();
             $search['name'] = I('get.name', null);
+            $search['name'] && $search['name'] = new \MongoRegex("/{$search['name']}/");
             $limit = intval(I('get.limit', C('PAGE_NUM')));
             $skip = (intval(I('get.p', 1)) - 1) * $limit;
             filter_array_element($search);
@@ -44,7 +45,7 @@ class MenuController extends BaseController {
             $parent_result = iterator_to_array($parent_query);
 
             $count = $admin_menu->count($search);
-            $page = new Page($count, C('PAGE_NUM'));
+            $page = new Page($count, $limit);
             $page = $page->show();
 
             $this->assign("page", $page);

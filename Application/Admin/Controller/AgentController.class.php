@@ -66,7 +66,7 @@ class AgentController extends BaseController
             }
 
             $count = $admin_agent->count($search);
-            $page = new Page($count, C('PAGE_NUM'));
+            $page = new Page($count, $limit);
             $page = $page->show();
 
             //role list
@@ -293,7 +293,7 @@ class AgentController extends BaseController
         $option = array();
         filter_array_element($search);
         filter_array_element($option);
-        $cursor = $admin_stock_grant_record->find($search, $option)->sort(array('date' => 1))->skip($skip)->limit($limit);
+        $cursor = $admin_stock_grant_record->find($search, $option)->sort(array('date' => -1))->skip($skip)->limit($limit);
         $result = array();
         $agent_type = C('SYSTEM.AGENT_TYPE');
         foreach ($cursor as $item) {
@@ -307,7 +307,7 @@ class AgentController extends BaseController
         }
 
         $count = $admin_stock_grant_record->count($search);
-        $page = new Page($count, C('PAGE_NUM'));
+        $page = new Page($count, $limit);
         $page = $page->show();
 
         $this->assign("page", $page);
@@ -333,7 +333,7 @@ class AgentController extends BaseController
         $option = array();
         filter_array_element($search);
         filter_array_element($option);
-        $cursor = $admin_stock_grant_record->find($search, $option)->sort(array('date' => 1))->skip($skip)->limit($limit);
+        $cursor = $admin_stock_grant_record->find($search, $option)->sort(array('date' => -1))->skip($skip)->limit($limit);
         $agent_type = C('SYSTEM.AGENT_TYPE');
         $option['filename'] = "充卡记录报表" . date("Y-m-d") . ".xls";
         $option['author'] = '杠杠麻将';
@@ -366,7 +366,7 @@ class AgentController extends BaseController
         filter_array_element($search);
         $search['nickname'] && $search['nickname'] = new \MongoRegex("/{$search['nickname']}/");
         $search['to_user'] && $search['to_user'] = intval($search['to_user']);
-        $cursor = $agent_stock_grant_record->find($search, $option)->sort(array('date' => 1))->skip($skip)->limit($limit);
+        $cursor = $agent_stock_grant_record->find($search, $option)->sort(array('date' => -1))->skip($skip)->limit($limit);
         $result = array();
         foreach ($cursor as $item) {
             $item['date'] = date("Y-m-d H:i:s", $item['date']);
@@ -374,7 +374,7 @@ class AgentController extends BaseController
             array_push($result, $item);
         }
         $count = $agent_stock_grant_record->count($search);
-        $page = new Page($count, C('PAGE_NUM'));
+        $page = new Page($count, $limit);
         $page = $page->show();
 
         $this->assign("page", $page);
@@ -400,7 +400,7 @@ class AgentController extends BaseController
         filter_array_element($search);
         $search['nickname'] && $search['nickname'] = new \MongoRegex("/{$search['nickname']}/");
         $search['to_user'] && $search['to_user'] = intval($search['to_user']);
-        $cursor = $agent_stock_grant_record->find($search, $option)->sort(array('date' => 1))->skip($skip)->limit($limit);
+        $cursor = $agent_stock_grant_record->find($search, $option)->sort(array('date' => -1))->skip($skip)->limit($limit);
         $option['filename'] = "代理充卡记录报表" . date("Y-m-d") . ".xls";
         $option['author'] = '杠杠麻将';
         $option['header'] = array('充卡时间', '代理', '玩家ID', '玩家昵称', '类型', '数量');

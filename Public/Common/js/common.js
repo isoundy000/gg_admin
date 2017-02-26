@@ -9,6 +9,11 @@ function exportExcel(_url) {
 }
 
 function menuClick(_url, source) {
+    var limit = $('.page-limit').val();
+    if (!limit) {
+        limit = 10;
+    }
+    _url = _url + "&limit=" + limit;
     ajaxRequest(_url, source, 'get', 'json', function(result) {
         if(result.code == 200) {
             $("#content-wrapper").html(result.data.html);

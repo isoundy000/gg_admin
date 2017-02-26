@@ -30,7 +30,7 @@ class RoleController extends BaseController {
             $result = iterator_to_array($cursor);
 
             $count = $admin_role->count($search);
-            $page = new Page($count, C('PAGE_NUM'));
+            $page = new Page($count, $limit);
             $page = $page->show();
 
             $this->_result['data']['menus'] = $this->menu_tree(array(),

@@ -49,6 +49,12 @@ class PlayerController extends BaseController
             $search['nickname'] && $search['nickname'] = new \MongoRegex("/{$search['nickname']}/");
             $limit = intval(I('get.limit', C('PAGE_NUM')));
             $skip = (intval(I('get.p', 1)) - 1) * $limit;
+            $search['regTime'] = I('get.regTime', null);
+
+            if ($search['regTime']) {
+                $search['regTime'] = rangeDate($search['regTime']);
+                $search['regTime'] = array('$gte' => $search['regTime'][0], '$lte' => $search['regTime'][1]);
+            }
             filter_array_element($search);
             filter_array_element($option);
 
@@ -56,11 +62,12 @@ class PlayerController extends BaseController
             $result = array();
             foreach ($cursor as $item) {
                 $item['match_count'] = $item['totalWinCi'] + $item['totalLoseCi'] + $item['totalPingCi'];
+                $item['date'] = date("Y-m-d H:i:s", $item['regTime']);
                 array_push($result, $item);
             }
 
             $count = $admin_client->count($search);
-            $page = new Page($count, C('PAGE_NUM'));
+            $page = new Page($count, $limit);
             $page = $page->show();
 
             $this->assign("page", $page);
@@ -80,19 +87,25 @@ class PlayerController extends BaseController
         $admin_client = $this->mongo_db->role_info;
         $search['roleid'] && $search['roleid'] = intval($search['roleid']);
         $search['nickname'] && $search['nickname'] = new \MongoRegex("/{$search['nickname']}/");
-        $limit = intval(I('get.limit', C('PAGE_NUM')));
+        /*$limit = intval(I('get.limit', C('PAGE_NUM')));
         $skip = $_SESSION['skip'];
-        $skip = ($skip - 1) * $limit;
+        $skip = ($skip - 1) * $limit;*/
+        $search['regTime'] = I('get.regTime', null);
+
+        if ($search['regTime']) {
+            $search['regTime'] = rangeDate($search['regTime']);
+            $search['regTime'] = array('$gte' => $search['regTime'][0], '$lte' => $search['regTime'][1]);
+        }
         filter_array_element($search);
         filter_array_element($option);
 
-        $cursor = $admin_client->find($search)->sort(array("roleid" => -1))->limit($limit)->skip($skip);
+        $cursor = $admin_client->find($search)->sort(array("roleid" => -1));//->limit($limit)->skip($skip);
         $option['filename'] = "玩家列表报表" . date("Y-m-d") . ".xlsx";
         $option['author'] = '杠杠麻将';
         $option['header'] = array('玩家ID', '注册时间', '昵称', '房卡剩余', '累计局数', '赢分');
         $option['data'] = array();
         foreach ($cursor as $item) {
-            $item['date'] = date("Y-m-d H:i:s", $item['date']);
+            $item['date'] = date("Y-m-d H:i:s", $item['regTime']);
             $item['match_count'] = $item['totalWinCi'] + $item['totalLoseCi'] + $item['totalPingCi'];
             //$charset = mb_detect_encoding($item['nickname']);
             //$item['nickname'] = iconv($charset, 'utf-8', $item['nickname']);

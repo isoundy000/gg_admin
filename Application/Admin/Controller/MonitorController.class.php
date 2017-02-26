@@ -121,7 +121,7 @@ class MonitorController extends RestController {
 
 
     /**
-     * @desc 游戏日，月消耗
+     * @desc 游戏时，日，月消耗
      */
     public function streamGet() {
         //校验KEY
@@ -131,10 +131,15 @@ class MonitorController extends RestController {
             return;
         }
 
+        // hour 时
         // day 日
         // month 月
         $type = I('get.type', 'day');
         switch ($type) {
+            case "hour":
+                $end_date = strtotime(date("Y-m-d H:00:00", time()));
+                $start_date = $end_date - 3600;
+                break;
             case "day":
                 $end_date = strtotime(date("Y-m-d 00:00:00", time()));
                 $start_date = $end_date - 86400;
@@ -172,14 +177,30 @@ class MonitorController extends RestController {
         foreach ($cursor as $item) {
             $count += $item['amount'];//给玩家充卡，消耗量
         }
+
+        //统计管理员发放代理房卡数
+        $admin_stock_grant_record = $db->admin_stock_grant_record;
+        $cursor = $admin_stock_grant_record->find(array('date' => array('$gte' => $start_date, '$lt' => $end_date)));
+        $admin_grant_count = array(
+            1 => 0,
+            2 => 0,
+        );
+        foreach ($cursor as $item) {
+            $admin_grant_count[$item['type']] += $item['amount'];
+        }
+
         $agent_data['date'] = $start_date;
         $agent_data['game'] = 1;
         $agent_type = C('SYSTEM.AGENT_TYPE');
         foreach ($agent_type as $key => $value) {
-            $agent_data['buy_card'][$key] = 0; //TODO
+            $admin_grant_count[$key] += 0; //管理员给代理充卡+代理自行购买房卡
         }
+        //TODO 充值功能完成后，需要统计代理充值购买量
+        $agent_data['buy_card'] = $admin_grant_count;
         $agent_data['expense'] = $count;
-        $agent_data['stream'] = $count;
+        $agent_data['stream'] = array_reduce($admin_grant_count, function($a , $b) {
+            return $a + $b;
+        });
         $table_name = "admin_report_stream_" . $type;
         $table_name = $db->$table_name;
         $table_name->update(array("date" => $start_date), array('$set' => $agent_data), array('upsert' => true));

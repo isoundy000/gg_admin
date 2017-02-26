@@ -72,7 +72,7 @@ class ReportController extends BaseController {
         }
 
         $count = $table->count($search);
-        $page = new Page($count, C('PAGE_NUM'));
+        $page = new Page($count, $limit);
         $page = $page->show();
 
         $this->assign("page", $page);
@@ -225,6 +225,11 @@ class ReportController extends BaseController {
             'purchase' => 0,
         );
         foreach ($cursor as $item) {
+            if ($item['expense'] >= 2000) {
+                $item['pay_back'] = intval($item['expense'] * 0.5);
+            } else {
+                $item['pay_back'] = intval($item['expense'] * 0.7);
+            }
             $item['date'] = date("Y-m", $item['date']);
             $total['pay_back'] += $item['pay_back'];
             $total['expense'] += $item['expense'];
@@ -235,7 +240,7 @@ class ReportController extends BaseController {
         }
 
         $count = $table->count($search);
-        $page = new Page($count, C('PAGE_NUM'));
+        $page = new Page($count, $limit);
         $page = $page->show();
 
         $this->assign("page", $page);
@@ -358,7 +363,7 @@ class ReportController extends BaseController {
         }
 
         $count = $table->count($search);
-        $page = new Page($count, C('PAGE_NUM'));
+        $page = new Page($count, $limit);
         $page = $page->show();
 
         $this->assign("page", $page);

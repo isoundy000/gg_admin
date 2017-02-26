@@ -37,7 +37,7 @@ class OperationController extends BaseController
             }
 
             $count = $admin_card_daily->count($search);
-            $page = new Page($count, C('PAGE_NUM'));
+            $page = new Page($count, $limit);
             $page = $page->show();
 
             $this->assign("page", $page);
@@ -147,7 +147,7 @@ class OperationController extends BaseController
         }
 
         $count = $admin_card_receive_daily->count($search);
-        $page = new Page($count, C('PAGE_NUM'));
+        $page = new Page($count, $limit);
         $page = $page->show();
 
         $this->assign("page", $page);

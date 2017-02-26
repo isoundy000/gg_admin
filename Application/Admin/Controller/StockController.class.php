@@ -67,7 +67,7 @@ class StockController extends BaseController
         }
 
         $count = $admin_stock->count($search);
-        $page = new Page($count, C('PAGE_NUM'));
+        $page = new Page($count, $limit);
         $page = $page->show();
 
         $this->assign("page", $page);
