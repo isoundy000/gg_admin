@@ -21,9 +21,15 @@ class ReportController extends BaseController {
 
         $type = I('get.type', 'day');
         switch ($type) {
+            case 'hour':
+                $match = 'm-d H:00:00';
+                break;
             case 'day':
+            case 'retail':
+                $match = 'Y-m-d';
                 break;
             case 'month':
+                $match = 'Y-m';
                 break;
         }
         $table_name = "admin_report_stream_" . $type;
@@ -52,7 +58,6 @@ class ReportController extends BaseController {
             );
         }
         foreach ($cursor as $item) {
-            $match = $type=='month' ? 'Y-m' : 'Y-m-d';
             $item['date'] = date($match, $item['date']);
             $item['game'] = $game_type[$item['game']];
             foreach ($item['buy_card'] as $k => $v) {
@@ -181,6 +186,10 @@ class ReportController extends BaseController {
         $this->assign("game_type", $game_type);
 
         $type = I('get.type', 'day');
+        //获取当天（月）数据
+        $table_name = "admin_report_agent_stream_" . $type;
+        $table = $this->mongo_db->$table_name;
+
         switch ($type) {
             case 'day':
                 $search['date'] = strtotime(date("Y-m-d", strtotime("-1 day")));
@@ -189,9 +198,6 @@ class ReportController extends BaseController {
                 $search['date'] = strtotime(date("Y-m-01", strtotime("-1 month")));
                 break;
         }
-        $table_name = "admin_report_agent_stream_" . $type;
-        $table = $this->mongo_db->$table_name;
-
 
         $limit = intval(I('get.limit', C('PAGE_NUM')));
         $skip = (intval(I('get.p', 1)) - 1) * $limit;

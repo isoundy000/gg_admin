@@ -1,7 +1,17 @@
 <!-- Content Header (Page header) -->
 <section class="content-header">
     <h1>
-        流水记录
+        <switch name="type">
+            <case value="hour">
+                每小时流水
+            </case>
+            <case value="day">
+                每日流水
+            </case>
+            <case value="month">
+                每月流水
+            </case>
+        </switch>
     </h1>
     <ol class="breadcrumb">
         <li><a href="__MODULE__/index/index"><i class="fa fa-dashboard"></i>首页</a></li>
@@ -42,18 +52,11 @@
                         <th>游戏</th>
                         <if condition="$type neq retail">
                             <th colspan="2">购卡量</th>
-                            <if condition="$type eq month">
-                                <th>月消耗</th>
-                                <th>月流水</th>
-                            <else/>
-                                <th>日消耗</th>
-                                <th>日流水</th>
-                            </if>
-
+                            <th>消耗</th>
                         <else/>
                             <th>购卡量</th>
-                            <th>流水</th>
                         </if>
+                        <th>流水</th>
                         <th>普通</th>
                         <th>活动</th>
 
@@ -69,11 +72,10 @@
                                     <td>{$card.name}: {$card.amount}</td>
                                 </foreach>
                                 <td>{$item.expense}</td>
-                                <td>{$item.stream}</td>
                             <else/>
                                 <td>{$item.buy_card}</td>
-                                <td>{$item.stream}</td>
                             </if>
+                            <td>{$item.stream}</td>
                             <td>{$item.card1}</td>
                             <td>{$item.card2}</td>
                         </tr>
