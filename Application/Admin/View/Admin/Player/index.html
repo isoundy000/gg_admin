@@ -50,7 +50,7 @@
                         <th>消耗房卡</th>
                         <th>累计局数</th>
                         <th>赢分</th>
-                        <!--<th>操作</th>-->
+                        <th>操作</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -66,9 +66,9 @@
                             <td></td>
                             <td>{$item.match_count}</td>
                             <td>{$item.totalWinFen}</td>
-                            <!--<td>
-                                <a href="Javascript:void(0)" onclick="menuClick('__MODULE__/client/clients/tab/card/_id/{$item._id}')">充卡</a>
-                            </td>-->
+                            <td>
+                                <button class="btn btn-primary" onclick="openDialog('{$item.roleid}')">封禁</button>
+                            </td>
                         </tr>
 
                     </foreach>
@@ -84,7 +84,52 @@
         </div>
     </div>
 </section>
+<div id="block-dialog" class="modal fade modal-info">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="closeDialog()">
+                    <span aria-hidden="true">×</span></button>
+                <h4 class="modal-title">封号</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <form class="form-horizontal" onsubmit="return false;">
+                        <div class="form-group">
+                            <label for="forbidden_time" class="col-sm-2 control-label">封停时长</label>
+                            <div class="col-sm-4">
+                                <input class="form-control" id="forbidden_time" placeholder="XX小时" type="number" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="remark" class="col-sm-2 control-label">备注</label>
+                            <div class="col-sm-4">
+                                <input class="form-control" id="remark" placeholder="备注" type="text" required>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline pull-left" onclick="closeDialog()" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-outline" onclick="playerBlock('__MODULE__/player/forbidden/op/block')">封停</button>
+                <input type="hidden" id="role_id">
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
 <script>
+    function openDialog(roleid) {
+        $('#block-dialog').modal('show');
+        $("#role_id").val(roleid);
+    }
+
+    function closeDialog() {
+        $('#block-dialog').modal('hide');
+    }
+
     $('#search_date').daterangepicker({
         timePicker: true,
         timePicker24Hour: true,
@@ -100,6 +145,24 @@
     $('#search_date').on('cancel.daterangepicker', function(ev, picker) {
         $(this).val('');
     });
+
+    function playerBlock(_url) {
+        var roleid = $("#role_id").val();
+        var time = $("#forbidden_time").val();
+        var remark = $("#remark").val();
+        var source = {
+            roleid: roleid,
+            time: time,
+            remark: remark
+        };
+        ajaxRequest(_url, source, 'PUT', 'json', function(result) {
+            if (result.code = 201) {
+                closeDialog();
+                successDialog('block', '封禁', '封禁成功!');
+                menuClick('__MODULE__/player/forbidden');
+            }
+        })
+    }
 
     function onSearch(_url) {
         var search_roleid = $("#search_roleid").val();

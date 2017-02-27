@@ -1,7 +1,7 @@
 <!-- Content Header (Page header) -->
 <section class="content-header">
     <h1>
-        玩家列表
+        封禁列表
     </h1>
     <ol class="breadcrumb">
         <li><a href="__MODULE__/index/index"><i class="fa fa-dashboard"></i>首页</a></li>
@@ -40,6 +40,7 @@
                         <th>房卡剩余</th>
                         <th>最近登录</th>
                         <th>最近登录IP</th>
+                        <th>封禁原因</th>
                         <th>操作</th>
                     </tr>
                     </thead>
@@ -49,16 +50,12 @@
                             <td>{$item.roleid}</td>
                             <td>{$item.date}</td>
                             <td>{$item.nickname}</td>
-                            <td>
-                                <foreach name="item.stock_amount" key="k" item="stock_amount">
-                                    {$stock_type[$k]}: {$stock_amount}<br>
-                                </foreach>
-                            </td>
+                            <td>{$item.stock_amount}</td>
                             <td>{$item.last_login}</td>
                             <td>{$item.last_login_ip}</td>
+                            <td>{$item.remark}</td>
                             <td>
-                                <button class="btn btn-success" onclick="confirmUnBlock('__MODULE__/player/forbidden/id/{$item._id}/op/unblock')">解封</button>
-                                <button class="btn btn-danger" onclick="confirmBlock('block')">封停</button>
+                                <button class="btn btn-success" onclick="confirmUnBlock('__MODULE__/player/forbidden/roleid/{$item.roleid}/op/unblock')">解封</button>
                             </td>
                         </tr>
 
@@ -75,41 +72,6 @@
         </div>
     </div>
 </section>
-    <div id="block-dialog" class="modal modal-info">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="confirmBlock('none')">
-                        <span aria-hidden="true">×</span></button>
-                    <h4 class="modal-title">封号</h4>
-                </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <form class="form-horizontal" onsubmit="return false;">
-                            <div class="form-group">
-                                <label for="forbidden_time" class="col-sm-2 control-label">封停时长</label>
-                                <div class="col-sm-4">
-                                    <input class="form-control" id="forbidden_time" placeholder="XX小时" type="number" required>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="remark" class="col-sm-2 control-label">备注</label>
-                                <div class="col-sm-4">
-                                    <input class="form-control" id="remark" placeholder="备注" type="text" required>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-outline pull-left" onclick="confirmBlock('none')" data-dismiss="modal">关闭</button>
-                    <button type="button" class="btn btn-outline" onclick="playerBlock('__MODULE__/player/forbidden/id/{$item._id}/op/block')">封停</button>
-                </div>
-            </div>
-            <!-- /.modal-content -->
-        </div>
-        <!-- /.modal-dialog -->
-    </div>
 <script>
     function onSearch(_url) {
         var search_roleid = $("#search_roleid").val();
@@ -121,26 +83,12 @@
         menuClick(_url, source);
     }
 
-    function confirmBlock(display) {
-        $("#block-dialog").css("display", display);
-    }
-
-    function playerBlock(_url) {
-        $("#block-dialog").css("display", 'none');
-        ajaxRequest(_url, null, 'PUT', 'json', function(result) {
-            if (!result) {
-                successDialog('block', '封禁', '封禁成功!');
-                menuClick('__MODULE__/player/forbidden');
-            }
-        })
-    }
-
     function confirmUnBlock(_url) {
-        warningDialog('block', '警告', '你真的要解禁此账号吗?', "playerUnBlock('_url')");
+        warningDialog('block', '警告', '你真的要解禁此账号吗?', "playerUnBlock('" + _url + "')");
     }
 
     function playerUnBlock(_url) {
-        //warningDialog('none');
+        warningDialog('none');
         ajaxRequest(_url, null, 'PUT', 'json', function(result) {
             if (!result) {
                 successDialog('block', '解封', '解禁成功!');
