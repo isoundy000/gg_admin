@@ -157,6 +157,7 @@ class UserController extends BaseController
         $search['username'] = I('get.username', null);
         $search['pid'] = $_SESSION[MODULE_NAME . '_admin']['_id']->__toString();
         $search['date'] = I('get.date', null);
+        $search['status'] = array('$ne' => 2);
         if ($search['date']) {
             $search['date'] = rangeDate($search['date']);
             $search['date'] = array('$gte' => $search['date'][0], '$lte' => $search['date'][1]);
@@ -172,6 +173,9 @@ class UserController extends BaseController
         foreach ($cursor as $item) {
             $item['type_name'] = $agent_type[$item['type']];
             $item['date'] = date('Y-m-d H:i:s', $item['date']);
+            $item['amount'] = array_reduce(array_values($item['stock_amount']), function($a, $b) {
+                return $a + $b;
+            }, 0);
             array_push($result, $item);
         }
 
@@ -180,9 +184,15 @@ class UserController extends BaseController
         $page = $page->show();
 
         $this->assign("page", $page);
-        $this->assign("agents", $result);
+
         $this->assign("agent_type", $agent_type);
-        $this->_result['data']['html'] = $this->fetch("User:agent");
+        if (I('get.tab') == 'card') {//代理充卡页面
+            $this->assign("agent", $result[0]);
+            $this->_result['data']['html'] = $this->fetch("User:card");
+        } else {
+            $this->assign("agents", $result);
+            $this->_result['data']['html'] = $this->fetch("User:agent");
+        }
 
         $this->_result['data']['count'] = $count;
         $this->_result['data']['page'] = $page;
@@ -268,6 +278,216 @@ class UserController extends BaseController
         $this->response($this->_result);
     }
 
+    //二级代理售卡情况，即取月统计
+    public function agentSellGet() {
+        $search = array();
+        $admin_agent = $this->mongo_db->admin_agent;
+        $agents = $admin_agent->find(array('pid' => $_SESSION[MODULE_NAME . '_admin']['_id']->__toString()));
+        $agent_list = array();
+        foreach ($agents as $item) {
+            array_push($agent_list, $item['username']);
+        }
+        $search['username'] = array('$in' => $agent_list);
+        $_GET['username'] && $search['username'] = I('get.username');
+
+        $agent_type = C('SYSTEM.AGENT_TYPE');
+        $this->assign("agent_type", $agent_type);
+        $game_type = C('SYSTEM.GAME');
+        $this->assign("game_type", $game_type);
+
+        $type = I('get.type', 'month');
+        switch ($type) {
+            case 'day':
+                break;
+            case 'month':
+                break;
+        }
+        $table_name = "admin_report_agent_stream_" . $type;
+        $table = $this->mongo_db->$table_name;
+
+        $limit = intval(I('get.limit', C('PAGE_NUM')));
+        $skip = (intval(I('get.p', 1)) - 1) * $limit;
+        $search['date'] = I('get.date', null);
+        $search['type'] = I('get.agent_type', null);
+        if ($search['date']) {
+            $search['date'] = rangeDate($search['date']);
+            $search['date'] = array('$gte' => $search['date'][0], '$lte' => $search['date'][1]);
+        }/* else {
+            //上月数据
+            $search['date'] = strtotime(date("Y-m-01", strtotime("-1 month")));
+        }*/
+        $search['type'] && $search['type'] = intval($search['type']);
+        filter_array_element($search);
+        $cursor = $table->find($search)->limit($limit)->skip($skip)->sort(array("username" => 1));
+        $result = array();
+        $total = array(
+            'pay_back' => 0,
+            'expense' => 0,
+            'purchase' => 0,
+        );
+        foreach ($cursor as $item) {
+            if ($item['expense'] >= 2000) {
+                $item['pay_back'] = intval($item['expense'] * 0.5);
+            } else {
+                $item['pay_back'] = intval($item['expense'] * 0.7);
+            }
+            $item['date'] = date("Y-m", $item['date']);
+            $total['pay_back'] += $item['pay_back'];
+            $total['expense'] += $item['expense'];
+            $total['purchase'] += $item['purchase'];
+            $item['type_name'] = $agent_type[$item['type']];
+            array_push($result, $item);
+        }
+
+        $count = $table->count($search);
+        $page = new Page($count, $limit);
+        $page = $page->show();
+
+        $this->assign("page", $page);
+        $this->assign("stream", $result);
+        $this->assign("total", $total);
+        $this->assign("type", $type);
+        $this->_result['data']['html'] = $this->fetch("User:agent_stream");
+        $this->_result['data']['total'] = $total;
+        $this->_result['data']['stream'] = $result;
+        $this->_result['data']['page'] = $page;
+        $this->response($this->_result);
+    }
+
+    public function agentSellExcelPost() {
+        $search = array();
+        $admin_agent = $this->mongo_db->admin_agent;
+        $agents = $admin_agent->find(array('pid' => $_SESSION[MODULE_NAME . '_admin']['_id']->__toString()));
+        $agent_list = array();
+        foreach ($agents as $item) {
+            array_push($agent_list, $item['username']);
+        }
+        $search['username'] = array('$in' => $agent_list);
+        $_GET['username'] && $search['username'] = I('get.username');
+
+        $agent_type = C('SYSTEM.AGENT_TYPE');
+        $this->assign("agent_type", $agent_type);
+        $game_type = C('SYSTEM.GAME');
+        $this->assign("game_type", $game_type);
+
+        $type = I('get.type', 'month');
+        switch ($type) {
+            case 'day':
+                break;
+            case 'month':
+                break;
+        }
+        $table_name = "admin_report_agent_stream_" . $type;
+        $table = $this->mongo_db->$table_name;
+
+        $search = array();
+        $limit = intval(I('get.limit', C('PAGE_NUM')));
+        $skip = $_SESSION['skip'];
+        $skip = ($skip - 1) * $limit;
+        $search['date'] = I('get.date', null);
+        $search['username'] = I('get.username', null);
+        $search['type'] = I('get.agent_type', null);
+        if ($search['date']) {
+            $search['date'] = rangeDate($search['date']);
+            $search['date'] = array('$gte' => $search['date'][0], '$lte' => $search['date'][1]);
+            $limit = null;
+            $skip = null;
+        }/* else {
+            //上月数据
+            $search['date'] = strtotime(date("Y-m-01", strtotime("-1 month")));
+        }*/
+        if ($search['username'] || $search['type']) {
+            $limit = null;
+            $skip = null;
+        }
+        $search['type'] && $search['type'] = intval($search['type']);
+        filter_array_element($search);
+        $cursor = $table->find($search)->limit($limit)->skip($skip)->sort(array("username" => 1));
+        $total = array(
+            'pay_back' => 0,
+            'expense' => 0,
+            'purchase' => 0,
+        );
+        $option['filename'] = "金牌代理月报表" . date("Y-m") . ".xls";
+        $option['author'] = '杠杠麻将';
+        $option['header'] = array('时间', '账号', '昵称', '购买', '售出', '返还');
+        $option['data'] = array();
+        foreach ($cursor as $item) {
+            $item['date'] = date("Y-m", $item['date']);
+            $total['pay_back'] += $item['pay_back'];
+            $total['expense'] += $item['expense'];
+            $total['purchase'] += $item['purchase'];
+            $item['type_name'] = $agent_type[$item['type']];
+            array_push($option['data'], array($item['date'], $item['username'], $item['name'],
+                 $item['purchase'], $item['expense'], $item['pay_back']));
+        }
+        array_push($option['data'], array('总计', '', '', $total['purchase'], $total['expense'], $total['pay_back']));
+        excelExport($option);
+    }
+
+    public function agentsPut() {
+        $search['_id'] = new \MongoId(I('put._id'));
+        $data['wechat'] = I('put.wechat', null, check_empty_string);
+        $data['name'] = I('put.name', null, check_empty_string);
+        merge_params_error($data['wechat'], 'wechat', '微信号不能为空', $this->_result['error'], false);
+        merge_params_error($data['name'], 'name', '昵称不能为空', $this->_result['error'], false);
+        //检查参数
+        if ($this->_result['error']) {
+            $error = array_shift($this->_result['error']);
+            $error = array_values($error);
+            $this->response($this->_result, 'json', 400, $error[0]);
+        }
+        filter_array_element($data);
+
+        $data && $update['$set'] = $data; //data不能为空
+        $admin_agent = $this->mongo_db->admin_agent;
+        $agent_stock_grant_record = $this->mongo_db->agent_stock_grant_record;
+        $stock_type = 2; //优化发放活动房卡
+        //充卡
+        $amount = intval(I('put.amount'));
+        if ($amount>0) {
+            if (!check_nature_integer($amount)) {
+                $this->response($this->_result, 'json', 400, '房卡数量必须为正整数');
+            } else {
+                //库存是否充足
+                $user = $admin_agent->findOne(array("_id" => $_SESSION[MODULE_NAME . '_admin']['_id']));
+                if ($user['stock_amount'][$stock_type] < $amount) {
+                    $stock_type = 1;//选择普通房卡
+                    if ($user['stock_amount'][$stock_type] < $amount) {
+                        $this->response($this->_result, 'json', 400, '房卡库存不足');
+                    }
+                }
+                $update['$inc'] = array("stock_amount.{$stock_type}" => $amount,
+                                        "total_amount.{$stock_type}" => $amount);
+            }
+            $client = $admin_agent->findOne($search);
+        }
+        if ($admin_agent->update($search,$update)) {
+            if ($amount > 0) {
+                //给代理充卡后要扣除代理相应的库存卡数量
+                $admin_agent->update(array("_id" => $_SESSION[MODULE_NAME . '_admin']['_id']),
+                    array('$inc' => array("stock_amount.{$stock_type}" => -$amount,
+                        "total_sell.{$stock_type}" => $amount))
+                );
+                //充卡记录，代理后台使用
+                $agent_stock_grant_record->insert(
+                    array(
+                        'from_user' => $_SESSION[MODULE_NAME . '_admin']['username'],
+                        'to_user' => $client['username'],
+                        'nickname' => $client['name'],
+                        'type' => $stock_type,
+                        'amount' => $amount,
+                        'date' => time(),
+                    )
+                );
+            }
+            $this->response($this->_result, 'json', 201, '保存成功');
+        } else {
+            $this->_result['data']['param'] = $data;
+            $this->response($this->_result, 'json', 400, '保存失败');
+        }
+    }
+
     public function agentsPost()
     {
         $admin_agent = $this->mongo_db->admin_agent;
@@ -345,6 +565,11 @@ class UserController extends BaseController
         } else {
             $this->response($this->_result, 'json', 400, '新建失败');
         }
+    }
+
+    //删除
+    public function agentDelete() {
+        $this->response($this->_result, 'json', 204);
     }
 
     public function verifyCodeGet()

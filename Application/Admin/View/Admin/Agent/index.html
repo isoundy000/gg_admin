@@ -61,6 +61,7 @@
                                 <thead>
                                 <tr>
                                     <th>注册时间</th>
+                                    <th>上级</th>
                                     <th>用户名</th>
                                     <th>昵称</th>
                                     <th>类型</th>
@@ -73,6 +74,7 @@
                                 <foreach name="agents" item="item">
                                     <tr>
                                         <td>{$item.date}</td>
+                                        <td>{$item.parent_name}</td>
                                         <td>{$item.username}</td>
                                         <td>{$item.name}</td>
                                         <td>{$item.type_name}</td>
@@ -135,11 +137,18 @@
                             <label for="type" class="col-sm-2 control-label">会员类型</label>
 
                             <div class="col-sm-4">
-                                <select class="form-control" id="type">
+                                <select class="form-control" id="type" onchange="showField(this);">
                                     <foreach name="agent_type" key="k" item="item">
                                         <option value="{$k}">{$item}</option>
                                     </foreach>
                                 </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="pid" class="col-sm-2 control-label">归属</label>
+
+                            <div class="col-sm-4">
+                                <input class="form-control invisible" id="pid" placeholder="归属" type="text" required>
                             </div>
                         </div>
                         <div class="form-group">
@@ -181,6 +190,16 @@
 </section>
 <!-- /.content -->
 <script>
+    function showField(obj) {
+        var option = $(obj).val();
+        if (option == 1) {
+            $("#pid").addClass("invisible");
+            //$("#pid").val(0);
+        } else {
+            $("#pid").removeClass("invisible");
+        }
+    }
+
     function onSearch(_url) {
         var search_username = $("#search_username").val();
         var search_name = $("#search_name").val();
@@ -211,6 +230,13 @@
                 $("#name").val(result.data.agents.name);
                 $("#type").val(result.data.agents.type);
                 $("#role_id").val(result.data.agents.role_id.$id);
+                $("#pid").val(result.data.agents.parent_name);
+                if (result.data.agents.type == 1) {
+                    $("#pid").addClass("invisible");
+                    $("#pid").val(0);
+                } else {
+                    $("#pid").removeClass("invisible");
+                }
                 if (result.data.agents.status) {
                     $("#status").attr("checked", true);
                 } else {
@@ -248,6 +274,7 @@
         var name = $("#name").val();
         var type = $("#type").val();
         var role_id = $("#role_id").val();
+        var pid = $("#pid").val();
         var _id = $("#_id").val();
         var status = $("#status").is(':checked') ? 1 : 0;
 
@@ -258,6 +285,7 @@
             name: name,
             type: type,
             role_id: role_id,
+            pid: pid,
             status:status,
             _id:_id
         };

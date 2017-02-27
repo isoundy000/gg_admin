@@ -1,7 +1,7 @@
 <!-- Content Header (Page header) -->
 <section class="content-header">
     <h1>
-        封禁玩家列表
+        玩家列表
     </h1>
     <ol class="breadcrumb">
         <li><a href="__MODULE__/index/index"><i class="fa fa-dashboard"></i>首页</a></li>
@@ -54,8 +54,8 @@
                                     {$stock_type[$k]}: {$stock_amount}<br>
                                 </foreach>
                             </td>
-                            <th>{$item.last_login}</th>
-                            <th>{$item.last_login_ip}</th>
+                            <td>{$item.last_login}</td>
+                            <td>{$item.last_login_ip}</td>
                             <td>
                                 <button class="btn btn-success" onclick="confirmUnBlock('__MODULE__/player/forbidden/id/{$item._id}/op/unblock')">解封</button>
                                 <button class="btn btn-danger" onclick="confirmBlock('block')">封停</button>

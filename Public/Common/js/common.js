@@ -13,7 +13,13 @@ function menuClick(_url, source) {
     if (!limit) {
         limit = 10;
     }
-    _url = _url + "&limit=" + limit;
+    if (source == null) {
+        source = {limit: limit};
+    } else {
+        source.limit = limit;
+    }
+
+    //_url = _url + "&limit=" + limit;
     ajaxRequest(_url, source, 'get', 'json', function(result) {
         if(result.code == 200) {
             $("#content-wrapper").html(result.data.html);

@@ -1,11 +1,21 @@
 <!-- Content Header (Page header) -->
 <section class="content-header">
+    <div class="row">
+        <div class="col-md-3 col-sm-6 col-xs-12">
+            <div class="info-box">
+                <span class="info-box-icon bg-aqua"><i class="fa fa-dollar"></i></span>
+
+                <div class="info-box-content">
+                    <span class="info-box-text">房卡数量</span>
+                    <span class="info-box-number">{$Think.session.Agent_admin.card_amount}</span>
+                </div>
+                <!-- /.info-box-content -->
+            </div>
+            <!-- /.info-box -->
+        </div>
+    </div>
     <h1>
-        <if condition="$type eq day">
-            代理日报表
-        <else/>
-            代理月报表
-        </if>
+        金牌代理售卡情况
     </h1>
     <ol class="breadcrumb">
         <li><a href="__MODULE__/index/index"><i class="fa fa-dashboard"></i>首页</a></li>
@@ -32,18 +42,10 @@
                         <input class="form-control" id="search_date" placeholder="时间段">
                     </div>
                     <div class="form-group col-sm-1">
-                        <select class="form-control" id="search_type">
-                            <option value="">请选择</option>
-                            <foreach name="agent_type" key="k" item="item">
-                                <option value="{$k}">{$item}</option>
-                            </foreach>
-                        </select>
+                        <button onclick="onSearch('__MODULE__/user/agentsell/type/month')" type="submit" class="btn btn-primary">查询</button>
                     </div>
                     <div class="form-group col-sm-1">
-                        <button onclick="onSearch('__MODULE__/report/agentStream/type/{$type}')" type="submit" class="btn btn-primary">查询</button>
-                    </div>
-                    <div class="form-group col-sm-1">
-                        <button  onclick='onExcel("__MODULE__/report/agentStreamExcel/type/{$type}")' class="btn btn-primary">
+                        <button  onclick='onExcel("__MODULE__/user/agentsellExcel/type/{$type}")' class="btn btn-primary">
                             <i class="fa fa-save"></i>
                             导出
                         </button>
@@ -58,44 +60,31 @@
                         <th>时间</th>
                         <th>账号</th>
                         <th>昵称</th>
-                        <th>微信</th>
-                        <th>级别</th>
-                        <if condition="$type eq month">
-                            <th>返还</th>
-                        </if>
                         <th>购买</th>
-                        <th>消耗</th>
+                        <th>售出</th>
+                        <th>返还</th>
                     </tr>
                     </thead>
                     <tbody>
                     <foreach name="stream" item="item">
-                        <tr onclick="showChild(this, '{$item.username}', '__MODULE__/report/agentStream/type/{$type}')">
+                        <tr>
                             <td>{$item.date}</td>
                             <td>{$item.username}</td>
                             <td>{$item.name}</td>
-                            <td>{$item.wechat}</td>
-                            <td>{$item.type_name}</td>
-                            <if condition="$type eq month">
-                                <td>{$item.pay_back}</td>
-                            </if>
                             <td>{$item.purchase}</td>
                             <td>{$item.expense}</td>
+                            <td>{$item.pay_back}</td>
                         </tr>
                     </foreach>
                     </tbody>
                     <tfoot class="bg-aqua">
                     <if condition="$total neq null">
-                    <tr>
-                        <if condition="$type eq month">
-                            <td colspan="5"><b>合计</b></td>
-                        <else/>
-                            <td colspan="4"><b>合计</b></td>
-                        </if>
-
-                        <td><b>{$total.pay_back}</b></td>
-                        <td><b>{$total.purchase}</b></td>
-                        <td><b>{$total.expense}</b></td>
-                    </tr>
+                        <tr>
+                            <td colspan="3"><b>合计</b></td>
+                            <td><b>{$total.purchase}</b></td>
+                            <td><b>{$total.expense}</b></td>
+                            <td><b>{$total.pay_back}</b></td>
+                        </tr>
                     </if>
                     </tfoot>
                 </table>
@@ -139,35 +128,11 @@
         menuClick(_url, source);
     }
 
-    function showChild(obj, username, _url) {
-        var flag = obj.getAttribute('class');
-        if (!flag) {
-            flag = 1;
-        } else {
-            flag = 0;
-        }
-        if (flag == 1) {
-            var source = {
-                username: username,
-                show_child: flag
-            };
-            ajaxRequest(_url, source, 'GET', 'json', function (response) {
-                var html = response.data.child_html;
-                $(obj).after(html);
-                $(obj).addClass('expand');
-            });
-        } else {
-            var cls = '.child_stream_' + username;
-            $(obj).removeClass('expand');
-            $(cls).remove();
-        }
-    }
-
     function onExcel(_url) {
         var search_date = $("#search_date").val();
         var search_username = $("#search_username").val();
-        var search_type = $("#search_type").val();
-        _url = _url + "?date=" + search_date + "&username=" + search_username + "&agent_type=" + search_type;
+        _url = _url + "?date=" + search_date + "&username=" + search_username;
+        console.log(_url);
         exportExcel(_url);
     }
 

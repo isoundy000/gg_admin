@@ -198,7 +198,7 @@ class MonitorController extends RestController {
         //TODO 充值功能完成后，需要统计代理充值购买量
         $agent_data['buy_card'] = $admin_grant_count;
         $agent_data['expense'] = $count;
-        $agent_data['stream'] = array_reduce($admin_grant_count, function($a , $b) {
+        $agent_data['stream'] = array_reduce(array_values($admin_grant_count), function($a , $b) {
             return $a + $b;
         });
         $table_name = "admin_report_stream_" . $type;
@@ -236,6 +236,28 @@ class MonitorController extends RestController {
         $db_name = C('MONGO_DB');
         $db = $mongo_client->$db_name;
 
+        //查找所有代理，写入空记录
+        $admin_agent = $db->admin_agent;
+        $table_name = "admin_report_agent_stream_{$type}";
+        $table = $db->$table_name;
+
+        $agents = $admin_agent->find();
+        foreach ($agents as $item) {
+            $data = array(
+                'date' => $start_date,
+                'game' => 1,
+                'username' => $item['username'],
+                'name' => $item['name'] ? $item['name'] : "",
+                'wechat' => $item['wechat'] ? $item['wechat'] : "",
+                'type' => $item['type'],
+                'pay_back' => 0,
+                'purchase' => 0,
+                'expense' => 0,
+            );
+            $table->update(array('date'=>$start_date,
+                'username' => $item['username']), array('$set' => $data), array('upsert' => true));
+        }
+
         //agent_stock_grant_record
         $agent_stock_grant_record = $db->agent_stock_grant_record;
         $cursor = $agent_stock_grant_record->group(
@@ -253,27 +275,25 @@ class MonitorController extends RestController {
                 )
             )
         );
-        $admin_agent = $db->admin_agent;
-        $table_name = "admin_report_agent_stream_{$type}";
-        $table = $db->$table_name;
+
         foreach($cursor['retval'] as $item) {
             //根据用户名查找用户信息
-            $agent = $admin_agent->findOne(array("username" => $item['from_user']));
-            if ($agent) {
+            //$agent = $admin_agent->findOne(array("username" => $item['from_user']));
+            //if ($agent) {
                 $data = array(
-                    'date' => $start_date,
+                    //'date' => $start_date,
                     'game' => 1,
-                    'username' => $agent['username'],
-                    'name' => $agent['name'] ? $agent['name'] : "",
-                    'wechat' => $agent['wechat'] ? $agent['wechat'] : "",
-                    'type' => $agent['type'],
-                    'pay_back' => 0, //TODO
-                    'purchase' => 0, //TODO 暂时以管理员给代理充卡的数量统计
+                    //'username' => $agent['username'],
+                    //'name' => $agent['name'] ? $agent['name'] : "",
+                    //'wechat' => $agent['wechat'] ? $agent['wechat'] : "",
+                    //'type' => $agent['type'],
+                    'pay_back' => 0,
+                    'purchase' => 0,
                     'expense' => intval($item['count']),
                 );
                 $table->update(array('date'=>$start_date,
-                    'username' => $item['from_user']), array('$set' => $data), array('upsert' => true));
-            }
+                    'username' => $item['from_user']), array('$set' => $data));
+            //}
         }
 
         //TODO 查找充卡记录，更新purchase字段
@@ -297,17 +317,17 @@ class MonitorController extends RestController {
             //根据用户名查找用户信息
             $agent = $admin_agent->findOne(array("username" => $item['to_user']));
             if ($agent) {
-                $data = array(
-                    'date' => $start_date,
-                    'game' => 1,
-                    'username' => $agent['username'],
-                    'name' => $agent['name'] ? $agent['name'] : "",
-                    'wechat' => $agent['wechat'] ? $agent['wechat'] : "",
-                    'type' => $agent['type'],
-                );
+                /*$data = array(
+                    //'date' => $start_date,
+                    //'game' => 1,
+                    //'username' => $agent['username'],
+                    //'name' => $agent['name'] ? $agent['name'] : "",
+                    //'wechat' => $agent['wechat'] ? $agent['wechat'] : "",
+                    //'type' => $agent['type'],
+                );*/
                 $table->update(array('date'=>$start_date,
                     'username' => $item['to_user']),
-                    array('$set' => $data, '$inc' => array('purchase'=>intval($item['count']))),
+                    array('$inc' => array('purchase'=>intval($item['count']))),
                     array('upsert' => true));
             }
         }

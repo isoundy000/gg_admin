@@ -1,0 +1,97 @@
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <div class="row">
+        <div class="col-md-3 col-sm-6 col-xs-12">
+            <div class="info-box">
+                <span class="info-box-icon bg-aqua"><i class="fa fa-dollar"></i></span>
+
+                <div class="info-box-content">
+                    <span class="info-box-text">房卡数量</span>
+                    <span class="info-box-number">{$Think.session.Agent_admin.card_amount}</span>
+                </div>
+                <!-- /.info-box-content -->
+            </div>
+            <!-- /.info-box -->
+        </div>
+    </div>
+    <h1>
+        金牌代理充卡
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="__MODULE__/index/index"><i class="fa fa-dashboard"></i>首页</a></li>
+        <foreach name="breadcrumb" item="item">
+            <li><a <if condition="$item.active eq 1">class="active"</if> href="javascript:void(0)" onclick="menuClick('{$item.action}')">{$item.name}</a></li>
+        </foreach>
+    </ol>
+</section>
+
+<!-- Main content -->
+<section class="content">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box box-primary">
+                <div class="box-header">
+                    <!--<h3>申请库存</h3>-->
+                </div>
+                <div class="box-body">
+                    <form class="form-horizontal" onsubmit="return false;">
+                        <div class="form-group">
+                            <label for="roleid" class="col-sm-2 control-label">代理用户名</label>
+                            <div class="col-sm-2">
+                                <input id="roleid" type="text" class="form-control" value="{$agent.username}" disabled>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="nickname" class="col-sm-2 control-label">昵称</label>
+                            <div class="col-sm-2">
+                                <input id="nickname" type="text" class="form-control" value="{$agent.name}" disabled>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="amount" class="col-sm-2 control-label">房卡数量</label>
+                            <div class="col-sm-2">
+                                <input type="number" min="1" class="form-control" value="{$agent.amount}" id="stock_amount" disabled>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="amount" class="col-sm-2 control-label">数量</label>
+                            <div class="col-sm-2">
+                                <input type="number" min="1" class="form-control" id="amount" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-offset-2 col-sm-4">
+                                <button id="agent_submit" type="submit" class="btn btn-primary" onclick="agentSave('__MODULE__/user/agents')">充卡</button>
+                                <button id="agent_back" type="submit" class="btn btn-warning" onclick="menuClick('__MODULE__/user/agents')">返回</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="box-footer">
+                    <input type="hidden" id="_id" value="{$agent._id}">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- /.content -->
+<script>
+    function agentSave(_url) {
+        var method = "PUT";
+        var _id = $("#_id").val();
+        var amount = $("#amount").val();
+
+        var source = {
+            amount: amount,
+            _id:_id
+        };
+        ajaxRequest(_url, source, method, 'json', function(result) {
+            if(result.code == 201) {
+                successDialog('block', '保存', result.msg);
+                menuClick('__MODULE__/user/agents');
+            } else {
+                errorDialog('block', '保存', result.msg);
+            }
+        });
+    }
+</script>

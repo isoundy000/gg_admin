@@ -90,16 +90,21 @@ class WeixinController extends RestController {
 
                         //查询是否已经领取该时段的奖励
                         $admin_card_receive_daily = $db->admin_card_receive_daily;
-                        $award = $admin_card_receive_daily->findOne(array(
+                        //查找最近一条记录
+                        $award = $admin_card_receive_daily->find(array(
                             'roleid' => $info['roleid'],
                             'start_time' => $info['start_time'],
                             'end_time' => $info['end_time']
-                        ));
+                        ))->sort(array("date"=>-1))->limit(1);
                         //如果有记录，判断这条记录是不是今天的
                         $today = date("Y-m-d", time());
                         $day = "";
                         if ($award) {
-                            $day = date("Y-m-d", $award['date']);
+                            $record = "";
+                            foreach($award as $item) {
+                                $record = $item;
+                            }
+                            $day = date("Y-m-d", $record['date']);
                         }
                         if (!$award) {//如果不存在记录
                             $admin_card_receive_daily->insert($info);

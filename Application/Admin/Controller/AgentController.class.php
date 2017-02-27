@@ -27,6 +27,12 @@ class AgentController extends BaseController
             $search['_id'] = new \MongoId(I('get._id', null));
             $option = array('password' => 0);
             $query = $admin_agent->findOne($search, $option);
+            if ($query['pid']) {
+                $parent = $admin_agent->findOne(array('_id' => new \MongoId($query['pid'])));
+                $query['parent_name'] = $parent ? $parent['username'] : '杠杠麻将';
+            } else {
+                $query['parent_name'] = '';
+            }
             $this->_result['data']['agents'] = $query;
             if (I('get.tab') == 'card') {//充卡页面
                 $stock_amount_type = C('SYSTEM.STOCK_AMOUNT_TYPE');
@@ -59,6 +65,12 @@ class AgentController extends BaseController
             $result = array();
             foreach ($cursor as $item) {
                 $role = $admin_role->findOne(array('_id' => $item['role_id']), array('name' => 1));
+                if ($item['pid']) {
+                    $parent = $admin_agent->findOne(array('_id' => new \MongoId($item['pid'])));
+                    $item['parent_name'] = $parent ? $parent['name'] : '杠杠麻将';
+                } else {
+                    $item['parent_name'] = '杠杠麻将';
+                }
                 $item['role_name'] = $role['name'];
                 $item['type_name'] = $agent_type[$item['type']];
                 $item['date'] = date('Y-m-d H:i:s', $item['date']);
@@ -131,6 +143,7 @@ class AgentController extends BaseController
         $data['password'] = I('put.password', null);
         $data['repeat_password'] = I('put.repeat_password', null);
         $data['type'] = intval(I('put.type'));
+        $data['pid'] = I('put.pid', 0);
         if (I('put.status') !== '') {
             $data['status'] = intval(I('put.status'));
         }
@@ -161,6 +174,18 @@ class AgentController extends BaseController
         }
         if (isset($data['repeat_password']) && !$data['repeat_password']) {
             unset($data['repeat_password']);
+        }
+
+        if ($data['pid']) {
+            $parent = $admin_agent->findOne(array('username' => $data['pid']));
+            if ($parent) {
+                $data['pid'] = $parent['_id']->__toString();
+            } else {
+                $this->response($this->_result, 'json', 400, '父级用户名不存在');
+            }
+        }
+        if ($data['type'] == 1) {//钻石代理无上级
+            $data['pid'] = 0;
         }
 
         //充卡
@@ -223,7 +248,7 @@ class AgentController extends BaseController
         $data['level'] = 1; //一级代理
         $data['status'] = intval(I('post.status'));
         $data['role_id'] = I('post.role_id');
-        $data['pid'] = 0;
+        $data['pid'] = I('post.pid', 0);
         $data['date'] = time();
         merge_params_error($data['username'], 'username', '用户名不能为空', $this->_result['error']);
         merge_params_error($data['name'], 'name', '名字不能为空', $this->_result['error']);
@@ -251,6 +276,18 @@ class AgentController extends BaseController
 
         if (findRecord('username', $data['username'], $admin_agent)) {
             $this->response($this->_result, 'json', 400, '用户名已经存在');
+        }
+
+        if ($data['pid']) {
+            $parent = $admin_agent->findOne(array('username' => $data['pid']));
+            if ($parent) {
+                $data['pid'] = $parent['_id']->__toString();
+            } else {
+                $this->response($this->_result, 'json', 400, '父级用户名不存在');
+            }
+        }
+        if ($data['type'] == 1) {//钻石代理无上级
+            $data['pid'] = 0;
         }
 
         filter_array_element($data);
@@ -368,7 +405,10 @@ class AgentController extends BaseController
         $search['to_user'] && $search['to_user'] = intval($search['to_user']);
         $cursor = $agent_stock_grant_record->find($search, $option)->sort(array('date' => -1))->skip($skip)->limit($limit);
         $result = array();
+        $admin_agent = $this->mongo_db->admin_agent;
         foreach ($cursor as $item) {
+            $agent = $admin_agent->findOne(array('username' => $item['from_user']));
+            $item['name'] = $agent['name'];
             $item['date'] = date("Y-m-d H:i:s", $item['date']);
             $item['type_name'] = $stock_type[$item['type']];
             array_push($result, $item);

@@ -5,7 +5,9 @@
         <td>{$item.name}</td>
         <td>{$item.wechat}</td>
         <td>{$item.type_name}</td>
-        <td>{$item.pay_back}</td>
+        <if condition="$type eq month">
+            <td>{$item.pay_back}</td>
+        </if>
         <td>{$item.purchase}</td>
         <td>{$item.expense}</td>
     </tr>

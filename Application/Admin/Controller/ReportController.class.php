@@ -174,6 +174,7 @@ class ReportController extends BaseController {
     }
 
     public function agentStreamGet() {
+        $search = array();
         $agent_type = C('SYSTEM.AGENT_TYPE');
         $this->assign("agent_type", $agent_type);
         $game_type = C('SYSTEM.GAME');
@@ -182,26 +183,27 @@ class ReportController extends BaseController {
         $type = I('get.type', 'day');
         switch ($type) {
             case 'day':
+                $search['date'] = strtotime(date("Y-m-d", strtotime("-1 day")));
                 break;
             case 'month':
+                $search['date'] = strtotime(date("Y-m-01", strtotime("-1 month")));
                 break;
         }
         $table_name = "admin_report_agent_stream_" . $type;
         $table = $this->mongo_db->$table_name;
 
-        $search = array();
+
         $limit = intval(I('get.limit', C('PAGE_NUM')));
         $skip = (intval(I('get.p', 1)) - 1) * $limit;
-        $search['date'] = I('get.date', null);
         $search['username'] = I('get.username', null);
         $search['type'] = I('get.agent_type', null);
-        if ($search['date']) {
+        if ($_GET['date']) {
             $search['date'] = rangeDate($search['date']);
             $search['date'] = array('$gte' => $search['date'][0], '$lte' => $search['date'][1]);
-        } else {
+        } /*else {
             //上月数据
             $search['date'] = strtotime(date("Y-m-01", strtotime("-1 month")));
-        }
+        }*/
         $search['type'] && $search['type'] = intval($search['type']);
         $show_child = I('get.show_child');//是否显示账号下的子账号
         if ($show_child) {
@@ -230,7 +232,11 @@ class ReportController extends BaseController {
             } else {
                 $item['pay_back'] = intval($item['expense'] * 0.7);
             }
-            $item['date'] = date("Y-m", $item['date']);
+            if($type == 'month') {
+                $item['date'] = date("Y-m", $item['date']);
+            } else {
+                $item['date'] = date("Y-m-d", $item['date']);
+            }
             $total['pay_back'] += $item['pay_back'];
             $total['expense'] += $item['expense'];
             $total['purchase'] += $item['purchase'];
@@ -246,12 +252,12 @@ class ReportController extends BaseController {
         $this->assign("page", $page);
 
         $this->assign("stream", $result);
+        $this->assign("total", $total);
+        $this->assign("type", $type);
         if ($show_child) {
             $this->assign("child_stream", $result);
             $this->_result['data']['child_html'] = $this->fetch("Report:agent_child_stream");
         }
-        $this->assign("total", $total);
-        $this->assign("type", $type);
         $this->_result['data']['html'] = $this->fetch("Report:agent_stream");
         $this->_result['data']['total'] = $total;
         $this->_result['data']['stream'] = $result;
@@ -260,6 +266,7 @@ class ReportController extends BaseController {
     }
 
     public function agentStreamExcelPost() {
+        $search = array();
         $agent_type = C('SYSTEM.AGENT_TYPE');
         $this->assign("agent_type", $agent_type);
         $game_type = C('SYSTEM.GAME');
@@ -268,28 +275,25 @@ class ReportController extends BaseController {
         $type = I('get.type', 'day');
         switch ($type) {
             case 'day':
+                $search['date'] = strtotime(date("Y-m-d", strtotime("-1 day")));
                 break;
             case 'month':
+                $search['date'] = strtotime(date("Y-m-01", strtotime("-1 month")));
                 break;
         }
         $table_name = "admin_report_agent_stream_" . $type;
         $table = $this->mongo_db->$table_name;
 
-        $search = array();
         $limit = intval(I('get.limit', C('PAGE_NUM')));
         $skip = $_SESSION['skip'];
         $skip = ($skip - 1) * $limit;
-        $search['date'] = I('get.date', null);
         $search['username'] = I('get.username', null);
         $search['type'] = I('get.agent_type', null);
-        if ($search['date']) {
+        if ($_GET['date']) {
             $search['date'] = rangeDate($search['date']);
             $search['date'] = array('$gte' => $search['date'][0], '$lte' => $search['date'][1]);
             $limit = null;
             $skip = null;
-        } else {
-            //上月数据
-            $search['date'] = strtotime(date("Y-m-01", strtotime("-1 month")));
         }
         if ($search['username'] || $search['type']) {
             $limit = null;
@@ -316,11 +320,17 @@ class ReportController extends BaseController {
             'expense' => 0,
             'purchase' => 0,
         );
-        $option['filename'] = "代理月报表" . date("Y-m") . ".xls";
+        $filename = $type=='month' ? '代表月报表' : '代表日报表';
+        $option['filename'] = $filename . date("Y-m") . ".xls";
         $option['author'] = '杠杠麻将';
         $option['header'] = array('时间', '账号', '微信', '级别', '返还', '购买', '消耗');
         $option['data'] = array();
         foreach ($cursor as $item) {
+            if ($item['expense'] >= 2000) {
+                $item['pay_back'] = intval($item['expense'] * 0.5);
+            } else {
+                $item['pay_back'] = intval($item['expense'] * 0.7);
+            }
             $item['date'] = date("Y-m", $item['date']);
             $total['pay_back'] += $item['pay_back'];
             $total['expense'] += $item['expense'];
