@@ -154,6 +154,9 @@ class UserController extends BaseController
 
 
         $search = array();
+        if (I('get._id')) {
+            $search['_id'] = new \MongoId(I('get._id'));
+        }
         $search['username'] = I('get.username', null);
         $search['pid'] = $_SESSION[MODULE_NAME . '_admin']['_id']->__toString();
         $search['date'] = I('get.date', null);

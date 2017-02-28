@@ -37,7 +37,7 @@ class AgentController extends BaseController
             if (I('get.tab') == 'card') {//充卡页面
                 $stock_amount_type = C('SYSTEM.STOCK_AMOUNT_TYPE');
                 $query['type_name'] = $stock_type[$query['type']];
-                $query['agent_type_name'] = $agent_type[$query['level']];
+                $query['agent_type_name'] = $agent_type[$query['type']];
                 $stock_amount = $query['stock_amount'];
                 foreach ($stock_amount as $key => $value) {
                     $stock_amount[$key] = array(
