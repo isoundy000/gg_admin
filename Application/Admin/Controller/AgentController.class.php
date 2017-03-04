@@ -142,8 +142,12 @@ class AgentController extends BaseController
         $data['name'] = I('put.name', null, check_empty_string);
         $data['password'] = I('put.password', null);
         $data['repeat_password'] = I('put.repeat_password', null);
-        $data['type'] = intval(I('put.type'));
-        $data['pid'] = I('put.pid', 0);
+        if (I('put.type')) {
+            $data['type'] = intval(I('put.type'));
+        }
+        if (I('put.pid') !== "") {
+            $data['pid'] = I('put.pid', 0);
+        }
         if (I('put.status') !== '') {
             $data['status'] = intval(I('put.status'));
         }
@@ -176,7 +180,7 @@ class AgentController extends BaseController
             unset($data['repeat_password']);
         }
 
-        if ($data['pid']) {
+        if (isset($data['pid']) && $data['pid']) {
             $parent = $admin_agent->findOne(array('username' => $data['pid']));
             if ($parent) {
                 $data['pid'] = $parent['_id']->__toString();
@@ -184,25 +188,26 @@ class AgentController extends BaseController
                 $this->response($this->_result, 'json', 400, '父级用户名不存在');
             }
         }
-        if ($data['type'] == 1) {//钻石代理无上级
+        if (isset($data['type']) && $data['type'] == 1) {//钻石代理无上级
             $data['pid'] = 0;
         }
 
         //充卡
         $amount = I('put.amount');
         if ($amount !== "") {
+            $stock_type = I('put.stock_type');
             $amount = intval($amount);
             if (!check_positive_integer($amount)) {
                 $this->response($this->_result, 'json', 400, '房卡数量必须为正整数');
             } else {
                 //库存是否充足
                 $user = $admin_user->findOne(array("_id" => $_SESSION[MODULE_NAME . '_admin']['_id']));
-                if ($user['stock_amount'][$data['type']] < $amount) {
+                if ($user['stock_amount'][$stock_type] < $amount) {
                     $this->response($this->_result, 'json', 400, '房卡库存不足，请前往"库存管理"申请足量房卡');
                 }
                 $update['$inc'] = array(
-                    "stock_amount.{$data['type']}" => $amount,
-                    "total_amount.{$data['type']}" => $amount
+                    "stock_amount.{$stock_type}" => $amount,
+                    "total_amount.{$stock_type}" => $amount
                 );
             }
         }
@@ -213,17 +218,20 @@ class AgentController extends BaseController
         filter_array_element($data);
 
         $update['$set'] = $data;
+        if (!$data) {
+            $this->response($this->_result, 'json', 201, '保存成功');
+        }
         if ($agent = $admin_agent->findAndModify($search, $update)) {
             if ($update['$inc']) {//给代理充卡后要扣除管理员相应的库存卡数量
                 $admin_user->update(array("_id" => $_SESSION[MODULE_NAME . '_admin']['_id']),
-                    array('$inc' => array("stock_amount.{$data['type']}" => -$amount))
+                    array('$inc' => array("stock_amount.{$stock_type}" => -$amount))
                 );
                 //充卡记录
                 $admin_stock_grant_record->insert(
                     array(
                         'from_user' => $_SESSION[MODULE_NAME . '_admin']['username'],
                         'to_user' => $agent['username'],
-                        'type' => $data['type'],
+                        'type' => $stock_type,
                         'amount' => $amount,
                         'date' => time(),
                     )

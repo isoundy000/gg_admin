@@ -41,9 +41,9 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="type" class="col-sm-2 control-label">房卡类型</label>
+                            <label for="stock_type" class="col-sm-2 control-label">房卡类型</label>
                             <div class="col-sm-2">
-                                <select class="form-control" id="type">
+                                <select class="form-control" id="stock_type">
                                     <foreach name="stock_type" key="k" item="item">
                                         <option value="{$k}">{$item}</option>
                                     </foreach>
@@ -75,12 +75,12 @@
 <script>
     function agentSave(_url) {
         var method = "PUT";
-        var type = $("#type").val();
+        var stock_type = $("#stock_type").val();
         var _id = $("#_id").val();
         var amount = $("#amount").val();
 
         var source = {
-            type: type,
+            stock_type: stock_type,
             amount: amount,
             _id:_id
         };
