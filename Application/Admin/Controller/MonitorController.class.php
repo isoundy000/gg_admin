@@ -166,9 +166,12 @@ class MonitorController extends RestController {
         $retail_data['buy_card'] = 0; //TODO
         $retail_data['stream'] = $count;
 
-        $admin_report_stream_retail = $db->admin_report_stream_retail;
-        $admin_report_stream_retail->update(array("date"=>$start_date), array('$set' => $retail_data), array('upsert' => true));
-        echo "零售统计完成\n";
+        //TODO 以后加上日统计，月统计
+        if ($type == 'day') {
+            $admin_report_stream_retail = $db->admin_report_stream_retail;
+            $admin_report_stream_retail->update(array("date" => $start_date), array('$set' => $retail_data), array('upsert' => true));
+            echo "零售统计完成\n";
+        }
 
         //统计代理流水
         $agent_stock_grant_record = $db->agent_stock_grant_record;

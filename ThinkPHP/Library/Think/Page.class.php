@@ -46,7 +46,11 @@ class Page{
         /* 基础设置 */
         $this->totalRows  = $totalRows; //设置总记录数
         $this->listRows   = $listRows;  //设置每页显示行数
-        $this->parameter  = empty($parameter) ? $_GET : $parameter;
+        $session = $_GET;
+        unset($session['limit']);
+        $this->date = isset($session['date']) ? $session['date'] : null;
+        unset($session['date']);
+        $this->parameter  = empty($parameter) ? $session : $parameter;
         $this->nowPage    = empty($_GET[$this->p]) ? 1 : intval($_GET[$this->p]);
         $this->nowPage    = $this->nowPage>0 ? $this->nowPage : 1;
         $this->firstRow   = $this->listRows * ($this->nowPage - 1);
@@ -86,7 +90,12 @@ class Page{
      * @return string
      */
     private function url($page){
-        return str_replace(urlencode('[PAGE]'), $page, $this->url);
+        if ($this->date) {
+            $date = '?&date=' . urlencode($this->date);
+        } else {
+            $date = null;
+        }
+        return str_replace(urlencode('[PAGE]'), $page, $this->url . $date);
     }
 
     /**
