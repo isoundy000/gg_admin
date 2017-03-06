@@ -217,9 +217,10 @@ class AgentController extends BaseController
         }
         filter_array_element($data);
 
-        $update['$set'] = $data;
-        if (!$data) {
-            $this->response($this->_result, 'json', 201, '保存成功');
+        //$update['$set'] = $data;
+        if ($data) {
+            $update['$set'] = $data;
+            //$this->response($this->_result, 'json', 201, '保存成功');
         }
         if ($agent = $admin_agent->findAndModify($search, $update)) {
             if ($update['$inc']) {//给代理充卡后要扣除管理员相应的库存卡数量
